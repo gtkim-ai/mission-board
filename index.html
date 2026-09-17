@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="미션보드">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#63a03f">
+<title>하주 · 하유 미션 보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e7dfcb; --panel:#f6f0e1; --panel2:#ece3cf; --ink:#2b241a; --dim:#7a6c56;
+  --line:#1d1a15; --grass:#63a03f; --grass-lt:#82c356; --dirt:#8a5f3c; --dirt-dk:#63422a;
+  --stone:#8d8d8d; --gold:#e6a92b; --dia:#3fbfbf; --red:#cf3b2f;
+  --shadow:rgba(0,0,0,.28); --hi:rgba(255,255,255,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#17140f; --panel:#2a251d; --panel2:#221d16; --ink:#f0e7d5; --dim:#a4967d;
+    --line:#0d0b08; --grass:#4e8434; --grass-lt:#6aa544; --dirt:#6b4a2e; --dirt-dk:#4a3220;
+    --stone:#6d6d6d; --gold:#d59a23; --dia:#37a8a8; --red:#c23a2f;
+    --shadow:rgba(0,0,0,.45); --hi:rgba(255,255,255,.16);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17140f; --panel:#2a251d; --panel2:#221d16; --ink:#f0e7d5; --dim:#a4967d;
+  --line:#0d0b08; --grass:#4e8434; --grass-lt:#6aa544; --dirt:#6b4a2e; --dirt-dk:#4a3220;
+  --stone:#6d6d6d; --gold:#d59a23; --dia:#37a8a8; --red:#c23a2f;
+  --shadow:rgba(0,0,0,.45); --hi:rgba(255,255,255,.16);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Gothic A1',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-weight:700; line-height:1.45; max-width:920px; margin:0 auto;
+  padding:calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
+  -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:contain;
+}
+button,.task,.sub,.habit .st{touch-action:manipulation; -webkit-user-select:none; user-select:none}
+h1,h2,h3,.px-font{font-family:'Do Hyeon','Gothic A1',sans-serif;font-weight:400;letter-spacing:.5px}
+img,svg{max-width:100%; image-rendering:pixelated}
+
+/* ---- blocky chrome ---- */
+.blk{border:3px solid var(--line); box-shadow:inset -4px -4px 0 var(--shadow), inset 4px 4px 0 var(--hi);}
+.card{background:var(--panel); border:3px solid var(--line); box-shadow:4px 4px 0 var(--shadow); margin-bottom:14px}
+.card > .head{
+  background:var(--dirt); color:#fff8e7; padding:8px 12px; border-bottom:3px solid var(--line);
+  font-family:'Do Hyeon',sans-serif; font-size:17px; display:flex; align-items:center; gap:8px;
+  box-shadow:inset 0 -4px 0 var(--dirt-dk), inset 0 4px 0 rgba(255,255,255,.18);
+}
+.card > .body{padding:12px}
+
+/* ---- header ---- */
+header{position:relative; margin-bottom:14px; border:3px solid var(--line); box-shadow:4px 4px 0 var(--shadow);
+  background:
+   repeating-linear-gradient(90deg, var(--dirt) 0 14px, var(--dirt-dk) 14px 28px) 0 0/auto 100%;
+  overflow:hidden}
+header .turf{height:16px;background:repeating-linear-gradient(90deg,var(--grass) 0 14px,var(--grass-lt) 14px 28px);border-bottom:3px solid var(--line)}
+header .inner{display:flex;align-items:center;gap:12px;padding:12px 14px;color:#fff6e4}
+header h1{margin:0;font-size:23px;text-shadow:3px 3px 0 rgba(0,0,0,.45)}
+header p{margin:2px 0 0;font-size:12.5px;color:#f0dcbb;font-weight:700;text-shadow:2px 2px 0 rgba(0,0,0,.35)}
+
+/* ---- buttons ---- */
+button{font-family:inherit;font-weight:700;color:var(--ink);cursor:pointer;
+  background:var(--panel2); border:3px solid var(--line); padding:7px 11px; font-size:14px;
+  box-shadow:inset -4px -4px 0 var(--shadow), inset 4px 4px 0 var(--hi);}
+button:active{box-shadow:inset 4px 4px 0 var(--shadow)}
+button.on{background:var(--grass); color:#fff}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.spacer{flex:1}
+
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px}
+.tabs button.on{background:var(--grass);color:#fff}
+.tabs svg{width:26px;height:26px;flex:none}
+
+.weeknav{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.weeknav .label{flex:1;text-align:center;font-family:'Do Hyeon',sans-serif;font-size:16px;
+  background:var(--panel);border:3px solid var(--line);padding:7px;box-shadow:4px 4px 0 var(--shadow)}
+
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:12px;
+  position:sticky;top:0;z-index:20;background:var(--bg);padding:6px 0 8px}
+.days button{padding:8px 1px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.1;min-height:60px;justify-content:center}
+.days button .d{font-family:'Do Hyeon',sans-serif;font-size:16px}
+.days button.sel{background:var(--gold);color:#2b241a}
+.days button.today{outline:3px solid var(--dia);outline-offset:-9px}
+.days .dot{width:8px;height:8px;background:var(--stone);border:2px solid var(--line)}
+.days .dot.done{background:var(--grass-lt)}
+.days .dot.part{background:var(--gold)}
+
+/* ---- task rows ---- */
+.grp{margin-bottom:10px}
+.grp h3{margin:0 0 6px;font-size:15px;color:var(--dim);display:flex;align-items:center;gap:6px}
+.grp h3::before{content:"";width:12px;height:12px;background:var(--dirt);border:2px solid var(--line)}
+.task{display:flex;align-items:center;gap:10px;padding:10px 10px;background:var(--panel2);
+  border:3px solid var(--line);margin-bottom:7px;cursor:pointer;user-select:none;min-height:52px}
+.task.done{background:color-mix(in srgb,var(--grass) 30%, var(--panel2))}
+.task .box{width:28px;height:28px;flex:none;background:var(--panel);border:3px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;
+  box-shadow:inset -3px -3px 0 var(--shadow)}
+.task.done .box{background:var(--grass)}
+.task .txt{flex:1;font-size:15px}
+.task .tag{font-size:11px;background:var(--gold);color:#2b241a;border:2px solid var(--line);padding:2px 5px;white-space:nowrap}
+.subs{display:flex;flex-wrap:wrap;gap:7px;margin:-2px 0 9px 12px}
+.subs .sub{display:flex;align-items:center;gap:6px;padding:9px 10px;background:var(--panel2);
+  border:3px solid var(--line);font-size:13.5px;cursor:pointer;min-height:44px}
+.subs .sub.done{background:color-mix(in srgb,var(--grass) 32%, var(--panel2))}
+.subs .sub .box{width:16px;height:16px;border-width:2px;font-size:11px}
+
+/* ---- habits ---- */
+.habit{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--panel2);
+  border:3px solid var(--line);margin-bottom:7px;min-height:56px}
+.habit .txt{flex:1;font-size:14.5px}
+.habit .st{width:56px;height:44px;flex:none;font-family:'Do Hyeon',sans-serif;font-size:20px;padding:0}
+.habit .st[data-v="ok"]{background:var(--grass);color:#fff}
+.habit .st[data-v="no"]{background:var(--red);color:#fff}
+.note{font-size:12.5px;color:var(--dim);margin:8px 0 0}
+
+/* ---- reward ---- */
+.bank{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.blocks{display:flex;gap:5px}
+.blocks i{width:34px;height:34px;display:block;border:3px solid var(--line);
+  background:repeating-linear-gradient(135deg,var(--dia) 0 6px,color-mix(in srgb,var(--dia) 70%,#fff) 6px 12px);
+  box-shadow:inset -4px -4px 0 var(--shadow), inset 4px 4px 0 var(--hi)}
+.blocks i.gone{background:var(--stone);opacity:.5}
+.big{font-family:'Do Hyeon',sans-serif;font-size:30px;line-height:1}
+.stat{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:13.5px;margin-top:10px}
+.stat b{font-weight:900}
+.bar{height:16px;background:var(--panel2);border:3px solid var(--line);margin-top:8px;position:relative;overflow:hidden}
+.bar > span{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--grass) 0 8px,var(--grass-lt) 8px 16px)}
+.ok-badge{font-family:'Do Hyeon',sans-serif;font-size:16px;padding:6px 10px;border:3px solid var(--line);
+  background:var(--gold);color:#2b241a;box-shadow:4px 4px 0 var(--shadow)}
+.ok-badge.no{background:var(--stone);color:#fff}
+.wk{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px;
+  padding:6px 9px;background:var(--panel2);border:3px solid var(--line);margin-bottom:6px}
+.wk .cnt{font-family:'Do Hyeon',sans-serif;font-size:16px}
+.wk .cnt.ok{color:var(--grass)}
+footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
+#sync{font-size:11.5px;color:var(--dim)}
+.weeknav button{min-height:44px;min-width:48px;font-size:15px}
+@media (max-width:430px){
+  header h1{font-size:19px}
+  header p{font-size:11.5px}
+  header .inner{padding:10px}
+  .tabs button{font-size:16px;min-height:52px}
+  .weeknav .label{font-size:14px;padding:9px 2px}
+  .card > .head{font-size:16px}
+  .card > .body{padding:10px}
+  .blocks i{width:30px;height:30px}
+  .big{font-size:26px}
+}
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,footer,#sync{display:none!important}
+  .card{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="turf"></div>
+  <div class="inner">
+    <div id="hdrAvatar"></div>
+    <div>
+      <h1>하주 · 하유 미션 보드</h1>
+      <p>미션 클리어 → 토요일·주일에 게임 2시간 획득!</p>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="weeknav">
+  <button id="prevW">◀</button>
+  <div class="label" id="weekLabel">–</div>
+  <button id="todayW">오늘</button>
+  <button id="nextW">▶</button>
+</div>
+
+<div class="days" id="days"></div>
+
+<div class="card">
+  <div class="head"><span id="dayTitle">오늘의 숙제</span></div>
+  <div class="body" id="tasks"></div>
+</div>
+
+<div class="card">
+  <div class="head">🧹 생활 미션 <span style="font-size:12px;opacity:.85">(어기면 30분 차감)</span></div>
+  <div class="body" id="habits"></div>
+</div>
+
+<div class="card">
+  <div class="head">📅 이번 주 미션</div>
+  <div class="body" id="weekly"></div>
+</div>
+
+<div class="card">
+  <div class="head">💎 게임 시간 통장</div>
+  <div class="body" id="bank"></div>
+</div>
+
+<div class="row" style="margin-bottom:10px">
+  <button id="printBtn">🖨 인쇄하기</button>
+  <button id="backupBtn">📦 백업</button>
+  <button id="restoreBtn">📥 복원</button>
+  <div class="spacer"></div>
+  <span id="sync">저장 준비 중…</span>
+</div>
+
+<footer>토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ============ 데이터 정의 ============ */
+var ENGLISH = [
+  {id:"en_focus", label:"집중듣기"},
+  {id:"en_word",  label:"단어쓰기"},
+  {id:"en_read",  label:"낭독영상", subs:[
+      {id:"en_r1", label:"듣기"},
+      {id:"en_r2", label:"듣고 따라읽기"},
+      {id:"en_r3", label:"혼자 읽기"},
+      {id:"en_r4", label:"검사"}]},
+  {id:"en_work",  label:"문제집 풀기"},
+  {id:"en_quiz",  label:"북퀴즈", weekly:2, tag:"3일에 1번"}
+];
+var MATH = [
+  {id:"ma_calc",  label:"연산 1장"},
+  {id:"ma_class", label:"학교 진도 문제풀이"}
+];
+var HOMERUN = [
+  {id:"hr_day",  label:"그날의 학습하기"},
+  {id:"hr_week", label:"오답노트 / 못한 것 하기", weekendOnly:true, tag:"주말"}
+];
+function groups(extra, engExtra){
+  var g = [{name:"큐티", items:[{id:"qt", label:"큐티"}]}];
+  if(extra) g.push(extra);
+  g.push({name:"영어", items: engExtra ? ENGLISH.concat(engExtra) : ENGLISH});
+  g.push({name:"수학", items:MATH});
+  g.push({name:"홈런 · 아이스크림", items:HOMERUN});
+  return g;
+}
+var KIDS = [
+  {id:"hajoo", name:"김하주", skin:{hair:"#5b3a1e", shirt:"#4e8f3a"},
+   groups: groups(null)},
+  {id:"hayoo", name:"김하유", skin:{hair:"#2b2b33", shirt:"#7a4fa8"},
+   groups: groups({name:"학교 숙제", items:[
+      {id:"sc_diary", label:"일기", weekly:2, tag:"주 2번"},
+      {id:"sc_read",  label:"독서 30분 이상"},
+      {id:"sc_log",   label:"독서기록장", weekly:1, tag:"주 1번"}
+   ]}, [{id:"en_class", label:"클래스카드", weekly:3, tag:"주 3번"}])}
+];
+var HABITS = [
+  {id:"hb_room",  label:"방 정리"},
+  {id:"hb_cloth", label:"옷 정리"},
+  {id:"hb_change",label:"학교·태권도 다녀와서 옷 갈아입기"},
+  {id:"hb_living",label:"내 물건 거실에 두지 않기"}
+];
+var BASE_MIN = 120, PENALTY = 30;
+var DAYN = ["월","화","수","목","금","토","일"];
+
+/* 하루 필수 항목 (주간목표 항목은 제외, 부모 항목은 하위로 대체) */
+function requiredIds(kid, date){
+  var out = [], wknd = isWeekend(date);
+  kid.groups.forEach(function(g){
+    g.items.forEach(function(it){
+      if(it.weekly) return;
+      if(it.weekendOnly && !wknd) return;
+      if(it.subs) it.subs.forEach(function(s){ out.push(s.id); });
+      else out.push(it.id);
+    });
+  });
+  return out;
+}
+function weeklyItems(kid){
+  var out=[];
+  kid.groups.forEach(function(g){ g.items.forEach(function(it){ if(it.weekly) out.push(it); }); });
+  return out;
+}
+
+/* ============ 날짜 ============ */
+function fmt(d){
+  var m = d.getMonth()+1, day = d.getDate();
+  return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(day<10?"0":"")+day;
+}
+function monday(d){
+  var c = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  c.setDate(c.getDate() - ((c.getDay()+6)%7));
+  return c;
+}
+function addDays(d,n){ var c=new Date(d.getFullYear(),d.getMonth(),d.getDate()); c.setDate(c.getDate()+n); return c; }
+function isWeekend(d){ var w=d.getDay(); return w===0||w===6; }
+var TODAY = new Date();
+var TODAY_KEY = fmt(TODAY);
+
+/* ============ 상태 ============ */
+var weekStart = monday(TODAY);
+var curKid = 0;
+var curDate = new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());
+var data = {};              // { kidId: { dateKey: {t:{}, h:{}} } }
+var db = null, unsub = null, saveTimer = null, pending = false;
+
+function weekKey(){ return fmt(weekStart); }
+function lsKey(){ return "mission:"+weekKey(); }
+function cell(kidId, dateKey){
+  data[kidId] = data[kidId] || {};
+  data[kidId][dateKey] = data[kidId][dateKey] || {t:{}, h:{}};
+  var c = data[kidId][dateKey];
+  c.t = c.t || {}; c.h = c.h || {};
+  return c;
+}
+function loadLocal(){
+  try{ var raw = localStorage.getItem(lsKey()); data = raw ? JSON.parse(raw) : {}; }
+  catch(e){ data = {}; }
+  if(!data || typeof data !== "object") data = {};
+}
+function save(){
+  try{ localStorage.setItem(lsKey(), JSON.stringify(data)); }catch(e){}
+  if(!db) return;
+  pending = true;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    var snapshot = JSON.parse(JSON.stringify(data));
+    db.doc("weeks/"+weekKey()).set(snapshot).then(function(){
+      pending = false; setSync("저장됨 ✔");
+    }).catch(function(err){
+      pending = false;
+      setSync(err && err.code === "invalid_argument" ? "보기 전용" : "이 기기에만 저장됨");
+    });
+  }, 400);
+}
+function setSync(msg){ var el=document.getElementById("sync"); if(el) el.textContent = msg; }
+
+/* ============ 픽셀 아바타 ============ */
+function avatar(skin, size){
+  var S = skin.skin || skin;
+  var map = [
+    "hhhhhhhh",
+    "hhhhhhhh",
+    "hssssssh",
+    "seesseess".slice(0,8),
+    "ssssssss",
+    "sssmmsss",
+    "ssssssss",
+    "cccccccc"
+  ];
+  var col = {h:S.hair, s:"#e4b08a", e:"#3a2a1c", m:"#a86a55", c:S.shirt};
+  var px = 1, out = '<svg viewBox="0 0 8 8" width="'+size+'" height="'+size+'" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">';
+  for(var y=0;y<8;y++) for(var x=0;x<8;x++){
+    var ch = map[y][x] || "s";
+    out += '<rect x="'+x+'" y="'+y+'" width="'+px+'" height="'+px+'" fill="'+(col[ch]||col.s)+'"/>';
+  }
+  out += '<rect x="0" y="0" width="8" height="8" fill="none" stroke="#1d1a15" stroke-width="0.4"/></svg>';
+  return out;
+}
+
+/* ============ 렌더링 ============ */
+function render(){
+  renderTabs(); renderWeek(); renderDays();
+  renderTasks(); renderHabits(); renderWeekly(); renderBank();
+}
+
+function renderTabs(){
+  var el = document.getElementById("tabs"); el.innerHTML = "";
+  KIDS.forEach(function(k,i){
+    var b = document.createElement("button");
+    b.className = i===curKid ? "on" : "";
+    b.innerHTML = avatar(k,26) + "<span>"+k.name+"</span>";
+    b.onclick = function(){ curKid = i; render(); };
+    el.appendChild(b);
+  });
+  document.getElementById("hdrAvatar").innerHTML =
+    '<div style="display:flex;gap:6px">'+avatar(KIDS[0],40)+avatar(KIDS[1],40)+'</div>';
+}
+
+function renderWeek(){
+  var end = addDays(weekStart,6);
+  document.getElementById("weekLabel").textContent =
+    (weekStart.getMonth()+1)+"월 "+weekStart.getDate()+"일 ~ "+(end.getMonth()+1)+"월 "+end.getDate()+"일";
+}
+
+function dayStatus(kid, d){
+  var c = cell(kid.id, fmt(d)), req = requiredIds(kid,d), n=0;
+  req.forEach(function(id){ if(c.t[id]) n++; });
+  if(n===0) return {cls:"", n:n, total:req.length};
+  return {cls: n>=req.length ? "done" : "part", n:n, total:req.length};
+}
+
+function renderDays(){
+  var el = document.getElementById("days"); el.innerHTML = "";
+  var kid = KIDS[curKid];
+  for(var i=0;i<7;i++){
+    (function(i){
+      var d = addDays(weekStart,i), key = fmt(d);
+      var b = document.createElement("button");
+      var st = dayStatus(kid,d);
+      b.className = (key===fmt(curDate) ? "sel " : "") + (key===TODAY_KEY ? "today" : "");
+      b.innerHTML = '<span class="d">'+DAYN[i]+'</span><span>'+d.getDate()+'</span><span class="dot '+st.cls+'"></span>';
+      b.onclick = function(){ curDate = d; render(); };
+      el.appendChild(b);
+    })(i);
+  }
+}
+
+function taskRow(kid, key, it){
+  var c = cell(kid.id, key);
+  var wrap = document.createDocumentFragment();
+  var done;
+  if(it.subs){
+    done = it.subs.every(function(s){ return !!c.t[s.id]; });
+  } else done = !!c.t[it.id];
+
+  var row = document.createElement("div");
+  row.className = "task" + (done ? " done" : "");
+  row.innerHTML = '<span class="box">'+(done?"✔":"")+'</span><span class="txt">'+it.label+'</span>'
+     + (it.tag ? '<span class="tag">'+it.tag+'</span>' : '');
+  if(!it.subs){
+    row.onclick = function(){ c.t[it.id] = !c.t[it.id]; save(); render(); };
+  } else {
+    row.style.cursor = "default";
+  }
+  wrap.appendChild(row);
+
+  if(it.subs){
+    var sd = document.createElement("div");
+    sd.className = "subs";
+    it.subs.forEach(function(s){
+      var b = document.createElement("div");
+      var on = !!c.t[s.id];
+      b.className = "sub" + (on ? " done" : "");
+      b.innerHTML = '<span class="box">'+(on?"✔":"")+'</span>'+s.label;
+      b.onclick = function(){ c.t[s.id] = !c.t[s.id]; save(); render(); };
+      sd.appendChild(b);
+    });
+    wrap.appendChild(sd);
+  }
+  return wrap;
+}
+
+function renderTasks(){
+  var kid = KIDS[curKid], key = fmt(curDate), wknd = isWeekend(curDate);
+  var el = document.getElementById("tasks"); el.innerHTML = "";
+  document.getElementById("dayTitle").textContent =
+    (curDate.getMonth()+1)+"/"+curDate.getDate()+" ("+DAYN[(curDate.getDay()+6)%7]+") "+kid.name+" 숙제";
+
+  kid.groups.forEach(function(g){
+    var items = g.items.filter(function(it){ return !(it.weekendOnly && !wknd); });
+    if(!items.length) return;
+    var box = document.createElement("div");
+    box.className = "grp";
+    var h = document.createElement("h3"); h.textContent = g.name; box.appendChild(h);
+    items.forEach(function(it){ box.appendChild(taskRow(kid,key,it)); });
+    el.appendChild(box);
+  });
+
+  var st = dayStatus(kid,curDate);
+  var bar = document.createElement("div");
+  bar.innerHTML = '<div class="bar"><span style="width:'+(st.total?Math.round(st.n/st.total*100):0)+'%"></span></div>'
+    + '<p class="note">오늘 필수 '+st.n+' / '+st.total+' 완료'+(st.n>=st.total?' — 다 했어요! 🎉':'')+'</p>';
+  el.appendChild(bar);
+}
+
+function renderHabits(){
+  var kid = KIDS[curKid], key = fmt(curDate), c = cell(kid.id,key);
+  var el = document.getElementById("habits"); el.innerHTML = "";
+  HABITS.forEach(function(h){
+    var v = c.h[h.id] || "";
+    var row = document.createElement("div");
+    row.className = "habit";
+    row.innerHTML = '<span class="txt">'+h.label+'</span>';
+    var b = document.createElement("button");
+    b.className = "st"; b.setAttribute("data-v", v);
+    b.textContent = v==="ok" ? "O" : v==="no" ? "X" : "–";
+    b.onclick = function(){
+      c.h[h.id] = v==="" ? "ok" : v==="ok" ? "no" : "";
+      save(); render();
+    };
+    row.appendChild(b);
+    el.appendChild(row);
+  });
+  var bad = 0;
+  for(var i=0;i<7;i++){
+    var cc = cell(kid.id, fmt(addDays(weekStart,i)));
+    HABITS.forEach(function(h){ if(cc.h[h.id]==="no") bad++; });
+  }
+  var p = document.createElement("p");
+  p.className = "note";
+  p.innerHTML = "– 아직 확인 안 함 · <b>O</b> 잘 지킴 · <b>X</b> 어김(30분 차감)<br>이번 주 X 표시: <b>"+bad+"번</b>";
+  el.appendChild(p);
+}
+
+function renderWeekly(){
+  var kid = KIDS[curKid];
+  var el = document.getElementById("weekly"); el.innerHTML = "";
+  var items = weeklyItems(kid);
+  if(!items.length){ el.innerHTML = '<p class="note">이번 주 따로 챙길 항목은 북퀴즈뿐이에요.</p>'; }
+  items.forEach(function(it){
+    var n = 0;
+    for(var i=0;i<7;i++){ if(cell(kid.id, fmt(addDays(weekStart,i))).t[it.id]) n++; }
+    var row = document.createElement("div");
+    row.className = "wk";
+    row.innerHTML = '<span>'+it.label+'</span><span class="cnt'+(n>=it.weekly?' ok':'')+'">'+n+' / '+it.weekly+(n>=it.weekly?' ✔':'')+'</span>';
+    el.appendChild(row);
+  });
+  var hint = document.createElement("p");
+  hint.className = "note";
+  hint.textContent = "해당 날짜를 골라 체크하면 여기 횟수가 올라가요.";
+  el.appendChild(hint);
+}
+
+function renderBank(){
+  var kid = KIDS[curKid];
+  var bad = 0, doneDays = 0, checkedDays = 0;
+  for(var i=0;i<7;i++){
+    var d = addDays(weekStart,i), c = cell(kid.id, fmt(d));
+    HABITS.forEach(function(h){ if(c.h[h.id]==="no") bad++; });
+    var st = dayStatus(kid,d);
+    if(st.n>0) checkedDays++;
+    if(st.total && st.n>=st.total) doneDays++;
+  }
+  var deduct = bad*PENALTY;
+  var remain = Math.max(0, BASE_MIN - deduct);
+  var wkOk = weeklyItems(kid).every(function(it){
+    var n=0; for(var i=0;i<7;i++){ if(cell(kid.id,fmt(addDays(weekStart,i))).t[it.id]) n++; }
+    return n>=it.weekly;
+  });
+
+  var blocks = "";
+  for(var b=0;b<4;b++) blocks += '<i class="'+(b < remain/PENALTY ? "" : "gone")+'"></i>';
+
+  var el = document.getElementById("bank");
+  el.innerHTML =
+    '<div class="bank"><div class="blocks">'+blocks+'</div>'
+    + '<div><div class="big">'+remain+'분</div>'
+    + '<div style="font-size:12.5px;color:var(--dim)">'+(remain>=60?Math.floor(remain/60)+"시간 "+(remain%60?remain%60+"분":""):"")+'</div></div>'
+    + '<div class="spacer" style="flex:1"></div>'
+    + '<div class="ok-badge'+(doneDays>=checkedDays && checkedDays>0 && wkOk ? "" : " no")+'">'
+    + (doneDays>=checkedDays && checkedDays>0 && wkOk ? "게임 가능 👍" : "숙제 먼저!")+'</div></div>'
+    + '<div class="stat">'
+    + '<span>기본 적립</span><b>'+BASE_MIN+'분</b>'
+    + '<span>생활 미션 어김 '+bad+'회 × '+PENALTY+'분</span><b style="color:var(--red)">-'+deduct+'분</b>'
+    + '<span>남은 게임 시간</span><b>'+remain+'분</b>'
+    + '<span>숙제 완료한 날</span><b>'+doneDays+'일</b>'
+    + '<span>주간 미션</span><b>'+(wkOk?"완료 ✔":"진행 중")+'</b>'
+    + '</div>'
+    + '<p class="note">숙제를 모두 마치면 <b>토요일 또는 주일</b>에 위 시간만큼 마인크래프트를 할 수 있어요. 주일이 지나면 남은 시간은 사라집니다.</p>';
+}
+
+/* ============ 조작 ============ */
+document.getElementById("prevW").onclick = function(){ shiftWeek(-7); };
+document.getElementById("nextW").onclick = function(){ shiftWeek(7); };
+document.getElementById("todayW").onclick = function(){
+  var t = new Date();
+  var target = monday(t);
+  if(fmt(target) !== weekKey()){
+    if(unsub){ try{unsub();}catch(e){} unsub=null; }
+    weekStart = target;
+    curDate = new Date(t.getFullYear(),t.getMonth(),t.getDate());
+    loadLocal(); render(); attach();
+  } else {
+    curDate = new Date(t.getFullYear(),t.getMonth(),t.getDate());
+    render();
+  }
+};
+document.getElementById("printBtn").onclick = function(){ window.print(); };
+document.getElementById("backupBtn").onclick = function(){
+  var txt = JSON.stringify({week:weekKey(), data:data});
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){ setSync("백업 내용을 복사했어요"); },
+      function(){ window.prompt("아래 내용을 복사해 두세요", txt); });
+  } else { window.prompt("아래 내용을 복사해 두세요", txt); }
+};
+document.getElementById("restoreBtn").onclick = function(){
+  var txt = window.prompt("백업한 내용을 붙여넣으세요");
+  if(!txt) return;
+  try{
+    var o = JSON.parse(txt);
+    if(!o || !o.week || !o.data) throw new Error("bad");
+    localStorage.setItem("mission:"+o.week, JSON.stringify(o.data));
+    var parts = o.week.split("-");
+    weekStart = new Date(+parts[0], +parts[1]-1, +parts[2]);
+    curDate = new Date(weekStart.getTime());
+    loadLocal(); render();
+    setSync("복원했어요 ("+o.week+" 주)");
+  }catch(e){ alert("내용을 알아볼 수 없어요. 백업한 글자 전체를 붙여넣어 주세요."); }
+};
+
+function shiftWeek(n){
+  weekStart = addDays(weekStart,n);
+  curDate = addDays(weekStart, Math.min(6, Math.max(0,(curDate.getDay()+6)%7)));
+  if(unsub){ try{unsub();}catch(e){} unsub=null; }
+  loadLocal();
+  render();
+  attach();
+}
+
+/* ============ 저장소 연결 ============ */
+function attach(){
+  if(!db) return;
+  try{
+    unsub = db.doc("weeks/"+weekKey()).onSnapshot(function(snap){
+      if(pending) return;
+      var d = snap.exists ? snap.data() : null;
+      if(d){
+        data = JSON.parse(JSON.stringify(d));
+        try{ localStorage.setItem(lsKey(), JSON.stringify(data)); }catch(e){}
+        render();
+      }
+      setSync("가족 기기와 동기화 중 ✔");
+    }, function(){ setSync("이 기기에만 저장됨"); });
+  }catch(e){ setSync("이 기기에만 저장됨"); }
+}
+
+loadLocal();
+render();
+setSync("이 기기에 저장됨");
+})();
+</script>
+</body>
+</html>
