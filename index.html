@@ -141,6 +141,12 @@ button.on{background:var(--grass); color:#fff}
   padding:6px 9px;background:var(--panel2);border:3px solid var(--line);margin-bottom:6px}
 .wk .cnt{font-family:'Do Hyeon',sans-serif;font-size:16px}
 .wk .cnt.ok{color:var(--grass)}
+.rpt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rptcol{background:var(--panel2);border:3px solid var(--line);padding:10px}
+.rptcol h3{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:6px}
+.rptcol .ok-badge{display:inline-block;margin-top:8px;box-shadow:none}
+.rpt .bar{margin-top:6px}
+@media (max-width:430px){ .rpt{grid-template-columns:1fr} }
 footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 #sync{font-size:11.5px;color:var(--dim)}
 #gate{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
@@ -239,6 +245,11 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 <div class="card">
   <div class="head">💎 게임 시간 통장</div>
   <div class="body" id="bank"></div>
+</div>
+
+<div class="card">
+  <div class="head">📊 주간 리포트</div>
+  <div class="body" id="report"></div>
 </div>
 
 <div class="row" style="margin-bottom:10px">
@@ -361,6 +372,7 @@ var curDate = new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());
 var data = {};              // { kidId: { dateKey: {t:{}, h:{}} } }
 var sb = null, chan = null, saveTimer = null, pending = false, pendingClear = null;
 var myEmail = "", allowed = false, sessionGen = 0;
+var baseData = {};
 
 function weekKey(){ return fmt(weekStart); }
 function lsKey(){ return "mission:"+weekKey(); }
@@ -383,6 +395,57 @@ function loadLocal(){
   try{ var raw = localStorage.getItem(lsKey()); data = raw ? JSON.parse(raw) : {}; }
   catch(e){ data = {}; }
   if(!data || typeof data !== "object") data = {};
+  setBase();
+}
+function clone(o){
+  try{ return JSON.parse(JSON.stringify(o || {})); }
+  catch(e){ return {}; }
+}
+function setBase(){ baseData = clone(data); }
+function keySet(){
+  var s = {};
+  for(var i=0;i<arguments.length;i++){
+    var o = arguments[i];
+    if(!o || typeof o !== "object") continue;
+    Object.keys(o).forEach(function(k){ s[k] = true; });
+  }
+  return Object.keys(s);
+}
+function mergeMeta(base, local, remote){
+  var b = (base && base.used) || 0, l = (local && local.used) || 0, r = (remote && remote.used) || 0;
+  return {used: l !== b ? l : r};
+}
+function mergeDay(base, local, remote){
+  base = base || {}; local = local || {}; remote = remote || {};
+  var bt = base.t || {}, lt = local.t || {}, rt = remote.t || {};
+  var bh = base.h || {}, lh = local.h || {}, rh = remote.h || {};
+  var t = {}, h = {};
+  keySet(bt, lt, rt).forEach(function(id){
+    var lv = !!lt[id], bv = !!bt[id], rv = !!rt[id];
+    t[id] = lv !== bv ? lv : rv;
+  });
+  keySet(bh, lh, rh).forEach(function(id){
+    var lv = lh[id] || "", bv = bh[id] || "", rv = rh[id] || "";
+    h[id] = lv !== bv ? lv : rv;
+  });
+  return {t:t, h:h};
+}
+function mergeKid(base, local, remote){
+  base = base || {}; local = local || {}; remote = remote || {};
+  var out = {};
+  keySet(base, local, remote).forEach(function(k){
+    if(k === "_meta") out._meta = mergeMeta(base._meta, local._meta, remote._meta);
+    else out[k] = mergeDay(base[k], local[k], remote[k]);
+  });
+  return out;
+}
+function mergeThree(base, local, remote){
+  base = base || {}; local = local || {}; remote = remote || {};
+  var out = {};
+  keySet(base, local, remote).forEach(function(kid){
+    out[kid] = mergeKid(base[kid], local[kid], remote[kid]);
+  });
+  return out;
 }
 function rememberAllowed(email){
   try{ if(email) localStorage.setItem(ALLOW_CACHE_KEY, email); else localStorage.removeItem(ALLOW_CACHE_KEY); }
@@ -399,7 +462,8 @@ function clearPendingSoon(){
   if(pendingClear) clearTimeout(pendingClear);
   pendingClear = setTimeout(function(){ pending = false; pendingClear = null; }, 800);
 }
-function save(){
+function save(opts){
+  opts = opts || {};
   cacheLocal();
   if(!sb){ setSync("저장 실패: 연결할 수 없습니다"); return; }
   if(!allowed){ setSync("이 기기에만 저장됨"); return; }
@@ -407,24 +471,39 @@ function save(){
   clearTimeout(saveTimer);
   setSync("저장 중…");
   var savedWeek = weekKey();
-  var snapshot;
-  try{ snapshot = JSON.parse(JSON.stringify(data)); }catch(e){ snapshot = data; }
+  var snapshot = clone(data);
+  var baseSnap = clone(baseData);
+  var replace = !!opts.replace;
   saveTimer = setTimeout(function(){
-    sb.from("mission_weeks").upsert({
-      week_start: savedWeek, data: snapshot,
-      updated_at: new Date().toISOString(), updated_by: myEmail
-    }, {onConflict:"week_start"}).then(function(r){
-      if(r.error){
+    sb.from("mission_weeks").select("data").eq("week_start", savedWeek).maybeSingle()
+      .then(function(got){
+        var remote = (!got.error && got.data && got.data.data) ? got.data.data : null;
+        var merged = (!replace && remote != null) ? mergeThree(baseSnap, snapshot, remote) : snapshot;
+        return sb.from("mission_weeks").upsert({
+          week_start: savedWeek, data: merged,
+          updated_at: new Date().toISOString(), updated_by: myEmail
+        }, {onConflict:"week_start"}).then(function(r){
+          if(r.error){
+            pending = false;
+            setSync("저장 실패: " + r.error.message);
+            return;
+          }
+          if(savedWeek === weekKey()){
+            data = merged;
+            setBase();
+            cacheLocal();
+            render();
+          } else {
+            try{ localStorage.setItem("mission:"+savedWeek, JSON.stringify(merged)); }catch(e){}
+          }
+          setSync(got.error ? "저장됨 · 상대 최신값 합치기 실패" : "저장됨 ✔");
+          clearPendingSoon();
+        });
+      })
+      .catch(function(e){
         pending = false;
-        setSync("저장 실패: " + r.error.message);
-        return;
-      }
-      setSync("저장됨 ✔");
-      clearPendingSoon();
-    }).catch(function(e){
-      pending = false;
-      setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
-    });
+        setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
+      });
   }, 600);
 }
 function setSync(msg){ var el=document.getElementById("sync"); if(el) el.textContent = msg; }
@@ -455,7 +534,7 @@ function avatar(skin, size){
 /* ============ 렌더링 ============ */
 function render(){
   renderTabs(); renderWeek(); renderDays();
-  renderTasks(); renderHabits(); renderWeekly(); renderBank();
+  renderTasks(); renderHabits(); renderWeekly(); renderBank(); renderReport();
 }
 
 function renderTabs(){
@@ -612,24 +691,40 @@ function renderWeekly(){
   el.appendChild(hint);
 }
 
-function renderBank(){
-  var kid = KIDS[curKid];
-  var bad = 0, doneDays = 0, checkedDays = 0;
+function weekStats(kid){
+  var bad = 0, doneDays = 0, checkedDays = 0, reqDone = 0, reqTotal = 0;
   for(var i=0;i<7;i++){
     var d = addDays(weekStart,i), c = cell(kid.id, fmt(d));
     HABITS.forEach(function(h){ if(c.h[h.id]==="no") bad++; });
     var st = dayStatus(kid,d);
     if(st.n>0) checkedDays++;
     if(st.total && st.n>=st.total) doneDays++;
+    reqDone += st.n; reqTotal += st.total;
   }
   var deduct = bad*PENALTY;
   var remain = Math.max(0, BASE_MIN - deduct);
-  var wkOk = weeklyItems(kid).every(function(it){
+  var weekly = weeklyItems(kid).map(function(it){
     var n=0; for(var i=0;i<7;i++){ if(cell(kid.id,fmt(addDays(weekStart,i))).t[it.id]) n++; }
-    return n>=it.weekly;
+    return {label:it.label, n:n, target:it.weekly, ok:n>=it.weekly};
   });
+  var wkOk = weekly.every(function(it){ return it.ok; });
+  var used = (meta(kid.id).used) || 0;
+  var left = Math.max(0, remain - used);
+  var playOk = doneDays>=checkedDays && checkedDays>0 && wkOk;
+  return {
+    bad:bad, deduct:deduct, remain:remain, used:used, left:left,
+    doneDays:doneDays, checkedDays:checkedDays, reqDone:reqDone, reqTotal:reqTotal,
+    pct: reqTotal ? Math.round(reqDone/reqTotal*100) : 0,
+    weekly:weekly, wkOk:wkOk, playOk:playOk
+  };
+}
 
-  var mt = meta(kid.id), used = mt.used || 0, left = Math.max(0, remain - used);
+function renderBank(){
+  var kid = KIDS[curKid];
+  var s = weekStats(kid);
+  var bad = s.bad, doneDays = s.doneDays, checkedDays = s.checkedDays;
+  var deduct = s.deduct, remain = s.remain, wkOk = s.wkOk;
+  var mt = meta(kid.id), used = s.used, left = s.left;
   var blocks = "";
   for(var b=0;b<4;b++) blocks += '<i class="'+(b < left/PENALTY ? "" : "gone")+'"></i>';
 
@@ -639,8 +734,8 @@ function renderBank(){
     + '<div><div class="big">'+left+'분</div>'
     + '<div style="font-size:12.5px;color:var(--dim)">'+(left>=60?Math.floor(left/60)+"시간 "+(left%60?left%60+"분":""):"")+'</div></div>'
     + '<div class="spacer" style="flex:1"></div>'
-    + '<div class="ok-badge'+(doneDays>=checkedDays && checkedDays>0 && wkOk ? "" : " no")+'">'
-    + (doneDays>=checkedDays && checkedDays>0 && wkOk ? "게임 가능 👍" : "숙제 먼저!")+'</div></div>'
+    + '<div class="ok-badge'+(s.playOk ? "" : " no")+'">'
+    + (s.playOk ? "게임 가능 👍" : "숙제 먼저!")+'</div></div>'
     + '<div class="stat">'
     + '<span>기본 적립</span><b>'+BASE_MIN+'분</b>'
     + '<span>생활 미션 어김 '+bad+'회 × '+PENALTY+'분</span><b style="color:var(--red)">-'+deduct+'분</b>'
@@ -661,6 +756,39 @@ function renderBank(){
   bUndo.onclick = function(){ mt.used = Math.max(0, used - PENALTY); save(); render(); };
   ctrl.appendChild(bUse); ctrl.appendChild(bUndo);
   el.appendChild(ctrl);
+}
+
+function renderReport(){
+  var el = document.getElementById("report");
+  if(!el) return;
+  el.innerHTML = "";
+  var wrap = document.createElement("div");
+  wrap.className = "rpt";
+  KIDS.forEach(function(kid){
+    var s = weekStats(kid);
+    var wkLine = s.weekly.length
+      ? s.weekly.map(function(it){ return it.label+" "+it.n+"/"+it.target+(it.ok?" ✔":""); }).join(" · ")
+      : "없음";
+    var col = document.createElement("div");
+    col.className = "rptcol";
+    col.innerHTML =
+      "<h3>"+avatar(kid,26)+"<span>"+kid.name+"</span></h3>"
+      + '<div class="bar"><span style="width:'+s.pct+'%"></span></div>'
+      + '<div class="stat">'
+      + "<span>필수 숙제</span><b>"+s.reqDone+" / "+s.reqTotal+" ("+s.pct+"%)</b>"
+      + "<span>숙제 완료한 날</span><b>"+s.doneDays+"일</b>"
+      + "<span>생활 미션 어김</span><b style=\"color:var(--red)\">"+s.bad+"회 (−"+s.deduct+"분)</b>"
+      + "<span>주간 미션</span><b>"+wkLine+"</b>"
+      + "<span>남은 게임 시간</span><b>"+s.left+"분</b>"
+      + "</div>"
+      + '<div class="ok-badge'+(s.playOk?"":" no")+'">'+(s.playOk?"게임 가능 👍":"숙제 먼저!")+"</div>";
+    wrap.appendChild(col);
+  });
+  el.appendChild(wrap);
+  var hint = document.createElement("p");
+  hint.className = "note";
+  hint.textContent = "토·일에 게임 허용할 때 이 표를 보면 됩니다. 주일이 지나면 시간은 사라집니다.";
+  el.appendChild(hint);
 }
 
 /* ============ 조작 ============ */
@@ -696,7 +824,7 @@ document.getElementById("restoreBtn").onclick = function(){
     var parts = o.week.split("-");
     weekStart = new Date(+parts[0], +parts[1]-1, +parts[2]);
     curDate = new Date(weekStart.getTime());
-    loadLocal(); render(); save();
+    loadLocal(); render(); save({replace:true});
     setSync("복원했어요 ("+o.week+" 주)");
   }catch(e){ alert("내용을 알아볼 수 없어요. 백업한 글자 전체를 붙여넣어 주세요."); }
 };
@@ -721,6 +849,7 @@ function pull(){
         cacheLocal();
         render();
       }
+      setBase();
       setSync("동기화됨 ✔");
     })
     .catch(function(e){
@@ -735,6 +864,7 @@ function subscribe(){
       if(!row || row.week_start !== weekKey()) return;
       if(pending) return;
       data = row.data || {};
+      setBase();
       cacheLocal(); render();
       setSync("상대방 변경 반영됨 ✔");
     })
