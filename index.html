@@ -143,6 +143,26 @@ button.on{background:var(--grass); color:#fff}
 .wk .cnt.ok{color:var(--grass)}
 footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 #sync{font-size:11.5px;color:var(--dim)}
+#gate{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+  background:var(--bg);padding:20px}
+.gatebox{width:100%;max-width:330px;background:var(--panel);border:3px solid var(--line);
+  box-shadow:6px 6px 0 var(--shadow);padding:18px}
+.gatebox .gtitle{font-family:'Do Hyeon',sans-serif;font-size:22px;text-align:center;margin-bottom:6px}
+.gatebox .gsub{font-size:12.5px;color:var(--dim);text-align:center;margin-bottom:14px}
+.gatebox label{display:block;font-size:13px;color:var(--dim);margin:10px 0 4px}
+.gatebox input{width:100%;font-family:inherit;font-weight:700;font-size:16px;padding:11px;
+  background:var(--panel2);color:var(--ink);border:3px solid var(--line);
+  box-shadow:inset 3px 3px 0 var(--shadow)}
+.gatebox button{width:100%;margin-top:16px;padding:13px;font-size:16px;background:var(--grass);color:#fff}
+.gatebox button.sub{background:var(--panel2);color:var(--ink);margin-top:8px}
+.gatebox p{min-height:18px;margin:10px 0 0;font-size:13px;color:var(--red);text-align:center;line-height:1.4;white-space:pre-line}
+#who{font-size:11.5px;color:var(--dim);margin-right:8px}
+.wkend{background:var(--gold);color:#2b241a;border:3px solid var(--line);padding:10px;
+  margin-bottom:10px;font-size:14px;line-height:1.4}
+.days button.wk .d{color:var(--gold)}
+.days button.sel .d{color:#2b241a}
+.usebtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.usebtns button{flex:1;min-height:44px}
 .weeknav button{min-height:44px;min-width:48px;font-size:15px}
 @media (max-width:430px){
   header h1{font-size:19px}
@@ -161,8 +181,23 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   .card{box-shadow:none;break-inside:avoid}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
+
+<div id="gate">
+  <div class="gatebox">
+    <div class="gtitle">🔒 미션 보드</div>
+    <div class="gsub">이메일로 로그인하세요</div>
+    <label for="gid">이메일</label>
+    <input id="gid" type="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+    <label for="gpw">비밀번호</label>
+    <input id="gpw" type="password" autocomplete="current-password">
+    <button id="gbtn">로그인</button>
+    <button id="gsignup" class="sub">회원가입</button>
+    <p id="gerr"></p>
+  </div>
+</div>
 
 <header>
   <div class="turf"></div>
@@ -210,8 +245,10 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   <button id="printBtn">🖨 인쇄하기</button>
   <button id="backupBtn">📦 백업</button>
   <button id="restoreBtn">📥 복원</button>
+  <button id="logoutBtn">🔒 잠그기</button>
   <div class="spacer"></div>
-  <span id="sync">저장 준비 중…</span>
+  <span id="who"></span>
+  <span id="sync">연결 중…</span>
 </div>
 
 <footer>토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다</footer>
@@ -219,6 +256,22 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 <script>
 (function(){
 "use strict";
+
+/* ═══════════════════════════════════════════════════════════
+   설정 — 아래 두 줄을 본인 Supabase 프로젝트 값으로 바꾸세요.
+   Supabase 대시보드 → Project Settings → API 에서 확인합니다.
+   ═══════════════════════════════════════════════════════════ */
+var SUPABASE_URL      = "https://여기에프로젝트ID.supabase.co";
+var SUPABASE_ANON_KEY = "여기에anon-public키";
+var ALLOW_CACHE_KEY   = "mission:allowedEmail";
+/* ═══════════════════════════════════════════════════════════ */
+
+function isConfigured(){
+  if(!SUPABASE_URL || SUPABASE_URL.indexOf("https://") !== 0) return false;
+  if(SUPABASE_URL.indexOf("여기에") >= 0) return false;
+  if(!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.indexOf("여기에") >= 0) return false;
+  return true;
+}
 
 /* ============ 데이터 정의 ============ */
 var ENGLISH = [
@@ -306,7 +359,8 @@ var weekStart = monday(TODAY);
 var curKid = 0;
 var curDate = new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());
 var data = {};              // { kidId: { dateKey: {t:{}, h:{}} } }
-var db = null, unsub = null, saveTimer = null, pending = false;
+var sb = null, chan = null, saveTimer = null, pending = false, pendingClear = null;
+var myEmail = "", allowed = false, sessionGen = 0;
 
 function weekKey(){ return fmt(weekStart); }
 function lsKey(){ return "mission:"+weekKey(); }
@@ -317,25 +371,61 @@ function cell(kidId, dateKey){
   c.t = c.t || {}; c.h = c.h || {};
   return c;
 }
+function meta(kidId){
+  data[kidId] = data[kidId] || {};
+  data[kidId]._meta = data[kidId]._meta || {used:0};
+  return data[kidId]._meta;
+}
+function cacheLocal(){
+  try{ localStorage.setItem(lsKey(), JSON.stringify(data)); }catch(e){}
+}
 function loadLocal(){
   try{ var raw = localStorage.getItem(lsKey()); data = raw ? JSON.parse(raw) : {}; }
   catch(e){ data = {}; }
   if(!data || typeof data !== "object") data = {};
 }
-function save(){
-  try{ localStorage.setItem(lsKey(), JSON.stringify(data)); }catch(e){}
-  if(!db) return;
+function rememberAllowed(email){
+  try{ if(email) localStorage.setItem(ALLOW_CACHE_KEY, email); else localStorage.removeItem(ALLOW_CACHE_KEY); }
+  catch(e){}
+}
+function lastAllowed(){
+  try{ return localStorage.getItem(ALLOW_CACHE_KEY) || ""; }catch(e){ return ""; }
+}
+function markPending(){
   pending = true;
+  if(pendingClear){ clearTimeout(pendingClear); pendingClear = null; }
+}
+function clearPendingSoon(){
+  if(pendingClear) clearTimeout(pendingClear);
+  pendingClear = setTimeout(function(){ pending = false; pendingClear = null; }, 800);
+}
+function save(){
+  cacheLocal();
+  if(!sb){ setSync("저장 실패: 연결할 수 없습니다"); return; }
+  if(!allowed){ setSync("이 기기에만 저장됨"); return; }
+  markPending();
   clearTimeout(saveTimer);
+  setSync("저장 중…");
+  var savedWeek = weekKey();
+  var snapshot;
+  try{ snapshot = JSON.parse(JSON.stringify(data)); }catch(e){ snapshot = data; }
   saveTimer = setTimeout(function(){
-    var snapshot = JSON.parse(JSON.stringify(data));
-    db.doc("weeks/"+weekKey()).set(snapshot).then(function(){
-      pending = false; setSync("저장됨 ✔");
-    }).catch(function(err){
+    sb.from("mission_weeks").upsert({
+      week_start: savedWeek, data: snapshot,
+      updated_at: new Date().toISOString(), updated_by: myEmail
+    }, {onConflict:"week_start"}).then(function(r){
+      if(r.error){
+        pending = false;
+        setSync("저장 실패: " + r.error.message);
+        return;
+      }
+      setSync("저장됨 ✔");
+      clearPendingSoon();
+    }).catch(function(e){
       pending = false;
-      setSync(err && err.code === "invalid_argument" ? "보기 전용" : "이 기기에만 저장됨");
+      setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
     });
-  }, 400);
+  }, 600);
 }
 function setSync(msg){ var el=document.getElementById("sync"); if(el) el.textContent = msg; }
 
@@ -402,7 +492,7 @@ function renderDays(){
       var d = addDays(weekStart,i), key = fmt(d);
       var b = document.createElement("button");
       var st = dayStatus(kid,d);
-      b.className = (key===fmt(curDate) ? "sel " : "") + (key===TODAY_KEY ? "today" : "");
+      b.className = (key===fmt(curDate) ? "sel " : "") + (key===TODAY_KEY ? "today " : "") + (i>=5 ? "wk" : "");
       b.innerHTML = '<span class="d">'+DAYN[i]+'</span><span>'+d.getDate()+'</span><span class="dot '+st.cls+'"></span>';
       b.onclick = function(){ curDate = d; render(); };
       el.appendChild(b);
@@ -448,6 +538,12 @@ function taskRow(kid, key, it){
 function renderTasks(){
   var kid = KIDS[curKid], key = fmt(curDate), wknd = isWeekend(curDate);
   var el = document.getElementById("tasks"); el.innerHTML = "";
+  if(wknd){
+    var bn = document.createElement("div");
+    bn.className = "wkend";
+    bn.innerHTML = "🎮 <b>토요일 · 주일</b>은 주중에 못한 숙제를 끝내는 날이자, 모은 시간만큼 게임을 하는 날이에요.";
+    el.appendChild(bn);
+  }
   document.getElementById("dayTitle").textContent =
     (curDate.getMonth()+1)+"/"+curDate.getDate()+" ("+DAYN[(curDate.getDay()+6)%7]+") "+kid.name+" 숙제";
 
@@ -533,25 +629,38 @@ function renderBank(){
     return n>=it.weekly;
   });
 
+  var mt = meta(kid.id), used = mt.used || 0, left = Math.max(0, remain - used);
   var blocks = "";
-  for(var b=0;b<4;b++) blocks += '<i class="'+(b < remain/PENALTY ? "" : "gone")+'"></i>';
+  for(var b=0;b<4;b++) blocks += '<i class="'+(b < left/PENALTY ? "" : "gone")+'"></i>';
 
   var el = document.getElementById("bank");
   el.innerHTML =
     '<div class="bank"><div class="blocks">'+blocks+'</div>'
-    + '<div><div class="big">'+remain+'분</div>'
-    + '<div style="font-size:12.5px;color:var(--dim)">'+(remain>=60?Math.floor(remain/60)+"시간 "+(remain%60?remain%60+"분":""):"")+'</div></div>'
+    + '<div><div class="big">'+left+'분</div>'
+    + '<div style="font-size:12.5px;color:var(--dim)">'+(left>=60?Math.floor(left/60)+"시간 "+(left%60?left%60+"분":""):"")+'</div></div>'
     + '<div class="spacer" style="flex:1"></div>'
     + '<div class="ok-badge'+(doneDays>=checkedDays && checkedDays>0 && wkOk ? "" : " no")+'">'
     + (doneDays>=checkedDays && checkedDays>0 && wkOk ? "게임 가능 👍" : "숙제 먼저!")+'</div></div>'
     + '<div class="stat">'
     + '<span>기본 적립</span><b>'+BASE_MIN+'분</b>'
     + '<span>생활 미션 어김 '+bad+'회 × '+PENALTY+'분</span><b style="color:var(--red)">-'+deduct+'분</b>'
-    + '<span>남은 게임 시간</span><b>'+remain+'분</b>'
+    + '<span>토·주일에 사용</span><b style="color:var(--dim)">-'+used+'분</b>'
+    + '<span>남은 게임 시간</span><b>'+left+'분</b>'
     + '<span>숙제 완료한 날</span><b>'+doneDays+'일</b>'
     + '<span>주간 미션</span><b>'+(wkOk?"완료 ✔":"진행 중")+'</b>'
     + '</div>'
     + '<p class="note">숙제를 모두 마치면 <b>토요일 또는 주일</b>에 위 시간만큼 마인크래프트를 할 수 있어요. 주일이 지나면 남은 시간은 사라집니다.</p>';
+
+  var ctrl = document.createElement("div");
+  ctrl.className = "usebtns";
+  var bUse = document.createElement("button");
+  bUse.textContent = "🎮 30분 사용";
+  bUse.onclick = function(){ mt.used = Math.min(BASE_MIN, used + PENALTY); save(); render(); };
+  var bUndo = document.createElement("button");
+  bUndo.textContent = "↩ 되돌리기";
+  bUndo.onclick = function(){ mt.used = Math.max(0, used - PENALTY); save(); render(); };
+  ctrl.appendChild(bUse); ctrl.appendChild(bUndo);
+  el.appendChild(ctrl);
 }
 
 /* ============ 조작 ============ */
@@ -561,10 +670,9 @@ document.getElementById("todayW").onclick = function(){
   var t = new Date();
   var target = monday(t);
   if(fmt(target) !== weekKey()){
-    if(unsub){ try{unsub();}catch(e){} unsub=null; }
     weekStart = target;
     curDate = new Date(t.getFullYear(),t.getMonth(),t.getDate());
-    loadLocal(); render(); attach();
+    loadLocal(); render(); pull();
   } else {
     curDate = new Date(t.getFullYear(),t.getMonth(),t.getDate());
     render();
@@ -588,7 +696,7 @@ document.getElementById("restoreBtn").onclick = function(){
     var parts = o.week.split("-");
     weekStart = new Date(+parts[0], +parts[1]-1, +parts[2]);
     curDate = new Date(weekStart.getTime());
-    loadLocal(); render();
+    loadLocal(); render(); save();
     setSync("복원했어요 ("+o.week+" 주)");
   }catch(e){ alert("내용을 알아볼 수 없어요. 백업한 글자 전체를 붙여넣어 주세요."); }
 };
@@ -596,32 +704,198 @@ document.getElementById("restoreBtn").onclick = function(){
 function shiftWeek(n){
   weekStart = addDays(weekStart,n);
   curDate = addDays(weekStart, Math.min(6, Math.max(0,(curDate.getDay()+6)%7)));
-  if(unsub){ try{unsub();}catch(e){} unsub=null; }
   loadLocal();
   render();
-  attach();
+  pull();
 }
 
-/* ============ 저장소 연결 ============ */
-function attach(){
-  if(!db) return;
-  try{
-    unsub = db.doc("weeks/"+weekKey()).onSnapshot(function(snap){
-      if(pending) return;
-      var d = snap.exists ? snap.data() : null;
-      if(d){
-        data = JSON.parse(JSON.stringify(d));
-        try{ localStorage.setItem(lsKey(), JSON.stringify(data)); }catch(e){}
+/* ============ 서버 동기화 ============ */
+function pull(){
+  if(!sb || !allowed) return;
+  setSync("불러오는 중…");
+  sb.from("mission_weeks").select("data").eq("week_start", weekKey()).maybeSingle()
+    .then(function(r){
+      if(r.error){ setSync("불러오기 실패: " + r.error.message); return; }
+      if(r.data && r.data.data){
+        data = r.data.data;
+        cacheLocal();
         render();
       }
-      setSync("가족 기기와 동기화 중 ✔");
-    }, function(){ setSync("이 기기에만 저장됨"); });
-  }catch(e){ setSync("이 기기에만 저장됨"); }
+      setSync("동기화됨 ✔");
+    })
+    .catch(function(e){
+      setSync("불러오기 실패: " + ((e && e.message) || "연결할 수 없습니다"));
+    });
 }
+function subscribe(){
+  if(chan){ try{ sb.removeChannel(chan); }catch(e){} chan = null; }
+  chan = sb.channel("mission-sync")
+    .on("postgres_changes", {event:"*", schema:"public", table:"mission_weeks"}, function(p){
+      var row = p["new"];
+      if(!row || row.week_start !== weekKey()) return;
+      if(pending) return;
+      data = row.data || {};
+      cacheLocal(); render();
+      setSync("상대방 변경 반영됨 ✔");
+    })
+    .subscribe();
+}
+document.addEventListener("visibilitychange", function(){
+  if(!document.hidden && allowed) pull();
+});
 
+
+/* ============ 로그인 (Supabase Auth) ============ */
+function gmsg(t, ok){
+  var p = document.getElementById("gerr");
+  p.style.color = ok ? "var(--grass)" : "var(--red)";
+  p.textContent = t || "";
+}
+function showGate(){
+  document.getElementById("gate").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+function hideGate(){
+  document.getElementById("gate").style.display = "none";
+  document.body.style.overflow = "";
+}
+function krErr(m){
+  m = m || "";
+  if(/Invalid login/i.test(m)) return "이메일 또는 비밀번호가 올바르지 않습니다";
+  if(/already registered|User already/i.test(m)) return "이미 가입된 이메일입니다. 로그인하세요";
+  if(/at least 6|Password should be/i.test(m)) return "비밀번호는 6자 이상이어야 합니다";
+  if(/Email not confirmed/i.test(m)) return "메일 인증이 아직 안 됐습니다. 받은 메일의 링크를 눌러주세요";
+  if(/valid email|Unable to validate/i.test(m)) return "이메일 형식을 확인해 주세요";
+  return m;
+}
+function creds(){
+  return {
+    email: document.getElementById("gid").value.trim(),
+    password: document.getElementById("gpw").value
+  };
+}
+function doLogin(){
+  if(!sb){ gmsg("설정이 필요합니다"); return; }
+  var c = creds();
+  if(!c.email || !c.password){ gmsg("이메일과 비밀번호를 입력하세요"); return; }
+  gmsg("로그인 중…", true);
+  sb.auth.signInWithPassword(c).then(function(r){
+    if(r.error) gmsg(krErr(r.error.message));
+    else document.getElementById("gpw").value = "";
+  }).catch(function(e){
+    gmsg(krErr((e && e.message) || "연결할 수 없습니다"));
+  });
+}
+function doSignup(){
+  if(!sb){ gmsg("설정이 필요합니다"); return; }
+  var c = creds();
+  if(!c.email || !c.password){ gmsg("이메일과 비밀번호를 입력하세요"); return; }
+  gmsg("가입 중…", true);
+  sb.auth.signUp(c).then(function(r){
+    if(r.error){ gmsg(krErr(r.error.message)); return; }
+    if(r.data && r.data.session) gmsg("가입 완료!", true);
+    else gmsg("확인 메일을 보냈습니다. 메일의 링크를 누른 뒤 로그인하세요.", true);
+  }).catch(function(e){
+    gmsg(krErr((e && e.message) || "연결할 수 없습니다"));
+  });
+}
+function enterApp(){
+  gmsg("");
+  hideGate();
+  document.getElementById("who").textContent = myEmail;
+  loadLocal(); render();
+  pull();
+  subscribe();
+}
+function enterOffline(msg){
+  myEmail = lastAllowed();
+  allowed = !!myEmail;
+  hideGate();
+  document.getElementById("who").textContent = myEmail;
+  loadLocal(); render();
+  setSync(msg || "저장 실패: 연결할 수 없습니다");
+}
+function onSession(sess){
+  var gen = ++sessionGen;
+  if(!sess){
+    myEmail = ""; allowed = false;
+    if(chan && sb){ try{ sb.removeChannel(chan); }catch(e){} chan = null; }
+    document.getElementById("who").textContent = "";
+    setSync("로그인이 필요합니다");
+    showGate();
+    return;
+  }
+  myEmail = sess.user.email;
+  sb.from("allowed_users").select("email").eq("email", myEmail).maybeSingle().then(function(r){
+    if(gen !== sessionGen) return;
+    if(r.error){
+      if(lastAllowed() === myEmail){
+        allowed = true;
+        enterApp();
+        setSync("불러오기 실패: " + r.error.message);
+        return;
+      }
+      showGate();
+      gmsg("허용 여부를 확인할 수 없습니다.\n" + r.error.message);
+      setSync("저장 실패: " + r.error.message);
+      return;
+    }
+    if(!r.data){
+      allowed = false;
+      rememberAllowed("");
+      showGate();
+      gmsg("이 계정은 아직 승인되지 않았습니다");
+      setSync("승인되지 않은 계정");
+      return;
+    }
+    allowed = true;
+    rememberAllowed(myEmail);
+    enterApp();
+  }).catch(function(e){
+    if(gen !== sessionGen) return;
+    if(lastAllowed() === myEmail){
+      allowed = true;
+      enterApp();
+    } else {
+      showGate();
+    }
+    setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
+  });
+}
+document.getElementById("gbtn").onclick = doLogin;
+document.getElementById("gsignup").onclick = doSignup;
+["gid","gpw"].forEach(function(k){
+  document.getElementById(k).addEventListener("keydown", function(e){
+    if(e.key === "Enter") doLogin();
+  });
+});
+document.getElementById("logoutBtn").onclick = function(){
+  rememberAllowed("");
+  if(sb) sb.auth.signOut();
+  else {
+    myEmail = ""; allowed = false;
+    document.getElementById("who").textContent = "";
+    showGate();
+    setSync("로그인이 필요합니다");
+  }
+};
+
+/* ============ 시작 ============ */
 loadLocal();
 render();
-setSync("이 기기에 저장됨");
+showGate();
+
+if(!isConfigured()){
+  gmsg("설정이 필요합니다.\n파일 위쪽의 SUPABASE_URL 과 SUPABASE_ANON_KEY 를 채워주세요.");
+  setSync("설정 필요");
+} else if(!window.supabase){
+  gmsg("Supabase 라이브러리를 불러오지 못했습니다.\n인터넷 연결을 확인하고 새로고침하세요.");
+  enterOffline("저장 실패: 연결할 수 없습니다");
+} else {
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  setSync("확인 중…");
+  sb.auth.onAuthStateChange(function(_e, sess){ onSession(sess); });
+}
 })();
 </script>
 </body>
