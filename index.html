@@ -141,12 +141,22 @@ button.on{background:var(--grass); color:#fff}
   padding:6px 9px;background:var(--panel2);border:3px solid var(--line);margin-bottom:6px}
 .wk .cnt{font-family:'Do Hyeon',sans-serif;font-size:16px}
 .wk .cnt.ok{color:var(--grass)}
-.rpt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.rptcol{background:var(--panel2);border:3px solid var(--line);padding:10px}
-.rptcol h3{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:6px}
-.rptcol .ok-badge{display:inline-block;margin-top:8px;box-shadow:none}
-.rpt .bar{margin-top:6px}
-@media (max-width:430px){ .rpt{grid-template-columns:1fr} }
+button.rpthead{
+  width:100%;display:flex;align-items:center;gap:8px;text-align:left;
+  background:var(--dirt);color:#fff8e7;padding:8px 12px;font-size:16px;
+  font-family:'Do Hyeon',sans-serif;min-height:48px;
+  box-shadow:inset 0 -4px 0 var(--dirt-dk), inset 0 4px 0 rgba(255,255,255,.18);
+}
+button.rpthead:active{box-shadow:inset 4px 4px 0 var(--shadow)}
+.rptsum{flex:1;display:flex;flex-wrap:wrap;gap:6px;font-family:'Gothic A1',sans-serif;font-size:12px;font-weight:700}
+.rptchip{background:rgba(0,0,0,.22);border:2px solid var(--line);padding:3px 7px;color:#fff8e7;white-space:nowrap}
+.rptchip.ok{background:var(--grass)}
+.rptchev{flex:none;font-size:14px;opacity:.85}
+.rptlist{display:flex;flex-direction:column;gap:6px}
+.rptrow{display:flex;align-items:center;gap:8px;padding:8px;background:var(--panel2);
+  border:3px solid var(--line);min-height:44px;font-size:13px}
+.rptrow .nm{flex:1;min-width:0}
+.rptrow .ok-badge{font-size:13px;padding:4px 7px;box-shadow:none;white-space:nowrap}
 footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 #sync{font-size:11.5px;color:var(--dim)}
 #gate{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
@@ -184,6 +194,8 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 @media print{
   body{background:#fff;color:#000;padding:0}
   button,.weeknav,#printBtn,#backupBtn,#restoreBtn,footer,#sync{display:none!important}
+  button.rpthead{display:flex!important}
+  #report{display:block!important}
   .card{box-shadow:none;break-inside:avoid}
 }
 </style>
@@ -227,6 +239,15 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 
 <div class="days" id="days"></div>
 
+<div class="card" id="reportCard">
+  <button type="button" class="head rpthead" id="reportToggle" aria-expanded="false" aria-controls="report">
+    <span>📊 주간 리포트</span>
+    <span class="rptsum" id="reportSum"></span>
+    <span class="rptchev" id="reportChev">▼</span>
+  </button>
+  <div class="body" id="report" style="display:none"></div>
+</div>
+
 <div class="card">
   <div class="head"><span id="dayTitle">오늘의 숙제</span></div>
   <div class="body" id="tasks"></div>
@@ -245,11 +266,6 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 <div class="card">
   <div class="head">💎 게임 시간 통장</div>
   <div class="body" id="bank"></div>
-</div>
-
-<div class="card">
-  <div class="head">📊 주간 리포트</div>
-  <div class="body" id="report"></div>
 </div>
 
 <div class="row" style="margin-bottom:10px">
@@ -373,6 +389,7 @@ var data = {};              // { kidId: { dateKey: {t:{}, h:{}} } }
 var sb = null, chan = null, saveTimer = null, pending = false, pendingClear = null;
 var myEmail = "", allowed = false, sessionGen = 0;
 var baseData = {};
+var rptOpen = false;
 
 function weekKey(){ return fmt(weekStart); }
 function lsKey(){ return "mission:"+weekKey(); }
@@ -758,40 +775,52 @@ function renderBank(){
   el.appendChild(ctrl);
 }
 
+function applyReportOpen(){
+  var body = document.getElementById("report");
+  var chev = document.getElementById("reportChev");
+  var btn = document.getElementById("reportToggle");
+  if(body) body.style.display = rptOpen ? "" : "none";
+  if(chev) chev.textContent = rptOpen ? "▲" : "▼";
+  if(btn) btn.setAttribute("aria-expanded", rptOpen ? "true" : "false");
+}
 function renderReport(){
+  var sum = document.getElementById("reportSum");
   var el = document.getElementById("report");
-  if(!el) return;
+  if(!sum || !el) return;
+  sum.innerHTML = "";
   el.innerHTML = "";
-  var wrap = document.createElement("div");
-  wrap.className = "rpt";
+  var list = document.createElement("div");
+  list.className = "rptlist";
   KIDS.forEach(function(kid){
     var s = weekStats(kid);
+    var chip = document.createElement("span");
+    chip.className = "rptchip" + (s.playOk ? " ok" : "");
+    chip.textContent = kid.name.replace("김","")+" "+s.pct+"% · "+(s.playOk?"가능":"숙제먼저");
+    sum.appendChild(chip);
+
     var wkLine = s.weekly.length
-      ? s.weekly.map(function(it){ return it.label+" "+it.n+"/"+it.target+(it.ok?" ✔":""); }).join(" · ")
-      : "없음";
-    var col = document.createElement("div");
-    col.className = "rptcol";
-    col.innerHTML =
-      "<h3>"+avatar(kid,26)+"<span>"+kid.name+"</span></h3>"
-      + '<div class="bar"><span style="width:'+s.pct+'%"></span></div>'
-      + '<div class="stat">'
-      + "<span>필수 숙제</span><b>"+s.reqDone+" / "+s.reqTotal+" ("+s.pct+"%)</b>"
-      + "<span>숙제 완료한 날</span><b>"+s.doneDays+"일</b>"
-      + "<span>생활 미션 어김</span><b style=\"color:var(--red)\">"+s.bad+"회 (−"+s.deduct+"분)</b>"
-      + "<span>주간 미션</span><b>"+wkLine+"</b>"
-      + "<span>남은 게임 시간</span><b>"+s.left+"분</b>"
-      + "</div>"
-      + '<div class="ok-badge'+(s.playOk?"":" no")+'">'+(s.playOk?"게임 가능 👍":"숙제 먼저!")+"</div>";
-    wrap.appendChild(col);
+      ? s.weekly.map(function(it){ return it.label+" "+it.n+"/"+it.target; }).join(" · ")
+      : "";
+    var row = document.createElement("div");
+    row.className = "rptrow";
+    row.innerHTML =
+      avatar(kid,26)
+      + '<div class="nm"><b>'+kid.name+'</b> · 필수 '+s.reqDone+'/'+s.reqTotal
+      + ' · X '+s.bad+' · '+s.left+'분'
+      + (wkLine ? '<div class="note" style="margin:2px 0 0">'+wkLine+'</div>' : '')
+      + '</div>'
+      + '<span class="ok-badge'+(s.playOk?"":" no")+'">'+(s.playOk?"가능":"숙제")+'</span>';
+    list.appendChild(row);
   });
-  el.appendChild(wrap);
-  var hint = document.createElement("p");
-  hint.className = "note";
-  hint.textContent = "토·일에 게임 허용할 때 이 표를 보면 됩니다. 주일이 지나면 시간은 사라집니다.";
-  el.appendChild(hint);
+  el.appendChild(list);
+  applyReportOpen();
 }
 
 /* ============ 조작 ============ */
+document.getElementById("reportToggle").onclick = function(){
+  rptOpen = !rptOpen;
+  applyReportOpen();
+};
 document.getElementById("prevW").onclick = function(){ shiftWeek(-7); };
 document.getElementById("nextW").onclick = function(){ shiftWeek(7); };
 document.getElementById("todayW").onclick = function(){
