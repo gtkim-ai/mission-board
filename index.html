@@ -48,7 +48,7 @@ img,svg{max-width:100%; image-rendering:pixelated}
 
 /* ---- blocky chrome ---- */
 .blk{border:3px solid var(--line); box-shadow:inset -4px -4px 0 var(--shadow), inset 4px 4px 0 var(--hi);}
-.card{background:var(--panel); border:3px solid var(--line); box-shadow:4px 4px 0 var(--shadow); margin-bottom:14px}
+.card{background:var(--panel); border:3px solid var(--line); box-shadow:4px 4px 0 var(--shadow); margin-bottom:10px}
 .card > .head{
   background:var(--dirt); color:#fff8e7; padding:8px 12px; border-bottom:3px solid var(--line);
   font-family:'Do Hyeon',sans-serif; font-size:17px; display:flex; align-items:center; gap:8px;
@@ -57,14 +57,12 @@ img,svg{max-width:100%; image-rendering:pixelated}
 .card > .body{padding:12px}
 
 /* ---- header ---- */
-header{position:relative; margin-bottom:14px; border:3px solid var(--line); box-shadow:4px 4px 0 var(--shadow);
+header{position:relative; margin-bottom:10px; border:3px solid var(--line); box-shadow:4px 4px 0 var(--shadow);
   background:
    repeating-linear-gradient(90deg, var(--dirt) 0 14px, var(--dirt-dk) 14px 28px) 0 0/auto 100%;
   overflow:hidden}
-header .turf{height:16px;background:repeating-linear-gradient(90deg,var(--grass) 0 14px,var(--grass-lt) 14px 28px);border-bottom:3px solid var(--line)}
-header .inner{display:flex;align-items:center;gap:12px;padding:12px 14px;color:#fff6e4}
-header h1{margin:0;font-size:23px;text-shadow:3px 3px 0 rgba(0,0,0,.45)}
-header p{margin:2px 0 0;font-size:12.5px;color:#f0dcbb;font-weight:700;text-shadow:2px 2px 0 rgba(0,0,0,.35)}
+header .inner{display:flex;align-items:center;gap:8px;padding:8px 10px;color:#fff6e4}
+header h1{margin:0;font-size:20px;text-shadow:3px 3px 0 rgba(0,0,0,.45)}
 
 /* ---- buttons ---- */
 button{font-family:inherit;font-weight:700;color:var(--ink);cursor:pointer;
@@ -75,17 +73,17 @@ button.on{background:var(--grass); color:#fff}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .spacer{flex:1}
 
-.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs{display:flex;gap:8px;margin-bottom:8px}
 .tabs button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px}
 .tabs button.on{background:var(--grass);color:#fff}
 .tabs svg{width:26px;height:26px;flex:none}
 
-.weeknav{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.weeknav{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .weeknav .label{flex:1;text-align:center;font-family:'Do Hyeon',sans-serif;font-size:16px;
   background:var(--panel);border:3px solid var(--line);padding:7px;box-shadow:4px 4px 0 var(--shadow)}
 
-.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:12px;
-  position:sticky;top:0;z-index:20;background:var(--bg);padding:6px 0 8px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:8px;
+  position:sticky;top:0;z-index:20;background:var(--bg);padding:4px 0 6px}
 .days button{padding:8px 1px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.1;min-height:60px;justify-content:center}
 .days button .d{font-family:'Do Hyeon',sans-serif;font-size:16px}
 .days button.sel{background:var(--gold);color:#2b241a}
@@ -181,9 +179,8 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .usebtns button{flex:1;min-height:44px}
 .weeknav button{min-height:44px;min-width:48px;font-size:15px}
 @media (max-width:430px){
-  header h1{font-size:19px}
-  header p{font-size:11.5px}
-  header .inner{padding:10px}
+  header h1{font-size:18px}
+  header .inner{padding:7px 8px}
   .tabs button{font-size:16px;min-height:52px}
   .weeknav .label{font-size:14px;padding:9px 2px}
   .card > .head{font-size:16px}
@@ -193,7 +190,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 }
 @media print{
   body{background:#fff;color:#000;padding:0}
-  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,footer,#sync{display:none!important}
+  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,#moreBtn,#moreBar,footer,#sync{display:none!important}
   button.rpthead{display:flex!important}
   #report{display:block!important}
   .card{box-shadow:none;break-inside:avoid}
@@ -218,13 +215,9 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 </div>
 
 <header>
-  <div class="turf"></div>
   <div class="inner">
     <div id="hdrAvatar"></div>
-    <div>
-      <h1>하주 · 하유 미션 보드</h1>
-      <p>미션 클리어 → 토요일·주일에 게임 2시간 획득!</p>
-    </div>
+    <h1>하주 · 하유 미션 보드</h1>
   </div>
 </header>
 
@@ -259,23 +252,21 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 </div>
 
 <div class="card">
-  <div class="head">📅 이번 주 미션</div>
-  <div class="body" id="weekly"></div>
-</div>
-
-<div class="card">
-  <div class="head">💎 게임 시간 통장</div>
+  <div class="head">💎 게임 시간</div>
   <div class="body" id="bank"></div>
 </div>
 
 <div class="row" style="margin-bottom:10px">
-  <button id="printBtn">🖨 인쇄하기</button>
-  <button id="backupBtn">📦 백업</button>
-  <button id="restoreBtn">📥 복원</button>
+  <button id="moreBtn">더보기</button>
   <button id="logoutBtn">🔒 잠그기</button>
   <div class="spacer"></div>
   <span id="who"></span>
   <span id="sync">연결 중…</span>
+</div>
+<div class="row" id="moreBar" style="display:none;margin-bottom:10px">
+  <button id="printBtn">🖨 인쇄하기</button>
+  <button id="backupBtn">📦 백업</button>
+  <button id="restoreBtn">📥 복원</button>
 </div>
 
 <footer>토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다</footer>
@@ -551,7 +542,7 @@ function avatar(skin, size){
 /* ============ 렌더링 ============ */
 function render(){
   renderTabs(); renderWeek(); renderDays();
-  renderTasks(); renderHabits(); renderWeekly(); renderBank(); renderReport();
+  renderTasks(); renderHabits(); renderBank(); renderReport();
 }
 
 function renderTabs(){
@@ -564,7 +555,7 @@ function renderTabs(){
     el.appendChild(b);
   });
   document.getElementById("hdrAvatar").innerHTML =
-    '<div style="display:flex;gap:6px">'+avatar(KIDS[0],40)+avatar(KIDS[1],40)+'</div>';
+    '<div style="display:flex;gap:4px">'+avatar(KIDS[0],28)+avatar(KIDS[1],28)+'</div>';
 }
 
 function renderWeek(){
@@ -689,25 +680,6 @@ function renderHabits(){
   el.appendChild(p);
 }
 
-function renderWeekly(){
-  var kid = KIDS[curKid];
-  var el = document.getElementById("weekly"); el.innerHTML = "";
-  var items = weeklyItems(kid);
-  if(!items.length){ el.innerHTML = '<p class="note">이번 주 따로 챙길 항목은 북퀴즈뿐이에요.</p>'; }
-  items.forEach(function(it){
-    var n = 0;
-    for(var i=0;i<7;i++){ if(cell(kid.id, fmt(addDays(weekStart,i))).t[it.id]) n++; }
-    var row = document.createElement("div");
-    row.className = "wk";
-    row.innerHTML = '<span>'+it.label+'</span><span class="cnt'+(n>=it.weekly?' ok':'')+'">'+n+' / '+it.weekly+(n>=it.weekly?' ✔':'')+'</span>';
-    el.appendChild(row);
-  });
-  var hint = document.createElement("p");
-  hint.className = "note";
-  hint.textContent = "해당 날짜를 골라 체크하면 여기 횟수가 올라가요.";
-  el.appendChild(hint);
-}
-
 function weekStats(kid){
   var bad = 0, doneDays = 0, checkedDays = 0, reqDone = 0, reqTotal = 0;
   for(var i=0;i<7;i++){
@@ -739,8 +711,6 @@ function weekStats(kid){
 function renderBank(){
   var kid = KIDS[curKid];
   var s = weekStats(kid);
-  var bad = s.bad, doneDays = s.doneDays, checkedDays = s.checkedDays;
-  var deduct = s.deduct, remain = s.remain, wkOk = s.wkOk;
   var mt = meta(kid.id), used = s.used, left = s.left;
   var blocks = "";
   for(var b=0;b<4;b++) blocks += '<i class="'+(b < left/PENALTY ? "" : "gone")+'"></i>';
@@ -749,30 +719,24 @@ function renderBank(){
   el.innerHTML =
     '<div class="bank"><div class="blocks">'+blocks+'</div>'
     + '<div><div class="big">'+left+'분</div>'
-    + '<div style="font-size:12.5px;color:var(--dim)">'+(left>=60?Math.floor(left/60)+"시간 "+(left%60?left%60+"분":""):"")+'</div></div>'
+    + (s.used ? '<div style="font-size:12px;color:var(--dim)">사용 '+s.used+'분</div>' : '')
+    + '</div>'
     + '<div class="spacer" style="flex:1"></div>'
     + '<div class="ok-badge'+(s.playOk ? "" : " no")+'">'
-    + (s.playOk ? "게임 가능 👍" : "숙제 먼저!")+'</div></div>'
-    + '<div class="stat">'
-    + '<span>기본 적립</span><b>'+BASE_MIN+'분</b>'
-    + '<span>생활 미션 어김 '+bad+'회 × '+PENALTY+'분</span><b style="color:var(--red)">-'+deduct+'분</b>'
-    + '<span>토·주일에 사용</span><b style="color:var(--dim)">-'+used+'분</b>'
-    + '<span>남은 게임 시간</span><b>'+left+'분</b>'
-    + '<span>숙제 완료한 날</span><b>'+doneDays+'일</b>'
-    + '<span>주간 미션</span><b>'+(wkOk?"완료 ✔":"진행 중")+'</b>'
-    + '</div>'
-    + '<p class="note">숙제를 모두 마치면 <b>토요일 또는 주일</b>에 위 시간만큼 마인크래프트를 할 수 있어요. 주일이 지나면 남은 시간은 사라집니다.</p>';
+    + (s.playOk ? "게임 가능 👍" : "숙제 먼저!")+'</div></div>';
 
-  var ctrl = document.createElement("div");
-  ctrl.className = "usebtns";
-  var bUse = document.createElement("button");
-  bUse.textContent = "🎮 30분 사용";
-  bUse.onclick = function(){ mt.used = Math.min(BASE_MIN, used + PENALTY); save(); render(); };
-  var bUndo = document.createElement("button");
-  bUndo.textContent = "↩ 되돌리기";
-  bUndo.onclick = function(){ mt.used = Math.max(0, used - PENALTY); save(); render(); };
-  ctrl.appendChild(bUse); ctrl.appendChild(bUndo);
-  el.appendChild(ctrl);
+  if(isWeekend(TODAY) || isWeekend(curDate)){
+    var ctrl = document.createElement("div");
+    ctrl.className = "usebtns";
+    var bUse = document.createElement("button");
+    bUse.textContent = "🎮 30분 사용";
+    bUse.onclick = function(){ mt.used = Math.min(BASE_MIN, used + PENALTY); save(); render(); };
+    var bUndo = document.createElement("button");
+    bUndo.textContent = "↩ 되돌리기";
+    bUndo.onclick = function(){ mt.used = Math.max(0, used - PENALTY); save(); render(); };
+    ctrl.appendChild(bUse); ctrl.appendChild(bUndo);
+    el.appendChild(ctrl);
+  }
 }
 
 function applyReportOpen(){
@@ -820,6 +784,13 @@ function renderReport(){
 document.getElementById("reportToggle").onclick = function(){
   rptOpen = !rptOpen;
   applyReportOpen();
+};
+document.getElementById("moreBtn").onclick = function(){
+  var bar = document.getElementById("moreBar");
+  var open = bar.style.display === "none";
+  bar.style.display = open ? "flex" : "none";
+  this.className = open ? "on" : "";
+  this.textContent = open ? "접기" : "더보기";
 };
 document.getElementById("prevW").onclick = function(){ shiftWeek(-7); };
 document.getElementById("nextW").onclick = function(){ shiftWeek(7); };
