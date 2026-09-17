@@ -250,13 +250,13 @@ function groups(extra, engExtra){
 }
 var KIDS = [
   {id:"hajoo", name:"김하주", skin:{hair:"#5b3a1e", shirt:"#4e8f3a"},
-   groups: groups(null)},
+   groups: groups(null, [{id:"en_class", label:"클래스카드", weekly:3, tag:"주 3번"}])},
   {id:"hayoo", name:"김하유", skin:{hair:"#2b2b33", shirt:"#7a4fa8"},
    groups: groups({name:"학교 숙제", items:[
       {id:"sc_diary", label:"일기", weekly:2, tag:"주 2번"},
       {id:"sc_read",  label:"독서 30분 이상"},
       {id:"sc_log",   label:"독서기록장", weekly:1, tag:"주 1번"}
-   ]}, [{id:"en_class", label:"클래스카드", weekly:3, tag:"주 3번"}])}
+   ]})}
 ];
 var HABITS = [
   {id:"hb_room",  label:"방 정리"},
