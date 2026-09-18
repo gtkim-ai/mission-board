@@ -214,13 +214,18 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .gchip{flex:1;min-width:120px;background:var(--panel2);border:3px solid var(--line);padding:8px}
 .gchip b{display:block;font-size:20px;font-family:'Do Hyeon',sans-serif}
 .gchip span{font-size:12px;color:var(--dim)}
-.psheet{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px}
-.psheet th,.psheet td{border:1px solid var(--line);padding:3px 2px;text-align:center}
-.psheet .wk{background:color-mix(in srgb,var(--gold) 28%, #fff)}
-.psheet .box{display:inline-block;width:12px;height:12px;border:1px solid #222;vertical-align:middle}
+.psheet{display:table;width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px}
+.psheet thead{display:table-header-group}
+.psheet tbody{display:table-row-group}
+.psheet tr{display:table-row}
+.psheet th,.psheet td{display:table-cell;border:1px solid #222;padding:3px 2px;text-align:center;vertical-align:middle}
+.psheet tr.pwk td{background:#fff3c4}
+.psheet td.off{background:#eeeae0}
+.psheet td.off .box{visibility:hidden}
+.psheet .box{display:inline-block;width:12px;height:12px;border:1px solid #222;vertical-align:middle;background:#fff}
 #printPreview{display:none;position:fixed;inset:0;z-index:120;background:var(--bg);overflow:auto;padding:10px}
 #printPreview .printbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
-#printSheet{background:#fff;color:#111;padding:8px}
+#printSheet{background:#fff;color:#111;padding:8px;border:3px solid var(--line)}
 .doses{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .doses button{flex:1;min-height:40px;font-size:13px}
 .chk{width:28px;height:28px;flex:none;background:var(--panel);border:3px solid var(--line);
@@ -250,6 +255,9 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   body.printing #printSheet{display:block!important;padding:0}
   body.printing .psheet{font-size:9px}
   body.printing .psheet th,body.printing .psheet td{border:1px solid #222;padding:1px 2px;height:16px}
+  body.printing .psheet tr.pwk td{background:#fff3c4!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.printing .psheet td.off{background:#eeeae0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.printing #printSheet{border:none}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -2026,16 +2034,19 @@ function buildPrintSheet(){
   for(var d=1;d<=last;d++){
     var dt = new Date(y,m,d);
     var wk = dt.getDay()===0 || dt.getDay()===6;
-    body += "<tr class='"+(wk?"wk":"")+"'><td>"+d+" "+DAYN[(dt.getDay()+6)%7]+"</td>";
+    body += "<tr class='"+(wk?"pwk":"")+"'><td>"+d+" "+DAYN[(dt.getDay()+6)%7]+"</td>";
     KIDS.forEach(function(k){
-      printGroups(k).forEach(function(){ body += "<td><span class='box'></span></td>"; });
+      printGroups(k).forEach(function(g){
+        var off = wk && (g==="학교" || g==="등원");
+        body += "<td"+(off?" class='off'":"")+"><span class='box'></span></td>";
+      });
     });
     body += "</tr>";
   }
   document.getElementById("printSheet").innerHTML =
-    "<div style='font-family:Do Hyeon,sans-serif;font-size:18px;margin-bottom:6px'>"+y+"년 "+(m+1)+"월 숙제 체크표 · 하주 · 하유 · 하서</div>"
+    "<div style='font-family:Gothic A1,sans-serif;font-size:16px;font-weight:900;margin-bottom:6px'>"+y+"년 "+(m+1)+"월 숙제 체크표 · 하주 · 하유 · 하서</div>"
     + "<table class='psheet'><thead>"+head+"</thead><tbody>"+body+"</tbody></table>"
-    + "<p class='note' style='margin-top:6px'>끝나면 V 표시 · A4 가로 1장 · 주말은 노란 칸</p>";
+    + "<p class='note' style='margin-top:6px'>끝나면 V 표시 · A4 가로 1장 · 주말은 노란 칸 · 학교·등원은 평일만</p>";
 }
 function openPrintPreview(){
   printYM = {y: TODAY.getFullYear(), m: TODAY.getMonth()};
