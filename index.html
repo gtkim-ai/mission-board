@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="미션보드">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#63a03f">
-<title>하주 · 하유 미션 보드</title>
+<title>하주 · 하유 · 하서 미션 보드</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -76,8 +76,8 @@ button.on{background:var(--grass); color:#fff}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .spacer{flex:1}
 
-.tabs{display:flex;gap:8px;margin-bottom:8px}
-.tabs button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.tabs button{flex:1;min-width:30%;font-family:'Do Hyeon',sans-serif;font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px}
 .tabs button.on{background:var(--grass);color:#fff}
 .tabs svg{width:26px;height:26px;flex:none}
 
@@ -191,7 +191,8 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .sev .kd.school{background:var(--grass);color:#fff}
 .sev .kd.academy{background:var(--gold);color:#2b241a}
 .sev .kd.other{background:var(--dia);color:#123}
-.sgrid{display:grid;grid-template-columns:28px repeat(7,1fr);gap:4px;align-items:stretch;font-size:11px}
+.sev .kd.daycare{background:#e07a6f;color:#fff}
+.sgrid{display:grid;grid-template-columns:52px repeat(7,1fr);gap:4px;align-items:stretch;font-size:11px}
 .sgrid b{display:flex;align-items:center;justify-content:center;padding:6px 0;font-family:'Do Hyeon',sans-serif;font-size:13px}
 .sgrid .scell{min-height:44px;background:var(--panel2);border:2px solid var(--line);padding:3px 2px;line-height:1.25}
 .sgrid .scell.on{outline:2px solid var(--gold);outline-offset:-2px}
@@ -199,18 +200,20 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .schip.school{background:var(--grass);color:#fff}
 .schip.academy{background:var(--gold);color:#2b241a}
 .schip.other{background:var(--dia);color:#123}
-#schedDlg{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
+.schip.daycare{background:#e07a6f;color:#fff}
+#schedDlg,#hospDlg{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
   background:rgba(0,0,0,.35);padding:12px}
-#schedDlg .gatebox{max-width:420px;margin-bottom:env(safe-area-inset-bottom)}
+#schedDlg .gatebox,#hospDlg .gatebox{max-width:420px;margin-bottom:env(safe-area-inset-bottom);max-height:90vh;overflow:auto}
 #schedDlg .daysel{display:flex;gap:4px}
 #schedDlg .daysel button{flex:1;padding:8px 0;min-height:44px;font-size:13px}
 #schedDlg .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-#schedDlg .kinds{display:flex;gap:6px}
-#schedDlg .kinds button{flex:1;min-height:44px}
+#schedDlg .kinds,#hospDlg .kinds{display:flex;gap:6px;flex-wrap:wrap}
+#schedDlg .kinds button,#hospDlg .kinds button{flex:1;min-height:44px;min-width:72px}
 @media (max-width:430px){
   header h1{font-size:18px}
   header .inner{padding:7px 8px}
-  .tabs button{font-size:16px;min-height:52px}
+  .tabs button{font-size:14px;min-height:48px}
+  .views button{font-size:15px}
   .weeknav .label{font-size:14px;padding:9px 2px}
   .card > .head{font-size:16px}
   .card > .body{padding:10px}
@@ -219,7 +222,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 }
 @media print{
   body{background:#fff;color:#000;padding:0}
-  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,#moreBtn,#moreBar,#viewTabs,#schedAdd,#schedDlg,footer,#sync{display:none!important}
+  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,#moreBtn,#moreBar,#viewTabs,#schedAdd,#hospAdd,#schedDlg,#hospDlg,footer,#sync{display:none!important}
   button.rpthead{display:flex!important}
   #report{display:block!important}
   .card{box-shadow:none;break-inside:avoid}
@@ -246,13 +249,14 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 <header>
   <div class="inner">
     <div id="hdrAvatar"></div>
-    <h1>하주 · 하유 미션 보드</h1>
+    <h1>하주 · 하유 · 하서 미션 보드</h1>
   </div>
 </header>
 
 <div class="views" id="viewTabs">
   <button type="button" id="viewMission" class="on">미션</button>
   <button type="button" id="viewSchedule">일정</button>
+  <button type="button" id="viewHospital">병원</button>
 </div>
 
 <div class="tabs" id="tabs"></div>
@@ -302,7 +306,44 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <div class="head">한 주 한눈에</div>
     <div class="body" id="schedWeek"></div>
   </div>
-  <button type="button" id="schedAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 학교·학원 일정 추가</button>
+  <button type="button" id="schedAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 학교·학원·어린이집 일정 추가</button>
+</div>
+
+<div id="hospView" style="display:none">
+  <div class="card">
+    <div class="head">다가오는 병원</div>
+    <div class="body" id="hospSoon"></div>
+  </div>
+  <div class="card">
+    <button type="button" class="head rpthead" id="hospPastToggle" aria-expanded="false">
+      <span>지난 병원</span>
+      <span class="rptsum" id="hospPastSum"></span>
+      <span class="rptchev" id="hospPastChev">▼</span>
+    </button>
+    <div class="body" id="hospPast" style="display:none"></div>
+  </div>
+  <button type="button" id="hospAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 병원 일정 추가</button>
+</div>
+
+<div id="hospDlg">
+  <div class="gatebox">
+    <div class="gtitle" id="hospDlgTitle">병원</div>
+    <label>아이</label>
+    <div class="kinds" id="hidKids"></div>
+    <label for="hidDate">날짜</label>
+    <input id="hidDate" type="date">
+    <label for="hidTime">시간</label>
+    <input id="hidTime" type="time">
+    <label for="hidTitle">병원 · 진료</label>
+    <input id="hidTitle" type="text" placeholder="예: 소아과, 치과, 예방접종">
+    <label for="hidPlace">장소 (선택)</label>
+    <input id="hidPlace" type="text" placeholder="예: ○○소아과">
+    <label for="hidNote">메모 (선택)</label>
+    <input id="hidNote" type="text" placeholder="예: 예약 번호, 준비물">
+    <button type="button" id="hidSave">저장</button>
+    <button type="button" id="hidDel" class="sub">삭제</button>
+    <button type="button" id="hidCancel" class="sub">닫기</button>
+  </div>
 </div>
 
 <div id="schedDlg">
@@ -314,6 +355,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <div class="kinds" id="sidKinds">
       <button type="button" data-k="school">학교</button>
       <button type="button" data-k="academy" class="on">학원</button>
+      <button type="button" data-k="daycare">어린이집</button>
       <button type="button" data-k="other">기타</button>
     </div>
     <label>요일</label>
@@ -407,7 +449,16 @@ var KIDS = [
       {id:"sc_diary", label:"일기", weekly:2, tag:"주 2번"},
       {id:"sc_read",  label:"독서 30분 이상"},
       {id:"sc_log",   label:"독서기록장", weekly:1, tag:"주 1번"}
-   ]})}
+   ]})},
+  {id:"haseo", name:"김하서", skin:{hair:"#c9a06a", shirt:"#e07a6f"},
+   groups:[
+     {name:"큐티", items:[{id:"qt", label:"큐티"}]},
+     {name:"어린이집", items:[
+       {id:"dc_go", label:"어린이집 등원", weekdayOnly:true},
+       {id:"dc_bag", label:"가방·물통 챙기기", weekdayOnly:true},
+       {id:"dc_sleep", label:"낮잠 · 잘 쉬기", weekdayOnly:true, tag:"어린이집"}
+     ]}
+   ]}
 ];
 var HABITS = [
   {id:"hb_room",  label:"방 정리"},
@@ -418,7 +469,8 @@ var HABITS = [
 var BASE_MIN = 120, PENALTY = 30;
 var DAYN = ["월","화","수","목","금","토","일"];
 var SCHEDULE_WEEK = "1970-01-01";
-var KINDN = {school:"학교", academy:"학원", other:"기타"};
+var HOSPITAL_WEEK = "1970-01-02";
+var KINDN = {school:"학교", academy:"학원", daycare:"어린이집", other:"기타"};
 
 /* 하루 필수 항목 (주간목표 항목은 제외, 부모 항목은 하위로 대체) */
 function requiredIds(kid, date){
@@ -427,6 +479,7 @@ function requiredIds(kid, date){
     g.items.forEach(function(it){
       if(it.weekly) return;
       if(it.weekendOnly && !wknd) return;
+      if(it.weekdayOnly && wknd) return;
       if(it.subs) it.subs.forEach(function(s){ out.push(s.id); });
       else out.push(it.id);
     });
@@ -467,6 +520,8 @@ var view = "mission";
 var schedDay = (TODAY.getDay()+6)%7;
 var schedule = {};
 var schedPending = false, schedTimer = null, schedEditId = null, schedKind = "academy";
+var hospitals = [];
+var hospPending = false, hospTimer = null, hospEditId = null, hospKid = "haseo", hospPastOpen = false;
 
 function weekKey(){ return fmt(weekStart); }
 function lsKey(){ return "mission:"+weekKey(); }
@@ -491,6 +546,7 @@ function loadLocal(){
   if(!data || typeof data !== "object") data = {};
   setBase();
   loadScheduleLocal();
+  loadHospitalLocal();
 }
 function defaultSchedule(){
   return {
@@ -501,14 +557,23 @@ function defaultSchedule(){
     hayoo:[
       {id:"hayoo-school", kind:"school", title:"학교", place:"", start:"09:00", end:"15:00", days:[0,1,2,3,4]},
       {id:"hayoo-tkd", kind:"academy", title:"태권도", place:"", start:"16:00", end:"17:30", days:[1,3]}
+    ],
+    haseo:[
+      {id:"haseo-dc", kind:"daycare", title:"어린이집", place:"", start:"09:00", end:"16:00", days:[0,1,2,3,4]}
     ]
   };
 }
 function ensureSchedule(){
   if(!schedule || typeof schedule !== "object") schedule = {};
+  var seed = defaultSchedule();
+  var added = false;
   KIDS.forEach(function(k){
-    if(!Array.isArray(schedule[k.id])) schedule[k.id] = [];
+    if(!Array.isArray(schedule[k.id])){
+      schedule[k.id] = seed[k.id] ? seed[k.id].slice() : [];
+      added = true;
+    }
   });
+  return added;
 }
 function loadScheduleLocal(){
   try{
@@ -556,11 +621,59 @@ function pullSchedule(){
       if(r.error){ setSync("일정 불러오기 실패: " + r.error.message); return; }
       if(r.data && r.data.data && typeof r.data.data === "object"){
         schedule = r.data.data;
-        ensureSchedule();
+        var seeded = ensureSchedule();
         cacheSchedule();
+        render();
+        if(seeded) saveSchedule();
+      }
+    });
+}
+function loadHospitalLocal(){
+  try{
+    var raw = localStorage.getItem("mission:hospital");
+    var o = raw ? JSON.parse(raw) : {items:[]};
+    hospitals = Array.isArray(o) ? o : (o.items || []);
+  }catch(e){ hospitals = []; }
+}
+function cacheHospital(){
+  try{ localStorage.setItem("mission:hospital", JSON.stringify({items:hospitals})); }catch(e){}
+}
+function saveHospital(){
+  cacheHospital();
+  if(!sb || !allowed){ setSync(!sb ? "저장 실패: 연결할 수 없습니다" : "이 기기에만 저장됨"); return; }
+  hospPending = true;
+  clearTimeout(hospTimer);
+  setSync("저장 중…");
+  var snap = {items: clone(hospitals)};
+  hospTimer = setTimeout(function(){
+    sb.from("mission_weeks").upsert({
+      week_start: HOSPITAL_WEEK, data: snap,
+      updated_at: new Date().toISOString(), updated_by: myEmail
+    }, {onConflict:"week_start"}).then(function(r){
+      hospPending = false;
+      setSync(r.error ? "저장 실패: " + r.error.message : "병원 일정 저장됨 ✔");
+    }).catch(function(e){
+      hospPending = false;
+      setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
+    });
+  }, 400);
+}
+function pullHospital(){
+  if(!sb || !allowed) return;
+  sb.from("mission_weeks").select("data").eq("week_start", HOSPITAL_WEEK).maybeSingle()
+    .then(function(r){
+      if(r.error){ setSync("병원 일정 불러오기 실패: " + r.error.message); return; }
+      if(r.data && r.data.data){
+        var d = r.data.data;
+        hospitals = Array.isArray(d) ? d : (d.items || []);
+        cacheHospital();
         render();
       }
     });
+}
+function kidById(id){
+  for(var i=0;i<KIDS.length;i++) if(KIDS[i].id===id) return KIDS[i];
+  return KIDS[0];
 }
 function clone(o){
   try{ return JSON.parse(JSON.stringify(o || {})); }
@@ -698,15 +811,19 @@ function avatar(skin, size){
 
 /* ============ 렌더링 ============ */
 function applyView(){
-  var mission = view === "mission";
-  document.getElementById("viewMission").className = mission ? "on" : "";
-  document.getElementById("viewSchedule").className = mission ? "" : "on";
-  document.getElementById("missionView").style.display = mission ? "" : "none";
-  document.getElementById("schedView").style.display = mission ? "none" : "";
+  document.getElementById("viewMission").className = view==="mission" ? "on" : "";
+  document.getElementById("viewSchedule").className = view==="schedule" ? "on" : "";
+  document.getElementById("viewHospital").className = view==="hospital" ? "on" : "";
+  document.getElementById("missionView").style.display = view==="mission" ? "" : "none";
+  document.getElementById("schedView").style.display = view==="schedule" ? "" : "none";
+  document.getElementById("hospView").style.display = view==="hospital" ? "" : "none";
+  document.getElementById("tabs").style.display = view==="hospital" ? "none" : "";
   var foot = document.getElementById("foot");
-  if(foot) foot.textContent = mission
+  if(foot) foot.textContent = view==="mission"
     ? "토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다"
-    : "반복되는 학교·학원 일정입니다. 칸을 누르면 수정할 수 있어요.";
+    : view==="schedule"
+      ? "반복되는 학교·학원·어린이집 일정입니다. 칸을 누르면 수정할 수 있어요."
+      : "병원 예약은 날짜가 있는 일정입니다. 지난 예약은 접어서 볼 수 있어요.";
 }
 function render(){
   applyView();
@@ -714,9 +831,11 @@ function render(){
   if(view === "mission"){
     renderWeek(); renderDays();
     renderTasks(); renderHabits(); renderBank(); renderReport();
-  } else {
+  } else if(view === "schedule"){
     renderSchedDays();
     renderSchedule();
+  } else {
+    renderHospital();
   }
 }
 
@@ -730,7 +849,7 @@ function renderTabs(){
     el.appendChild(b);
   });
   document.getElementById("hdrAvatar").innerHTML =
-    '<div style="display:flex;gap:4px">'+avatar(KIDS[0],28)+avatar(KIDS[1],28)+'</div>';
+    '<div style="display:flex;gap:4px">'+KIDS.map(function(k){ return avatar(k,26); }).join("")+'</div>';
 }
 
 function renderWeek(){
@@ -788,7 +907,7 @@ function renderSchedule(){
     list.innerHTML = "";
     var dayEvs = kidEvents().filter(function(ev){ return evOnDay(ev, schedDay); });
     if(!dayEvs.length){
-      list.innerHTML = '<p class="note">이 요일 일정이 없습니다. 아래 버튼으로 학교·학원을 넣으세요.</p>';
+      list.innerHTML = '<p class="note">이 요일 일정이 없습니다. 아래 버튼으로 학교·학원·어린이집을 넣으세요.</p>';
     }
     dayEvs.forEach(function(ev){
       var row = document.createElement("div");
@@ -812,7 +931,7 @@ function renderSchedule(){
       if(i===schedDay) h.style.color = "var(--gold)";
       grid.appendChild(h);
     });
-    var kinds = ["school","academy","other"];
+    var kinds = ["school","academy","daycare","other"];
     kinds.forEach(function(kd){
       var lab = document.createElement("b");
       lab.textContent = KINDN[kd];
@@ -869,9 +988,10 @@ function openSchedDlg(ev){
   document.getElementById("schedDlgTitle").textContent = ev ? "일정 수정" : "일정 추가";
   document.getElementById("sidTitle").value = ev ? ev.title : "";
   document.getElementById("sidPlace").value = ev ? (ev.place||"") : "";
-  document.getElementById("sidStart").value = ev ? ev.start : "16:00";
-  document.getElementById("sidEnd").value = ev ? ev.end : "17:30";
-  setSidKind(ev ? ev.kind : "academy");
+  var addHaseo = !ev && KIDS[curKid].id === "haseo";
+  document.getElementById("sidStart").value = ev ? ev.start : (addHaseo ? "09:00" : "16:00");
+  document.getElementById("sidEnd").value = ev ? ev.end : (addHaseo ? "16:00" : "17:30");
+  setSidKind(ev ? ev.kind : (addHaseo ? "daycare" : "academy"));
   var days = ev ? ev.days : [schedDay];
   document.querySelectorAll("#sidDays button").forEach(function(b){
     b.className = days.indexOf(+b.getAttribute("data-d")) >= 0 ? "on" : "";
@@ -914,6 +1034,102 @@ function delSchedDlg(){
   schedule[kid.id] = (schedule[kid.id]||[]).filter(function(x){ return x.id !== schedEditId; });
   closeSchedDlg();
   saveSchedule();
+  render();
+}
+
+function hospItems(){
+  return (hospitals||[]).slice().sort(function(a,b){
+    return (a.date||"").localeCompare(b.date||"") || (a.time||"").localeCompare(b.time||"");
+  });
+}
+function renderHospList(el, items){
+  el.innerHTML = "";
+  if(!items.length){
+    el.innerHTML = '<p class="note">일정이 없습니다.</p>';
+    return;
+  }
+  items.forEach(function(it){
+    var k = kidById(it.kidId);
+    var row = document.createElement("div");
+    row.className = "sev";
+    row.innerHTML = '<div class="when">'+(it.date||"")+'<br>'+(it.time||"")+'</div>'
+      + avatar(k,26)
+      + '<div class="ttl"><b>'+k.name+'</b> · '+it.title
+      + (it.place||it.note ? '<div class="note" style="margin:2px 0 0">'+(it.place||"")+(it.place&&it.note?" · ":"")+(it.note||"")+"</div>" : "")
+      + "</div>";
+    row.onclick = function(){ openHospDlg(it); };
+    el.appendChild(row);
+  });
+}
+function renderHospital(){
+  var all = hospItems();
+  var soon = all.filter(function(it){ return (it.date||"") >= TODAY_KEY; });
+  var past = all.filter(function(it){ return (it.date||"") < TODAY_KEY; }).reverse();
+  renderHospList(document.getElementById("hospSoon"), soon);
+  if(!soon.length) document.getElementById("hospSoon").innerHTML = '<p class="note">다가오는 병원 예약이 없습니다. 아래 버튼으로 추가하세요.</p>';
+  var sum = document.getElementById("hospPastSum");
+  if(sum) sum.textContent = past.length ? past.length+"건" : "없음";
+  renderHospList(document.getElementById("hospPast"), past);
+  document.getElementById("hospPast").style.display = hospPastOpen ? "" : "none";
+  document.getElementById("hospPastChev").textContent = hospPastOpen ? "▲" : "▼";
+}
+function openHospDlg(it){
+  hospEditId = it ? it.id : null;
+  hospKid = it ? it.kidId : KIDS[curKid].id;
+  document.getElementById("hospDlgTitle").textContent = it ? "병원 수정" : "병원 추가";
+  document.getElementById("hidDate").value = it ? it.date : TODAY_KEY;
+  document.getElementById("hidTime").value = it ? (it.time||"") : "14:00";
+  document.getElementById("hidTitle").value = it ? it.title : "";
+  document.getElementById("hidPlace").value = it ? (it.place||"") : "";
+  document.getElementById("hidNote").value = it ? (it.note||"") : "";
+  var box = document.getElementById("hidKids");
+  box.innerHTML = "";
+  KIDS.forEach(function(k){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = k.name.replace("김","");
+    b.className = k.id===hospKid ? "on" : "";
+    b.onclick = function(){
+      hospKid = k.id;
+      box.querySelectorAll("button").forEach(function(x){ x.className = ""; });
+      b.className = "on";
+    };
+    box.appendChild(b);
+  });
+  document.getElementById("hidDel").style.display = it ? "" : "none";
+  document.getElementById("hospDlg").style.display = "flex";
+}
+function closeHospDlg(){
+  document.getElementById("hospDlg").style.display = "none";
+  hospEditId = null;
+}
+function saveHospDlg(){
+  var title = document.getElementById("hidTitle").value.trim();
+  var date = document.getElementById("hidDate").value;
+  if(!title){ setSync("병원·진료 이름을 적어 주세요"); return; }
+  if(!date){ setSync("날짜를 골라 주세요"); return; }
+  var ev = {
+    id: hospEditId || ("h"+Date.now().toString(36)),
+    kidId: hospKid,
+    date: date,
+    time: document.getElementById("hidTime").value || "",
+    title: title,
+    place: document.getElementById("hidPlace").value.trim(),
+    note: document.getElementById("hidNote").value.trim()
+  };
+  var idx = -1;
+  hospitals.forEach(function(x,i){ if(x.id===ev.id) idx=i; });
+  if(idx>=0) hospitals[idx] = ev; else hospitals.push(ev);
+  closeHospDlg();
+  saveHospital();
+  render();
+}
+function delHospDlg(){
+  if(!hospEditId) return;
+  if(!window.confirm("이 병원 일정을 지울까요?")) return;
+  hospitals = hospitals.filter(function(x){ return x.id !== hospEditId; });
+  closeHospDlg();
+  saveHospital();
   render();
 }
 
@@ -965,7 +1181,11 @@ function renderTasks(){
     (curDate.getMonth()+1)+"/"+curDate.getDate()+" ("+DAYN[(curDate.getDay()+6)%7]+") "+kid.name+" 숙제";
 
   kid.groups.forEach(function(g){
-    var items = g.items.filter(function(it){ return !(it.weekendOnly && !wknd); });
+    var items = g.items.filter(function(it){
+      if(it.weekendOnly && !wknd) return false;
+      if(it.weekdayOnly && wknd) return false;
+      return true;
+    });
     if(!items.length) return;
     var box = document.createElement("div");
     box.className = "grp";
@@ -988,7 +1208,8 @@ function renderHabits(){
     var v = c.h[h.id] || "";
     var row = document.createElement("div");
     row.className = "habit";
-    row.innerHTML = '<span class="txt">'+h.label+'</span>';
+    var lab = (kid.id==="haseo" && h.id==="hb_change") ? "어린이집 다녀와서 옷 갈아입기" : h.label;
+    row.innerHTML = '<span class="txt">'+lab+'</span>';
     var b = document.createElement("button");
     b.className = "st"; b.setAttribute("data-v", v);
     b.textContent = v==="ok" ? "O" : v==="no" ? "X" : "–";
@@ -1117,7 +1338,20 @@ document.getElementById("viewSchedule").onclick = function(){
   schedDay = (curDate.getDay()+6)%7;
   render();
 };
+document.getElementById("viewHospital").onclick = function(){ view = "hospital"; render(); };
 document.getElementById("schedAdd").onclick = function(){ openSchedDlg(null); };
+document.getElementById("hospAdd").onclick = function(){ openHospDlg(null); };
+document.getElementById("hidSave").onclick = saveHospDlg;
+document.getElementById("hidDel").onclick = delHospDlg;
+document.getElementById("hidCancel").onclick = closeHospDlg;
+document.getElementById("hospDlg").addEventListener("click", function(e){
+  if(e.target.id === "hospDlg") closeHospDlg();
+});
+document.getElementById("hospPastToggle").onclick = function(){
+  hospPastOpen = !hospPastOpen;
+  document.getElementById("hospPastToggle").setAttribute("aria-expanded", hospPastOpen ? "true" : "false");
+  render();
+};
 document.getElementById("sidSave").onclick = saveSchedDlg;
 document.getElementById("sidDel").onclick = delSchedDlg;
 document.getElementById("sidCancel").onclick = closeSchedDlg;
@@ -1217,6 +1451,15 @@ function subscribe(){
         setSync("상대방 변경 반영됨 ✔");
         return;
       }
+      if(row.week_start === HOSPITAL_WEEK){
+        if(hospPending) return;
+        var hd = row.data;
+        hospitals = Array.isArray(hd) ? hd : ((hd && hd.items) || []);
+        cacheHospital();
+        render();
+        setSync("상대방 변경 반영됨 ✔");
+        return;
+      }
       if(row.week_start !== weekKey()) return;
       if(pending) return;
       data = row.data || {};
@@ -1227,7 +1470,7 @@ function subscribe(){
     .subscribe();
 }
 document.addEventListener("visibilitychange", function(){
-  if(!document.hidden && allowed){ pull(); pullSchedule(); }
+  if(!document.hidden && allowed){ pull(); pullSchedule(); pullHospital(); }
 });
 
 
@@ -1292,6 +1535,7 @@ function enterApp(){
   loadLocal(); render();
   pull();
   pullSchedule();
+  pullHospital();
   subscribe();
 }
 function enterOffline(msg){
