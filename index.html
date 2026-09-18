@@ -214,18 +214,36 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .gchip{flex:1;min-width:120px;background:var(--panel2);border:3px solid var(--line);padding:8px}
 .gchip b{display:block;font-size:20px;font-family:'Do Hyeon',sans-serif}
 .gchip span{font-size:12px;color:var(--dim)}
-.psheet{display:table;width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px}
+.psheet{display:table;width:100%;border-collapse:collapse;table-layout:fixed;font-size:10px}
 .psheet thead{display:table-header-group}
 .psheet tbody{display:table-row-group}
 .psheet tr{display:table-row}
-.psheet th,.psheet td{display:table-cell;border:1px solid #222;padding:3px 2px;text-align:center;vertical-align:middle}
-.psheet tr.pwk td{background:#fff3c4}
-.psheet td.off{background:#eeeae0}
-.psheet td.off .box{visibility:hidden}
-.psheet .box{display:inline-block;width:12px;height:12px;border:1px solid #222;vertical-align:middle;background:#fff}
+.psheet th,.psheet td{display:table-cell;border:2px solid #1d1a15;padding:2px 1px;text-align:center;vertical-align:middle}
+.psheet th.g{background:#8a5f3c;color:#fff8e7;font-family:'Do Hyeon',sans-serif;font-size:12px;letter-spacing:.3px}
+.psheet th.day{background:#63422a;color:#fff8e7;width:36px;font-family:'Do Hyeon',sans-serif}
+.psheet th.it{background:#f6f0e1;color:#2b241a;font-size:10px;line-height:1.1;padding:5px 2px;height:74px;
+  writing-mode:vertical-rl;text-orientation:mixed;white-space:nowrap}
+.psheet td.day{background:#ece3cf;font-family:'Do Hyeon',sans-serif;font-size:11px;white-space:nowrap}
+.psheet tr.pwk td{background:#ffe08a}
+.psheet tr.pwk td.day{background:#e6a92b;color:#2b241a}
+.psheet td.off{background:#cfc8b8}
+.psheet td.off .mcbox{visibility:hidden}
+.mcbox{display:inline-block;width:12px;height:12px;border:2px solid #1d1a15;vertical-align:middle;
+  background:linear-gradient(180deg,#fff8e4 0 55%,#e4d8b8 55%);
+  box-shadow:inset 1px 1px 0 #fff, inset -1px -1px 0 #b8ab8c}
 #printPreview{display:none;position:fixed;inset:0;z-index:120;background:var(--bg);overflow:auto;padding:10px}
 #printPreview .printbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
-#printSheet{background:#fff;color:#111;padding:8px;border:3px solid var(--line)}
+#printKids{display:flex;gap:4px;flex-wrap:wrap}
+#printKids button{min-height:40px}
+#printSheet{background:transparent;border:none;padding:0}
+.mcpage{background:#e7dfcb;color:#2b241a;border:4px solid #1d1a15;box-shadow:6px 6px 0 rgba(0,0,0,.28);
+  padding:8px;margin:0 0 18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.mchd{display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:6px;border:3px solid #1d1a15;color:#fff6e4;
+  background:repeating-linear-gradient(90deg,#8a5f3c 0 14px,#63422a 14px 28px)}
+.mchd .ttl{font-family:'Do Hyeon',sans-serif;font-size:20px;line-height:1.1;text-shadow:2px 2px 0 rgba(0,0,0,.4)}
+.mchd .sub{font-size:11px;opacity:.95}
+.mcfoot{margin:6px 0 0;font-size:11px;color:#2b241a;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mcfoot b{background:#63a03f;color:#fff;border:2px solid #1d1a15;padding:1px 6px;font-family:'Do Hyeon',sans-serif}
 .doses{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .doses button{flex:1;min-height:40px;font-size:13px}
 .chk{width:28px;height:28px;flex:none;background:var(--panel);border:3px solid var(--line);
@@ -244,20 +262,23 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   .big{font-size:26px}
 }
 @media print{
-  @page{size:A4 landscape;margin:7mm}
-  body.printing{background:#fff!important;color:#000;padding:0;max-width:none}
+  @page{size:A4 landscape;margin:6mm}
+  body.printing{background:#e7dfcb!important;color:#2b241a;padding:0;max-width:none}
   body.printing header,.printing .views,.printing .tabs,.printing #todayView,.printing #missionView,
   .printing #schedView,.printing #hospView,.printing #growView,.printing #gate,.printing #moreBtn,
   .printing #logoutBtn,.printing #moreBar,.printing #who,.printing #sync,.printing footer,
   .printing #schedDlg,.printing #hospDlg,.printing #medDlg,.printing #packDlg,.printing #growDlg,
   .printing #printPreview .printbar{display:none!important}
-  body.printing #printPreview{display:block!important;position:static;inset:auto;background:#fff;padding:0;overflow:visible}
-  body.printing #printSheet{display:block!important;padding:0}
-  body.printing .psheet{font-size:9px}
-  body.printing .psheet th,body.printing .psheet td{border:1px solid #222;padding:1px 2px;height:16px}
-  body.printing .psheet tr.pwk td{background:#fff3c4!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body.printing .psheet td.off{background:#eeeae0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body.printing #printSheet{border:none}
+  body.printing #printPreview{display:block!important;position:static;inset:auto;background:#e7dfcb;padding:0;overflow:visible}
+  body.printing #printSheet{display:block!important;padding:0;background:transparent;border:none}
+  body.printing .mcpage{box-shadow:none;margin:0;padding:4px;page-break-after:always;break-after:page}
+  body.printing .mcpage:last-child{page-break-after:auto;break-after:auto}
+  body.printing .psheet{font-size:8px}
+  body.printing .psheet th,body.printing .psheet td{padding:1px 1px;height:15px}
+  body.printing .psheet th.it{font-size:9px;height:70px;padding:3px 1px}
+  body.printing .mchd .ttl{font-size:18px}
+  body.printing .mcpage,.printing .psheet th,.printing .psheet td,.printing .mchd,.printing .mcbox{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -459,6 +480,12 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <button type="button" id="printPrevM">◀</button>
     <div id="printMonthLabel" class="weeknav" style="flex:1;justify-content:center;margin:0"></div>
     <button type="button" id="printNextM">▶</button>
+    <div id="printKids">
+      <button type="button" data-pk="all" class="on">모두</button>
+      <button type="button" data-pk="hajoo">하주</button>
+      <button type="button" data-pk="hayoo">하유</button>
+      <button type="button" data-pk="haseo">하서</button>
+    </div>
     <button type="button" id="printGo" style="background:var(--grass);color:#fff">인쇄</button>
     <button type="button" id="printClose">닫기</button>
   </div>
@@ -721,6 +748,7 @@ var packPending = false, packTimer = null, packEditId = null, packKid = "hajoo",
 var growth = {profiles:{}, items:[]};
 var growPending = false, growTimer = null, growEditId = null;
 var printYM = {y: TODAY.getFullYear(), m: TODAY.getMonth()};
+var printKidId = "all";
 
 function weekKey(){ return fmt(weekStart); }
 function lsKey(){ return "mission:"+weekKey(); }
@@ -1998,55 +2026,82 @@ function saveGrowProfile(){
   saveGrowth();
   render();
 }
-function printGroups(kid){
-  var core = [];
-  kid.groups.forEach(function(g){
-    var n = g.name.replace(" · 아이스크림","");
-    if(n==="학교 숙제") n = "학교";
-    else if(n==="어린이집") n = "등원";
-    else if(n.indexOf("홈런")>=0) n = "학습";
-    if(n!=="학습" && core.indexOf(n)<0) core.push(n);
-  });
-  if(core.indexOf("생활")<0) core.push("생활");
-  if(core.length<=4) return core;
-  var keep = [core[0]];
-  core.forEach(function(n){
-    if(n!=="생활" && keep.indexOf(n)<0 && keep.length<3) keep.push(n);
-  });
-  keep.push("생활");
-  return keep;
+var PRINT_SHORT = {
+  qt:"큐티", en_focus:"집중듣기", en_word:"단어쓰기", en_r1:"낭독듣기", en_r2:"따라읽기",
+  en_r3:"혼자읽기", en_r4:"낭독검사", en_work:"문제집", en_quiz:"북퀴즈", en_class:"클래스카드",
+  ma_calc:"연산", ma_class:"학교진도", hr_day:"홈런학습", hr_week:"오답노트",
+  sc_diary:"일기", sc_read:"독서30분", sc_log:"독서기록",
+  dc_go:"등원", dc_bag:"가방물통", dc_sleep:"낮잠",
+  hb_room:"방정리", hb_cloth:"옷정리", hb_change:"옷갈아입기", hb_living:"거실정리"
+};
+function printGroupName(n){
+  if(n==="학교 숙제") return "학교";
+  if(n.indexOf("홈런")>=0) return "홈런";
+  return n;
 }
-function buildPrintSheet(){
-  var y = printYM.y, m = printYM.m;
-  var last = new Date(y, m+1, 0).getDate();
-  document.getElementById("printMonthLabel").textContent = y+"년 "+(m+1)+"월 숙제 체크표";
-  var head = "<tr><th rowspan='2'>날</th>";
-  KIDS.forEach(function(k){
-    var gs = printGroups(k);
-    head += "<th colspan='"+gs.length+"'>"+k.name.replace("김","")+"</th>";
+function printItems(kid){
+  var cols = [];
+  kid.groups.forEach(function(g){
+    var gn = printGroupName(g.name);
+    g.items.forEach(function(it){
+      if(it.subs){
+        it.subs.forEach(function(s){
+          cols.push({id:s.id, label:PRINT_SHORT[s.id]||s.label, group:gn, weekdayOnly:!!it.weekdayOnly, weekendOnly:!!it.weekendOnly, tag:s.tag||it.tag||""});
+        });
+      } else {
+        cols.push({id:it.id, label:PRINT_SHORT[it.id]||it.label, group:gn, weekdayOnly:!!it.weekdayOnly, weekendOnly:!!it.weekendOnly, tag:it.tag||""});
+      }
+    });
   });
+  HABITS.forEach(function(h){
+    cols.push({id:h.id, label:PRINT_SHORT[h.id]||h.label, group:"생활", weekdayOnly:false, weekendOnly:false, tag:""});
+  });
+  return cols;
+}
+function buildPrintKidPage(kid, y, m, last){
+  var cols = printItems(kid);
+  var groups = [];
+  cols.forEach(function(c){
+    var lastG = groups[groups.length-1];
+    if(lastG && lastG.name===c.group) lastG.n++;
+    else groups.push({name:c.group, n:1});
+  });
+  var head = "<tr><th class='day' rowspan='2'>날</th>";
+  groups.forEach(function(g){ head += "<th class='g' colspan='"+g.n+"'>"+g.name+"</th>"; });
   head += "</tr><tr>";
-  KIDS.forEach(function(k){
-    printGroups(k).forEach(function(g){ head += "<th>"+g+"</th>"; });
+  cols.forEach(function(c){
+    head += "<th class='it' title='"+(c.tag?c.label+" · "+c.tag:c.label)+"'>"+c.label+(c.tag?" · "+c.tag:"")+"</th>";
   });
   head += "</tr>";
   var body = "";
   for(var d=1;d<=last;d++){
     var dt = new Date(y,m,d);
     var wk = dt.getDay()===0 || dt.getDay()===6;
-    body += "<tr class='"+(wk?"pwk":"")+"'><td>"+d+" "+DAYN[(dt.getDay()+6)%7]+"</td>";
-    KIDS.forEach(function(k){
-      printGroups(k).forEach(function(g){
-        var off = wk && (g==="학교" || g==="등원");
-        body += "<td"+(off?" class='off'":"")+"><span class='box'></span></td>";
-      });
+    body += "<tr class='"+(wk?"pwk":"")+"'><td class='day'>"+d+" "+DAYN[(dt.getDay()+6)%7]+"</td>";
+    cols.forEach(function(c){
+      var off = (wk && c.weekdayOnly) || (!wk && c.weekendOnly);
+      body += "<td"+(off?" class='off'":"")+">"+(off?"":"<span class='mcbox'></span>")+"</td>";
     });
     body += "</tr>";
   }
-  document.getElementById("printSheet").innerHTML =
-    "<div style='font-family:Gothic A1,sans-serif;font-size:16px;font-weight:900;margin-bottom:6px'>"+y+"년 "+(m+1)+"월 숙제 체크표 · 하주 · 하유 · 하서</div>"
+  var nick = kid.name.replace("김","");
+  return "<section class='mcpage'>"
+    + "<div class='mchd'>"+avatar(kid,36)
+    + "<div><div class='ttl'>"+nick+" 미션 체크표</div>"
+    + "<div class='sub'>"+y+"년 "+(m+1)+"월 · 네모에 V 하면 미션 클리어!</div></div></div>"
     + "<table class='psheet'><thead>"+head+"</thead><tbody>"+body+"</tbody></table>"
-    + "<p class='note' style='margin-top:6px'>끝나면 V 표시 · A4 가로 1장 · 주말은 노란 칸 · 학교·등원은 평일만</p>";
+    + "<div class='mcfoot'><b>V</b> 하면 클리어 · 주말은 금광석 · 회색은 쉬는 날 · A4 가로 1장</div>"
+    + "</section>";
+}
+function buildPrintSheet(){
+  var y = printYM.y, m = printYM.m;
+  var last = new Date(y, m+1, 0).getDate();
+  var kids = KIDS.filter(function(k){ return printKidId==="all" || k.id===printKidId; });
+  document.getElementById("printMonthLabel").textContent = y+"년 "+(m+1)+"월 · 아이마다 1장";
+  document.getElementById("printSheet").innerHTML = kids.map(function(k){ return buildPrintKidPage(k,y,m,last); }).join("");
+  document.querySelectorAll("#printKids button").forEach(function(b){
+    b.className = b.getAttribute("data-pk")===printKidId ? "on" : "";
+  });
 }
 function openPrintPreview(){
   printYM = {y: TODAY.getFullYear(), m: TODAY.getMonth()};
@@ -2357,6 +2412,9 @@ document.getElementById("printGo").onclick = function(){
   window.print();
 };
 document.getElementById("printClose").onclick = closePrintPreview;
+document.querySelectorAll("#printKids button").forEach(function(b){
+  b.onclick = function(){ printKidId = b.getAttribute("data-pk"); buildPrintSheet(); };
+});
 window.addEventListener("afterprint", function(){ document.body.classList.remove("printing"); });
 document.getElementById("growAdd").onclick = function(){ openGrowDlg(null); };
 document.getElementById("gridSave").onclick = saveGrowDlg;
