@@ -181,8 +181,8 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .usebtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .usebtns button{flex:1;min-height:44px}
 .weeknav button{min-height:44px;min-width:48px;font-size:15px}
-.views{display:flex;gap:6px;margin-bottom:8px}
-.views button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:15px;min-height:44px;padding:7px 4px}
+.views{display:flex;gap:4px;margin-bottom:8px}
+.views button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:14px;min-height:44px;padding:7px 2px}
 .sev{display:flex;align-items:flex-start;flex-wrap:wrap;gap:10px;padding:10px;background:var(--panel2);
   border:3px solid var(--line);margin-bottom:7px;min-height:52px}
 .sev .doses{flex-basis:100%;margin-top:0}
@@ -202,14 +202,25 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .schip.academy{background:var(--gold);color:#2b241a}
 .schip.other{background:var(--dia);color:#123}
 .schip.daycare{background:#e07a6f;color:#fff}
-#schedDlg,#hospDlg,#medDlg,#packDlg{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
+#schedDlg,#hospDlg,#medDlg,#packDlg,#growDlg{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
   background:rgba(0,0,0,.35);padding:12px}
-#schedDlg .gatebox,#hospDlg .gatebox,#medDlg .gatebox,#packDlg .gatebox{max-width:420px;margin-bottom:env(safe-area-inset-bottom);max-height:90vh;overflow:auto}
+#schedDlg .gatebox,#hospDlg .gatebox,#medDlg .gatebox,#packDlg .gatebox,#growDlg .gatebox{max-width:420px;margin-bottom:env(safe-area-inset-bottom);max-height:90vh;overflow:auto}
 #schedDlg .daysel{display:flex;gap:4px}
 #schedDlg .daysel button{flex:1;padding:8px 0;min-height:44px;font-size:13px}
 #schedDlg .times,#medDlg .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-#schedDlg .kinds,#hospDlg .kinds,#medDlg .kinds,#packDlg .kinds,#medDlg .doses{display:flex;gap:6px;flex-wrap:wrap}
-#schedDlg .kinds button,#hospDlg .kinds button,#medDlg .kinds button,#packDlg .kinds button,#medDlg .doses button{flex:1;min-height:44px;min-width:64px}
+#schedDlg .kinds,#hospDlg .kinds,#medDlg .kinds,#packDlg .kinds,#growDlg .kinds,#medDlg .doses{display:flex;gap:6px;flex-wrap:wrap}
+#schedDlg .kinds button,#hospDlg .kinds button,#medDlg .kinds button,#packDlg .kinds button,#growDlg .kinds button,#medDlg .doses button{flex:1;min-height:44px;min-width:64px}
+.gstat{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.gchip{flex:1;min-width:120px;background:var(--panel2);border:3px solid var(--line);padding:8px}
+.gchip b{display:block;font-size:20px;font-family:'Do Hyeon',sans-serif}
+.gchip span{font-size:12px;color:var(--dim)}
+.psheet{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px}
+.psheet th,.psheet td{border:1px solid var(--line);padding:3px 2px;text-align:center}
+.psheet .wk{background:color-mix(in srgb,var(--gold) 28%, #fff)}
+.psheet .box{display:inline-block;width:12px;height:12px;border:1px solid #222;vertical-align:middle}
+#printPreview{display:none;position:fixed;inset:0;z-index:120;background:var(--bg);overflow:auto;padding:10px}
+#printPreview .printbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+#printSheet{background:#fff;color:#111;padding:8px}
 .doses{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .doses button{flex:1;min-height:40px;font-size:13px}
 .chk{width:28px;height:28px;flex:none;background:var(--panel);border:3px solid var(--line);
@@ -220,7 +231,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   header h1{font-size:18px}
   header .inner{padding:7px 8px}
   .tabs button{font-size:14px;min-height:48px}
-  .views button{font-size:14px}
+  .views button{font-size:13px}
   .weeknav .label{font-size:14px;padding:9px 2px}
   .card > .head{font-size:16px}
   .card > .body{padding:10px}
@@ -228,14 +239,21 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   .big{font-size:26px}
 }
 @media print{
-  body{background:#fff;color:#000;padding:0}
-  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,#moreBtn,#moreBar,#viewTabs,#schedAdd,#hospAdd,#medAdd,#packAdd,#schedDlg,#hospDlg,#medDlg,#packDlg,footer,#sync{display:none!important}
-  button.rpthead{display:flex!important}
-  #report{display:block!important}
-  .card{box-shadow:none;break-inside:avoid}
+  @page{size:A4 landscape;margin:7mm}
+  body.printing{background:#fff!important;color:#000;padding:0;max-width:none}
+  body.printing header,.printing .views,.printing .tabs,.printing #todayView,.printing #missionView,
+  .printing #schedView,.printing #hospView,.printing #growView,.printing #gate,.printing #moreBtn,
+  .printing #logoutBtn,.printing #moreBar,.printing #who,.printing #sync,.printing footer,
+  .printing #schedDlg,.printing #hospDlg,.printing #medDlg,.printing #packDlg,.printing #growDlg,
+  .printing #printPreview .printbar{display:none!important}
+  body.printing #printPreview{display:block!important;position:static;inset:auto;background:#fff;padding:0;overflow:visible}
+  body.printing #printSheet{display:block!important;padding:0}
+  body.printing .psheet{font-size:9px}
+  body.printing .psheet th,body.printing .psheet td{border:1px solid #222;padding:1px 2px;height:16px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="growth-lms.js"></script>
 </head>
 <body>
 
@@ -265,6 +283,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   <button type="button" id="viewMission">미션</button>
   <button type="button" id="viewSchedule">일정</button>
   <button type="button" id="viewHospital">병원</button>
+  <button type="button" id="viewGrowth">성장</button>
 </div>
 
 <div class="tabs" id="tabs"></div>
@@ -289,6 +308,10 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   <div class="card">
     <div class="head">오늘 · 내일 준비물</div>
     <div class="body" id="todayPack"></div>
+  </div>
+  <div class="card">
+    <div class="head">최근 키 · 몸무게</div>
+    <div class="body" id="todayGrow"></div>
   </div>
 </div>
 
@@ -380,6 +403,58 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <div class="body" id="medPast" style="display:none"></div>
   </div>
   <button type="button" id="medAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 약 추가</button>
+</div>
+
+<div id="growView" style="display:none">
+  <div class="card">
+    <div class="head">생년월일 · 성별</div>
+    <div class="body">
+      <label for="gidBirth">생년월일</label>
+      <input id="gidBirth" type="date" style="width:100%;margin:4px 0 8px;font:inherit;font-weight:700;padding:10px;border:3px solid var(--line);background:var(--panel2);color:var(--ink)">
+      <label>성별</label>
+      <div class="kinds" id="gidSex" style="display:flex;gap:6px;margin-top:4px">
+        <button type="button" data-s="F">여아</button>
+        <button type="button" data-s="M">남아</button>
+      </div>
+      <p class="note" id="growAge">생년월일을 넣으면 또래 백분위를 계산합니다.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="head">최근 기록</div>
+    <div class="body" id="growNow"></div>
+  </div>
+  <div class="card">
+    <div class="head">이전 기록</div>
+    <div class="body" id="growHist"></div>
+  </div>
+  <button type="button" id="growAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 키 · 몸무게 기록</button>
+  <p class="note">백분위는 세계보건기구(WHO) 0–24개월 성장표준과 미국 CDC 2000 성장도표 LMS로 계산합니다. 한국 병원은 질병관리청·대한소아청소년과학회 <b>2017 소아청소년 성장도표</b>를 쓰므로, 진료 전 <a href="https://knhanes.kdca.go.kr/knhanes/grtcht/clclt/measClclt.do" target="_blank" rel="noopener">질병관리청 공식 계산기</a>에서 한 번 더 확인하세요. 참고용이며 진료를 대신하지 않습니다.</p>
+</div>
+
+<div id="growDlg">
+  <div class="gatebox">
+    <div class="gtitle" id="growDlgTitle">키 · 몸무게</div>
+    <label for="gridDate">측정일</label>
+    <input id="gridDate" type="date">
+    <label for="gridH">키 (cm)</label>
+    <input id="gridH" type="number" inputmode="decimal" step="0.1" min="30" max="220" placeholder="예: 122.5">
+    <label for="gridW">몸무게 (kg)</label>
+    <input id="gridW" type="number" inputmode="decimal" step="0.1" min="2" max="150" placeholder="예: 23.0">
+    <button type="button" id="gridSave">저장</button>
+    <button type="button" id="gridDel" class="sub">삭제</button>
+    <button type="button" id="gridCancel" class="sub">닫기</button>
+  </div>
+</div>
+
+<div id="printPreview">
+  <div class="printbar">
+    <button type="button" id="printPrevM">◀</button>
+    <div id="printMonthLabel" class="weeknav" style="flex:1;justify-content:center;margin:0"></div>
+    <button type="button" id="printNextM">▶</button>
+    <button type="button" id="printGo" style="background:var(--grass);color:#fff">인쇄</button>
+    <button type="button" id="printClose">닫기</button>
+  </div>
+  <div id="printSheet"></div>
 </div>
 
 <div id="hospDlg">
@@ -490,7 +565,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   <span id="sync">연결 중…</span>
 </div>
 <div class="row" id="moreBar" style="display:none;margin-bottom:10px">
-  <button id="printBtn">🖨 인쇄하기</button>
+  <button id="printBtn">🖨 한달 체크표</button>
   <button id="backupBtn">📦 백업</button>
   <button id="restoreBtn">📥 복원</button>
 </div>
@@ -576,6 +651,7 @@ var SCHEDULE_WEEK = "1970-01-01";
 var HOSPITAL_WEEK = "1970-01-02";
 var MEDICINE_WEEK = "1970-01-03";
 var PACKING_WEEK = "1970-01-04";
+var GROWTH_WEEK = "1970-01-05";
 var KINDN = {school:"학교", academy:"학원", daycare:"어린이집", other:"기타"};
 var DOSEN = {am:"아침", lunch:"점심", pm:"저녁", night:"자기전"};
 var DOSEIDS = ["am","lunch","pm","night"];
@@ -634,6 +710,9 @@ var medicines = [];
 var medPending = false, medTimer = null, medEditId = null, medKid = "haseo", medPastOpen = false;
 var packs = [];
 var packPending = false, packTimer = null, packEditId = null, packKid = "hajoo", packPastOpen = false;
+var growth = {profiles:{}, items:[]};
+var growPending = false, growTimer = null, growEditId = null;
+var printYM = {y: TODAY.getFullYear(), m: TODAY.getMonth()};
 
 function weekKey(){ return fmt(weekStart); }
 function lsKey(){ return "mission:"+weekKey(); }
@@ -661,6 +740,7 @@ function loadLocal(){
   loadHospitalLocal();
   loadMedicineLocal();
   loadPackingLocal();
+  loadGrowthLocal();
 }
 function defaultSchedule(){
   return {
@@ -871,6 +951,120 @@ function pullPacking(){
       }
     });
 }
+function defaultGrowth(){
+  var p = {};
+  KIDS.forEach(function(k){ p[k.id] = {birth:"", sex:"F"}; });
+  return {profiles:p, items:[]};
+}
+function ensureGrowth(){
+  if(!growth || typeof growth !== "object") growth = defaultGrowth();
+  growth.profiles = growth.profiles || {};
+  growth.items = Array.isArray(growth.items) ? growth.items : [];
+  KIDS.forEach(function(k){
+    if(!growth.profiles[k.id]) growth.profiles[k.id] = {birth:"", sex:"F"};
+    if(!growth.profiles[k.id].sex) growth.profiles[k.id].sex = "F";
+  });
+}
+function loadGrowthLocal(){
+  try{
+    var raw = localStorage.getItem("mission:growth");
+    growth = raw ? JSON.parse(raw) : defaultGrowth();
+  }catch(e){ growth = defaultGrowth(); }
+  ensureGrowth();
+}
+function cacheGrowth(){
+  try{ localStorage.setItem("mission:growth", JSON.stringify(growth)); }catch(e){}
+}
+function saveGrowth(){
+  ensureGrowth();
+  cacheGrowth();
+  if(!sb || !allowed){ setSync(!sb ? "저장 실패: 연결할 수 없습니다" : "이 기기에만 저장됨"); return; }
+  growPending = true;
+  clearTimeout(growTimer);
+  setSync("저장 중…");
+  var snap = clone(growth);
+  growTimer = setTimeout(function(){
+    sb.from("mission_weeks").upsert({
+      week_start: GROWTH_WEEK, data: snap,
+      updated_at: new Date().toISOString(), updated_by: myEmail
+    }, {onConflict:"week_start"}).then(function(r){
+      growPending = false;
+      setSync(r.error ? "저장 실패: " + r.error.message : "성장 기록 저장됨 ✔");
+    }).catch(function(e){
+      growPending = false;
+      setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
+    });
+  }, 400);
+}
+function pullGrowth(){
+  if(!sb || !allowed) return;
+  sb.from("mission_weeks").select("data").eq("week_start", GROWTH_WEEK).maybeSingle()
+    .then(function(r){
+      if(r.error){ setSync("성장 기록 불러오기 실패: " + r.error.message); return; }
+      if(r.data && r.data.data && typeof r.data.data === "object"){
+        growth = r.data.data;
+        ensureGrowth();
+        cacheGrowth();
+        render();
+      }
+    });
+}
+function parseYmd(s){
+  if(!s) return null;
+  var p = String(s).split("-");
+  if(p.length<3) return null;
+  return new Date(+p[0], +p[1]-1, +p[2]);
+}
+function ageMonthsOn(birth, date){
+  var b = parseYmd(birth), d = parseYmd(date);
+  if(!b || !d) return null;
+  var m = (d.getFullYear()-b.getFullYear())*12 + (d.getMonth()-b.getMonth());
+  if(d.getDate() < b.getDate()) m--;
+  return Math.max(0, m);
+}
+function ageLabel(birth, date){
+  var m = ageMonthsOn(birth, date);
+  if(m==null) return "";
+  return Math.floor(m/12)+"세 "+(m%12)+"개월";
+}
+function normCdf(z){
+  var t = 1/(1+0.2316419*Math.abs(z));
+  var d = 0.3989422804*Math.exp(-z*z/2);
+  var p = d*t*(0.31938153+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+  return z>0 ? 1-p : p;
+}
+function lmsAt(kind, sex, months){
+  var table = (typeof GROWTH_LMS !== "undefined" && GROWTH_LMS[kind]) ? GROWTH_LMS[kind][sex==="M"?"M":"F"] : null;
+  if(!table || !table.length) return null;
+  if(months <= table[0][0]) return {L:table[0][1], M:table[0][2], S:table[0][3]};
+  if(months >= table[table.length-1][0]) return {L:table[table.length-1][1], M:table[table.length-1][2], S:table[table.length-1][3]};
+  var lo = 0, hi = table.length-1;
+  while(hi-lo>1){
+    var mid = (lo+hi)>>1;
+    if(table[mid][0] <= months) lo = mid; else hi = mid;
+  }
+  var a = table[lo], b = table[hi], t = (months-a[0])/((b[0]-a[0])||1);
+  return {L:a[1]+(b[1]-a[1])*t, M:a[2]+(b[2]-a[2])*t, S:a[3]+(b[3]-a[3])*t};
+}
+function lmsZ(y, lms){
+  if(!lms || !y || y<=0) return null;
+  if(Math.abs(lms.L) < 1e-6) return Math.log(y/lms.M)/lms.S;
+  return (Math.pow(y/lms.M, lms.L)-1)/(lms.L*lms.S);
+}
+function pctOf(kind, sex, months, value){
+  var z = lmsZ(value, lmsAt(kind, sex, months));
+  if(z==null || !isFinite(z)) return null;
+  return Math.max(0.1, Math.min(99.9, normCdf(z)*100));
+}
+function pctText(p){
+  if(p==null) return "계산 불가";
+  var top = Math.max(1, Math.round(100-p));
+  return "백분위 "+Math.round(p)+"% · 상위 약 "+top+"%";
+}
+function kidGrowthItems(kidId){
+  return (growth.items||[]).filter(function(x){ return x.kidId===kidId; })
+    .sort(function(a,b){ return (b.date||"").localeCompare(a.date||""); });
+}
 function kidById(id){
   for(var i=0;i<KIDS.length;i++) if(KIDS[i].id===id) return KIDS[i];
   return KIDS[0];
@@ -1055,10 +1249,12 @@ function applyView(){
   document.getElementById("viewMission").className = view==="mission" ? "on" : "";
   document.getElementById("viewSchedule").className = view==="schedule" ? "on" : "";
   document.getElementById("viewHospital").className = view==="hospital" ? "on" : "";
+  document.getElementById("viewGrowth").className = view==="growth" ? "on" : "";
   document.getElementById("todayView").style.display = view==="today" ? "" : "none";
   document.getElementById("missionView").style.display = view==="mission" ? "" : "none";
   document.getElementById("schedView").style.display = view==="schedule" ? "" : "none";
   document.getElementById("hospView").style.display = view==="hospital" ? "" : "none";
+  document.getElementById("growView").style.display = view==="growth" ? "" : "none";
   document.getElementById("tabs").style.display = (view==="hospital" || view==="today") ? "none" : "";
   var foot = document.getElementById("foot");
   if(foot) foot.textContent = view==="today"
@@ -1067,7 +1263,9 @@ function applyView(){
       ? "토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다"
       : view==="schedule"
         ? "반복 일정과 날짜별 준비물을 함께 봅니다."
-        : "병원 예약과 먹는 약을 함께 봅니다.";
+        : view==="hospital"
+          ? "병원 예약과 먹는 약을 함께 봅니다."
+          : "키·몸무게를 모아 두고, 또래 백분위를 참고로 봅니다.";
 }
 function render(){
   applyView();
@@ -1081,9 +1279,11 @@ function render(){
     renderSchedDays();
     renderSchedule();
     renderPacking();
-  } else {
+  } else if(view === "hospital"){
     renderHospital();
     renderMedicine();
+  } else {
+    renderGrowth();
   }
 }
 
@@ -1671,6 +1871,180 @@ function renderToday(){
   var tomo = fmt(addDays(TODAY,1));
   var todayP = packItems().filter(function(it){ return it.date===TODAY_KEY || it.date===tomo; });
   renderPackList(pk, todayP, "오늘·내일 준비물이 없습니다.");
+
+  var tg = document.getElementById("todayGrow");
+  if(tg){
+    tg.innerHTML = "";
+    var any = false;
+    KIDS.forEach(function(kid){
+      var last = kidGrowthItems(kid.id)[0];
+      if(!last) return;
+      any = true;
+      var row = document.createElement("div");
+      row.className = "rptrow";
+      row.innerHTML = avatar(kid,26)+'<div class="nm"><b>'+kid.name+'</b> · '+prettyDate(last.date)
+        +' · '+(last.height?last.height+"cm":"")+(last.height&&last.weight?" / ":"")+(last.weight?last.weight+"kg":"")
+        + growPctLine(kid.id, last)+"</div>";
+      row.onclick = function(){ curKid = kidIndex(kid.id); view = "growth"; render(); };
+      tg.appendChild(row);
+    });
+    if(!any) tg.innerHTML = '<p class="note">아직 기록이 없습니다. 성장 메뉴에서 키·몸무게를 넣으세요.</p>';
+  }
+}
+
+function growPctLine(kidId, it){
+  var pr = (growth.profiles||{})[kidId] || {};
+  if(!pr.birth || !it) return "";
+  var mo = ageMonthsOn(pr.birth, it.date);
+  if(mo==null) return "";
+  var bits = [];
+  if(it.height) bits.push("키 "+pctText(pctOf("h", pr.sex, mo, +it.height)));
+  if(it.weight) bits.push("몸무게 "+pctText(pctOf("w", pr.sex, mo, +it.weight)));
+  return bits.length ? '<div class="note" style="margin:2px 0 0">'+bits.join("<br>")+"</div>" : "";
+}
+function renderGrowth(){
+  ensureGrowth();
+  var kid = KIDS[curKid];
+  var pr = growth.profiles[kid.id] || {birth:"", sex:"F"};
+  var birthEl = document.getElementById("gidBirth");
+  if(birthEl && document.activeElement !== birthEl) birthEl.value = pr.birth || "";
+  document.querySelectorAll("#gidSex button").forEach(function(b){
+    b.className = b.getAttribute("data-s") === (pr.sex||"F") ? "on" : "";
+  });
+  var ageEl = document.getElementById("growAge");
+  if(ageEl) ageEl.textContent = pr.birth
+    ? ("오늘 기준 "+ageLabel(pr.birth, TODAY_KEY))
+    : "생년월일을 넣으면 또래 백분위를 계산합니다.";
+  var items = kidGrowthItems(kid.id);
+  var now = document.getElementById("growNow");
+  var hist = document.getElementById("growHist");
+  if(!items.length){
+    now.innerHTML = '<p class="note">기록이 없습니다. 아래 버튼으로 키와 몸무게를 넣으세요.</p>';
+    hist.innerHTML = '<p class="note">이전 기록이 없습니다.</p>';
+    return;
+  }
+  var last = items[0];
+  var bmi = (last.height && last.weight) ? (last.weight/Math.pow(last.height/100,2)) : 0;
+  now.innerHTML = '<div class="gstat">'
+    + '<div class="gchip"><span>키</span><b>'+(last.height||"-")+'cm</b></div>'
+    + '<div class="gchip"><span>몸무게</span><b>'+(last.weight||"-")+'kg</b></div>'
+    + '<div class="gchip"><span>BMI</span><b>'+(bmi?bmi.toFixed(1):"-")+'</b></div>'
+    + '<div class="gchip"><span>측정일</span><b>'+prettyDate(last.date)+'</b></div></div>'
+    + growPctLine(kid.id, last);
+  hist.innerHTML = "";
+  items.slice(1).forEach(function(it){
+    var row = document.createElement("div");
+    row.className = "sev";
+    row.innerHTML = '<div class="when">'+prettyDate(it.date)+"</div>"
+      + '<div class="ttl">'+(it.height?it.height+"cm":"")+(it.height&&it.weight?" · ":"")+(it.weight?it.weight+"kg":"")
+      + growPctLine(kid.id, it)+"</div>";
+    row.onclick = function(){ openGrowDlg(it); };
+    hist.appendChild(row);
+  });
+  if(items.length===1) hist.innerHTML = '<p class="note">이전 기록이 없습니다. 다음에 재면 여기에 쌓입니다.</p>';
+}
+function openGrowDlg(it){
+  growEditId = it ? it.id : null;
+  document.getElementById("growDlgTitle").textContent = it ? "기록 수정" : "키 · 몸무게";
+  document.getElementById("gridDate").value = it ? it.date : TODAY_KEY;
+  document.getElementById("gridH").value = it && it.height ? it.height : "";
+  document.getElementById("gridW").value = it && it.weight ? it.weight : "";
+  document.getElementById("gridDel").style.display = it ? "" : "none";
+  document.getElementById("growDlg").style.display = "flex";
+}
+function closeGrowDlg(){
+  document.getElementById("growDlg").style.display = "none";
+  growEditId = null;
+}
+function saveGrowDlg(){
+  var date = document.getElementById("gridDate").value;
+  var h = parseFloat(document.getElementById("gridH").value);
+  var w = parseFloat(document.getElementById("gridW").value);
+  if(!date){ setSync("측정일을 골라 주세요"); return; }
+  if(!(h>0) && !(w>0)){ setSync("키 또는 몸무게를 적어 주세요"); return; }
+  var ev = {
+    id: growEditId || ("g"+Date.now().toString(36)),
+    kidId: KIDS[curKid].id,
+    date: date,
+    height: h>0 ? Math.round(h*10)/10 : "",
+    weight: w>0 ? Math.round(w*10)/10 : ""
+  };
+  upsertById(growth.items, ev);
+  closeGrowDlg();
+  saveGrowth();
+  render();
+}
+function delGrowDlg(){
+  if(!growEditId) return;
+  if(!window.confirm("이 기록을 지울까요?")) return;
+  growth.items = growth.items.filter(function(x){ return x.id !== growEditId; });
+  closeGrowDlg();
+  saveGrowth();
+  render();
+}
+function saveGrowProfile(){
+  ensureGrowth();
+  var kid = KIDS[curKid];
+  growth.profiles[kid.id] = growth.profiles[kid.id] || {birth:"", sex:"F"};
+  growth.profiles[kid.id].birth = document.getElementById("gidBirth").value;
+  saveGrowth();
+  render();
+}
+function printGroups(kid){
+  var core = [];
+  kid.groups.forEach(function(g){
+    var n = g.name.replace(" · 아이스크림","");
+    if(n==="학교 숙제") n = "학교";
+    else if(n==="어린이집") n = "등원";
+    else if(n.indexOf("홈런")>=0) n = "학습";
+    if(n!=="학습" && core.indexOf(n)<0) core.push(n);
+  });
+  if(core.indexOf("생활")<0) core.push("생활");
+  if(core.length<=4) return core;
+  var keep = [core[0]];
+  core.forEach(function(n){
+    if(n!=="생활" && keep.indexOf(n)<0 && keep.length<3) keep.push(n);
+  });
+  keep.push("생활");
+  return keep;
+}
+function buildPrintSheet(){
+  var y = printYM.y, m = printYM.m;
+  var last = new Date(y, m+1, 0).getDate();
+  document.getElementById("printMonthLabel").textContent = y+"년 "+(m+1)+"월 숙제 체크표";
+  var head = "<tr><th rowspan='2'>날</th>";
+  KIDS.forEach(function(k){
+    var gs = printGroups(k);
+    head += "<th colspan='"+gs.length+"'>"+k.name.replace("김","")+"</th>";
+  });
+  head += "</tr><tr>";
+  KIDS.forEach(function(k){
+    printGroups(k).forEach(function(g){ head += "<th>"+g+"</th>"; });
+  });
+  head += "</tr>";
+  var body = "";
+  for(var d=1;d<=last;d++){
+    var dt = new Date(y,m,d);
+    var wk = dt.getDay()===0 || dt.getDay()===6;
+    body += "<tr class='"+(wk?"wk":"")+"'><td>"+d+" "+DAYN[(dt.getDay()+6)%7]+"</td>";
+    KIDS.forEach(function(k){
+      printGroups(k).forEach(function(){ body += "<td><span class='box'></span></td>"; });
+    });
+    body += "</tr>";
+  }
+  document.getElementById("printSheet").innerHTML =
+    "<div style='font-family:Do Hyeon,sans-serif;font-size:18px;margin-bottom:6px'>"+y+"년 "+(m+1)+"월 숙제 체크표 · 하주 · 하유 · 하서</div>"
+    + "<table class='psheet'><thead>"+head+"</thead><tbody>"+body+"</tbody></table>"
+    + "<p class='note' style='margin-top:6px'>끝나면 V 표시 · A4 가로 1장 · 주말은 노란 칸</p>";
+}
+function openPrintPreview(){
+  printYM = {y: TODAY.getFullYear(), m: TODAY.getMonth()};
+  buildPrintSheet();
+  document.getElementById("printPreview").style.display = "block";
+}
+function closePrintPreview(){
+  document.getElementById("printPreview").style.display = "none";
+  document.body.classList.remove("printing");
 }
 
 function taskRow(kid, key, it){
@@ -1874,6 +2248,7 @@ function renderReport(){
 /* ============ 조작 ============ */
 document.getElementById("viewToday").onclick = function(){ view = "today"; render(); };
 document.getElementById("viewMission").onclick = function(){ view = "mission"; render(); };
+document.getElementById("viewGrowth").onclick = function(){ view = "growth"; render(); };
 document.getElementById("viewSchedule").onclick = function(){
   view = "schedule";
   schedDay = (curDate.getDay()+6)%7;
@@ -1954,7 +2329,41 @@ document.getElementById("todayW").onclick = function(){
     render();
   }
 };
-document.getElementById("printBtn").onclick = function(){ window.print(); };
+document.getElementById("printBtn").onclick = function(){
+  document.getElementById("moreBar").style.display = "none";
+  document.getElementById("moreBtn").className = "";
+  document.getElementById("moreBtn").textContent = "더보기";
+  openPrintPreview();
+};
+document.getElementById("printPrevM").onclick = function(){
+  printYM.m--; if(printYM.m<0){ printYM.m=11; printYM.y--; } buildPrintSheet();
+};
+document.getElementById("printNextM").onclick = function(){
+  printYM.m++; if(printYM.m>11){ printYM.m=0; printYM.y++; } buildPrintSheet();
+};
+document.getElementById("printGo").onclick = function(){
+  document.body.classList.add("printing");
+  window.print();
+};
+document.getElementById("printClose").onclick = closePrintPreview;
+window.addEventListener("afterprint", function(){ document.body.classList.remove("printing"); });
+document.getElementById("growAdd").onclick = function(){ openGrowDlg(null); };
+document.getElementById("gridSave").onclick = saveGrowDlg;
+document.getElementById("gridDel").onclick = delGrowDlg;
+document.getElementById("gridCancel").onclick = closeGrowDlg;
+document.getElementById("growDlg").addEventListener("click", function(e){
+  if(e.target.id === "growDlg") closeGrowDlg();
+});
+document.getElementById("gidBirth").addEventListener("change", saveGrowProfile);
+document.querySelectorAll("#gidSex button").forEach(function(b){
+  b.onclick = function(){
+    ensureGrowth();
+    growth.profiles[KIDS[curKid].id] = growth.profiles[KIDS[curKid].id] || {birth:"", sex:"F"};
+    growth.profiles[KIDS[curKid].id].sex = b.getAttribute("data-s");
+    saveGrowth();
+    render();
+  };
+});
 document.getElementById("backupBtn").onclick = function(){
   var txt = JSON.stringify({week:weekKey(), data:data});
   if(navigator.clipboard && navigator.clipboard.writeText){
@@ -2046,6 +2455,17 @@ function subscribe(){
         setSync("상대방 변경 반영됨 ✔");
         return;
       }
+      if(row.week_start === GROWTH_WEEK){
+        if(growPending) return;
+        if(row.data && typeof row.data === "object"){
+          growth = row.data;
+          ensureGrowth();
+          cacheGrowth();
+          render();
+        }
+        setSync("상대방 변경 반영됨 ✔");
+        return;
+      }
       if(row.week_start !== weekKey()) return;
       if(pending) return;
       data = row.data || {};
@@ -2056,7 +2476,7 @@ function subscribe(){
     .subscribe();
 }
 document.addEventListener("visibilitychange", function(){
-  if(!document.hidden && allowed){ pull(); pullSchedule(); pullHospital(); pullMedicine(); pullPacking(); }
+  if(!document.hidden && allowed){ pull(); pullSchedule(); pullHospital(); pullMedicine(); pullPacking(); pullGrowth(); }
 });
 
 
@@ -2124,6 +2544,7 @@ function enterApp(){
   pullHospital();
   pullMedicine();
   pullPacking();
+  pullGrowth();
   subscribe();
 }
 function enterOffline(msg){
