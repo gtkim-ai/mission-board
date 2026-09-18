@@ -181,6 +181,32 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .usebtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .usebtns button{flex:1;min-height:44px}
 .weeknav button{min-height:44px;min-width:48px;font-size:15px}
+.views{display:flex;gap:8px;margin-bottom:8px}
+.views button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:16px;min-height:44px}
+.sev{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--panel2);
+  border:3px solid var(--line);margin-bottom:7px;min-height:52px}
+.sev .when{width:72px;flex:none;font-size:12px;color:var(--dim);line-height:1.3}
+.sev .ttl{flex:1;font-size:15px}
+.sev .kd{font-size:11px;border:2px solid var(--line);padding:2px 5px;white-space:nowrap}
+.sev .kd.school{background:var(--grass);color:#fff}
+.sev .kd.academy{background:var(--gold);color:#2b241a}
+.sev .kd.other{background:var(--dia);color:#123}
+.sgrid{display:grid;grid-template-columns:28px repeat(7,1fr);gap:4px;align-items:stretch;font-size:11px}
+.sgrid b{display:flex;align-items:center;justify-content:center;padding:6px 0;font-family:'Do Hyeon',sans-serif;font-size:13px}
+.sgrid .scell{min-height:44px;background:var(--panel2);border:2px solid var(--line);padding:3px 2px;line-height:1.25}
+.sgrid .scell.on{outline:2px solid var(--gold);outline-offset:-2px}
+.schip{display:block;margin:0 0 3px;padding:2px 3px;border:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.schip.school{background:var(--grass);color:#fff}
+.schip.academy{background:var(--gold);color:#2b241a}
+.schip.other{background:var(--dia);color:#123}
+#schedDlg{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,.35);padding:12px}
+#schedDlg .gatebox{max-width:420px;margin-bottom:env(safe-area-inset-bottom)}
+#schedDlg .daysel{display:flex;gap:4px}
+#schedDlg .daysel button{flex:1;padding:8px 0;min-height:44px;font-size:13px}
+#schedDlg .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#schedDlg .kinds{display:flex;gap:6px}
+#schedDlg .kinds button{flex:1;min-height:44px}
 @media (max-width:430px){
   header h1{font-size:18px}
   header .inner{padding:7px 8px}
@@ -193,7 +219,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 }
 @media print{
   body{background:#fff;color:#000;padding:0}
-  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,#moreBtn,#moreBar,footer,#sync{display:none!important}
+  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,#moreBtn,#moreBar,#viewTabs,#schedAdd,#schedDlg,footer,#sync{display:none!important}
   button.rpthead{display:flex!important}
   #report{display:block!important}
   .card{box-shadow:none;break-inside:avoid}
@@ -224,8 +250,14 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   </div>
 </header>
 
+<div class="views" id="viewTabs">
+  <button type="button" id="viewMission" class="on">미션</button>
+  <button type="button" id="viewSchedule">일정</button>
+</div>
+
 <div class="tabs" id="tabs"></div>
 
+<div id="missionView">
 <div class="weeknav">
   <button id="prevW">◀</button>
   <div class="label" id="weekLabel">–</div>
@@ -258,6 +290,51 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   <div class="head">💎 게임 시간</div>
   <div class="body" id="bank"></div>
 </div>
+</div>
+
+<div id="schedView" style="display:none">
+  <div class="days" id="schedDays"></div>
+  <div class="card">
+    <div class="head"><span id="schedTitle">오늘의 일정</span></div>
+    <div class="body" id="schedList"></div>
+  </div>
+  <div class="card">
+    <div class="head">한 주 한눈에</div>
+    <div class="body" id="schedWeek"></div>
+  </div>
+  <button type="button" id="schedAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 학교·학원 일정 추가</button>
+</div>
+
+<div id="schedDlg">
+  <div class="gatebox">
+    <div class="gtitle" id="schedDlgTitle">일정</div>
+    <label for="sidTitle">이름</label>
+    <input id="sidTitle" type="text" placeholder="예: 태권도, 영어학원">
+    <label>종류</label>
+    <div class="kinds" id="sidKinds">
+      <button type="button" data-k="school">학교</button>
+      <button type="button" data-k="academy" class="on">학원</button>
+      <button type="button" data-k="other">기타</button>
+    </div>
+    <label>요일</label>
+    <div class="daysel" id="sidDays"></div>
+    <div class="times">
+      <div>
+        <label for="sidStart">시작</label>
+        <input id="sidStart" type="time">
+      </div>
+      <div>
+        <label for="sidEnd">끝</label>
+        <input id="sidEnd" type="time">
+      </div>
+    </div>
+    <label for="sidPlace">장소 (선택)</label>
+    <input id="sidPlace" type="text" placeholder="예: 학교, ○○태권도">
+    <button type="button" id="sidSave">저장</button>
+    <button type="button" id="sidDel" class="sub">삭제</button>
+    <button type="button" id="sidCancel" class="sub">닫기</button>
+  </div>
+</div>
 
 <div class="row" style="margin-bottom:10px">
   <button id="moreBtn">더보기</button>
@@ -272,7 +349,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   <button id="restoreBtn">📥 복원</button>
 </div>
 
-<footer>토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다</footer>
+<footer id="foot">토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다</footer>
 
 <script>
 (function(){
@@ -340,6 +417,8 @@ var HABITS = [
 ];
 var BASE_MIN = 120, PENALTY = 30;
 var DAYN = ["월","화","수","목","금","토","일"];
+var SCHEDULE_WEEK = "1970-01-01";
+var KINDN = {school:"학교", academy:"학원", other:"기타"};
 
 /* 하루 필수 항목 (주간목표 항목은 제외, 부모 항목은 하위로 대체) */
 function requiredIds(kid, date){
@@ -384,6 +463,10 @@ var sb = null, chan = null, saveTimer = null, pending = false, pendingClear = nu
 var myEmail = "", allowed = false, sessionGen = 0;
 var baseData = {};
 var rptOpen = false;
+var view = "mission";
+var schedDay = (TODAY.getDay()+6)%7;
+var schedule = {};
+var schedPending = false, schedTimer = null, schedEditId = null, schedKind = "academy";
 
 function weekKey(){ return fmt(weekStart); }
 function lsKey(){ return "mission:"+weekKey(); }
@@ -407,6 +490,77 @@ function loadLocal(){
   catch(e){ data = {}; }
   if(!data || typeof data !== "object") data = {};
   setBase();
+  loadScheduleLocal();
+}
+function defaultSchedule(){
+  return {
+    hajoo:[
+      {id:"hajoo-school", kind:"school", title:"학교", place:"", start:"09:00", end:"15:00", days:[0,1,2,3,4]},
+      {id:"hajoo-tkd", kind:"academy", title:"태권도", place:"", start:"16:00", end:"17:30", days:[1,3]}
+    ],
+    hayoo:[
+      {id:"hayoo-school", kind:"school", title:"학교", place:"", start:"09:00", end:"15:00", days:[0,1,2,3,4]},
+      {id:"hayoo-tkd", kind:"academy", title:"태권도", place:"", start:"16:00", end:"17:30", days:[1,3]}
+    ]
+  };
+}
+function ensureSchedule(){
+  if(!schedule || typeof schedule !== "object") schedule = {};
+  KIDS.forEach(function(k){
+    if(!Array.isArray(schedule[k.id])) schedule[k.id] = [];
+  });
+}
+function loadScheduleLocal(){
+  try{
+    var raw = localStorage.getItem("mission:schedule");
+    schedule = raw ? JSON.parse(raw) : defaultSchedule();
+  }catch(e){ schedule = defaultSchedule(); }
+  ensureSchedule();
+}
+function cacheSchedule(){
+  try{ localStorage.setItem("mission:schedule", JSON.stringify(schedule)); }catch(e){}
+}
+function evOnDay(ev, di){
+  return ev && ev.days && ev.days.indexOf(di) >= 0;
+}
+function kidEvents(){
+  var kid = KIDS[curKid];
+  return (schedule[kid.id] || []).slice().sort(function(a,b){
+    return (a.start||"").localeCompare(b.start||"");
+  });
+}
+function saveSchedule(){
+  cacheSchedule();
+  if(!sb || !allowed){ setSync(!sb ? "저장 실패: 연결할 수 없습니다" : "이 기기에만 저장됨"); return; }
+  schedPending = true;
+  clearTimeout(schedTimer);
+  setSync("저장 중…");
+  var snap = clone(schedule);
+  schedTimer = setTimeout(function(){
+    sb.from("mission_weeks").upsert({
+      week_start: SCHEDULE_WEEK, data: snap,
+      updated_at: new Date().toISOString(), updated_by: myEmail
+    }, {onConflict:"week_start"}).then(function(r){
+      schedPending = false;
+      setSync(r.error ? "저장 실패: " + r.error.message : "일정 저장됨 ✔");
+    }).catch(function(e){
+      schedPending = false;
+      setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
+    });
+  }, 400);
+}
+function pullSchedule(){
+  if(!sb || !allowed) return;
+  sb.from("mission_weeks").select("data").eq("week_start", SCHEDULE_WEEK).maybeSingle()
+    .then(function(r){
+      if(r.error){ setSync("일정 불러오기 실패: " + r.error.message); return; }
+      if(r.data && r.data.data && typeof r.data.data === "object"){
+        schedule = r.data.data;
+        ensureSchedule();
+        cacheSchedule();
+        render();
+      }
+    });
 }
 function clone(o){
   try{ return JSON.parse(JSON.stringify(o || {})); }
@@ -543,9 +697,27 @@ function avatar(skin, size){
 }
 
 /* ============ 렌더링 ============ */
+function applyView(){
+  var mission = view === "mission";
+  document.getElementById("viewMission").className = mission ? "on" : "";
+  document.getElementById("viewSchedule").className = mission ? "" : "on";
+  document.getElementById("missionView").style.display = mission ? "" : "none";
+  document.getElementById("schedView").style.display = mission ? "none" : "";
+  var foot = document.getElementById("foot");
+  if(foot) foot.textContent = mission
+    ? "토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다"
+    : "반복되는 학교·학원 일정입니다. 칸을 누르면 수정할 수 있어요.";
+}
 function render(){
-  renderTabs(); renderWeek(); renderDays();
-  renderTasks(); renderHabits(); renderBank(); renderReport();
+  applyView();
+  renderTabs();
+  if(view === "mission"){
+    renderWeek(); renderDays();
+    renderTasks(); renderHabits(); renderBank(); renderReport();
+  } else {
+    renderSchedDays();
+    renderSchedule();
+  }
 }
 
 function renderTabs(){
@@ -588,6 +760,161 @@ function renderDays(){
       el.appendChild(b);
     })(i);
   }
+}
+
+function renderSchedDays(){
+  var el = document.getElementById("schedDays"); if(!el) return;
+  el.innerHTML = "";
+  var evs = kidEvents();
+  for(var i=0;i<7;i++){
+    (function(i){
+      var n = 0;
+      evs.forEach(function(ev){ if(evOnDay(ev,i)) n++; });
+      var b = document.createElement("button");
+      b.className = (i===schedDay ? "sel " : "") + (i===((TODAY.getDay()+6)%7) ? "today " : "") + (i>=5 ? "wk" : "");
+      b.innerHTML = '<span class="d">'+DAYN[i]+'</span><span>'+(n?n+"개":"–")+'</span><span class="dot '+(n?"done":"")+'"></span>';
+      b.onclick = function(){ schedDay = i; render(); };
+      el.appendChild(b);
+    })(i);
+  }
+}
+
+function renderSchedule(){
+  var kid = KIDS[curKid];
+  var title = document.getElementById("schedTitle");
+  if(title) title.textContent = DAYN[schedDay]+"요일 · "+kid.name;
+  var list = document.getElementById("schedList");
+  if(list){
+    list.innerHTML = "";
+    var dayEvs = kidEvents().filter(function(ev){ return evOnDay(ev, schedDay); });
+    if(!dayEvs.length){
+      list.innerHTML = '<p class="note">이 요일 일정이 없습니다. 아래 버튼으로 학교·학원을 넣으세요.</p>';
+    }
+    dayEvs.forEach(function(ev){
+      var row = document.createElement("div");
+      row.className = "sev";
+      row.innerHTML = '<div class="when">'+(ev.start||"--:--")+'<br>'+(ev.end||"")+'</div>'
+        + '<div class="ttl">'+ev.title+(ev.place?'<div class="note" style="margin:2px 0 0">'+ev.place+"</div>":"")+"</div>"
+        + '<span class="kd '+ev.kind+'">'+(KINDN[ev.kind]||"기타")+"</span>";
+      row.onclick = function(){ openSchedDlg(ev); };
+      list.appendChild(row);
+    });
+  }
+  var week = document.getElementById("schedWeek");
+  if(week){
+    week.innerHTML = "";
+    var grid = document.createElement("div");
+    grid.className = "sgrid";
+    grid.appendChild(document.createElement("b"));
+    DAYN.forEach(function(n,i){
+      var h = document.createElement("b");
+      h.textContent = n;
+      if(i===schedDay) h.style.color = "var(--gold)";
+      grid.appendChild(h);
+    });
+    var kinds = ["school","academy","other"];
+    kinds.forEach(function(kd){
+      var lab = document.createElement("b");
+      lab.textContent = KINDN[kd];
+      grid.appendChild(lab);
+      for(var i=0;i<7;i++){
+        var cell = document.createElement("div");
+        cell.className = "scell" + (i===schedDay ? " on" : "");
+        kidEvents().forEach(function(ev){
+          if(ev.kind!==kd || !evOnDay(ev,i)) return;
+          var chip = document.createElement("span");
+          chip.className = "schip "+kd;
+          chip.textContent = ev.title;
+          cell.appendChild(chip);
+        });
+        grid.appendChild(cell);
+      }
+    });
+    week.appendChild(grid);
+    var hint = document.createElement("p");
+    hint.className = "note";
+    hint.textContent = "시간은 예시입니다. 우리 집 시간에 맞게 눌러서 고치세요.";
+    week.appendChild(hint);
+  }
+}
+
+function fillSidDays(){
+  var box = document.getElementById("sidDays");
+  box.innerHTML = "";
+  DAYN.forEach(function(n,i){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = n;
+    b.setAttribute("data-d", String(i));
+    b.onclick = function(){ b.className = b.className === "on" ? "" : "on"; };
+    box.appendChild(b);
+  });
+}
+function selectedSidDays(){
+  var out = [];
+  document.querySelectorAll("#sidDays button.on").forEach(function(b){
+    out.push(+b.getAttribute("data-d"));
+  });
+  return out;
+}
+function setSidKind(k){
+  schedKind = k;
+  document.querySelectorAll("#sidKinds button").forEach(function(b){
+    b.className = b.getAttribute("data-k") === k ? "on" : "";
+  });
+}
+function openSchedDlg(ev){
+  fillSidDays();
+  schedEditId = ev ? ev.id : null;
+  document.getElementById("schedDlgTitle").textContent = ev ? "일정 수정" : "일정 추가";
+  document.getElementById("sidTitle").value = ev ? ev.title : "";
+  document.getElementById("sidPlace").value = ev ? (ev.place||"") : "";
+  document.getElementById("sidStart").value = ev ? ev.start : "16:00";
+  document.getElementById("sidEnd").value = ev ? ev.end : "17:30";
+  setSidKind(ev ? ev.kind : "academy");
+  var days = ev ? ev.days : [schedDay];
+  document.querySelectorAll("#sidDays button").forEach(function(b){
+    b.className = days.indexOf(+b.getAttribute("data-d")) >= 0 ? "on" : "";
+  });
+  document.getElementById("sidDel").style.display = ev ? "" : "none";
+  document.getElementById("schedDlg").style.display = "flex";
+}
+function closeSchedDlg(){
+  document.getElementById("schedDlg").style.display = "none";
+  schedEditId = null;
+}
+function saveSchedDlg(){
+  var title = document.getElementById("sidTitle").value.trim();
+  var days = selectedSidDays();
+  if(!title){ setSync("일정 이름을 적어 주세요"); return; }
+  if(!days.length){ setSync("요일을 하나 이상 고르세요"); return; }
+  var kid = KIDS[curKid];
+  ensureSchedule();
+  var ev = {
+    id: schedEditId || ("s"+Date.now().toString(36)),
+    kind: schedKind || "other",
+    title: title,
+    place: document.getElementById("sidPlace").value.trim(),
+    start: document.getElementById("sidStart").value || "",
+    end: document.getElementById("sidEnd").value || "",
+    days: days
+  };
+  var arr = schedule[kid.id];
+  var idx = -1;
+  arr.forEach(function(x,i){ if(x.id===ev.id) idx=i; });
+  if(idx>=0) arr[idx] = ev; else arr.push(ev);
+  closeSchedDlg();
+  saveSchedule();
+  render();
+}
+function delSchedDlg(){
+  if(!schedEditId) return;
+  if(!window.confirm("이 일정을 지울까요?")) return;
+  var kid = KIDS[curKid];
+  schedule[kid.id] = (schedule[kid.id]||[]).filter(function(x){ return x.id !== schedEditId; });
+  closeSchedDlg();
+  saveSchedule();
+  render();
 }
 
 function taskRow(kid, key, it){
@@ -784,6 +1111,22 @@ function renderReport(){
 }
 
 /* ============ 조작 ============ */
+document.getElementById("viewMission").onclick = function(){ view = "mission"; render(); };
+document.getElementById("viewSchedule").onclick = function(){
+  view = "schedule";
+  schedDay = (curDate.getDay()+6)%7;
+  render();
+};
+document.getElementById("schedAdd").onclick = function(){ openSchedDlg(null); };
+document.getElementById("sidSave").onclick = saveSchedDlg;
+document.getElementById("sidDel").onclick = delSchedDlg;
+document.getElementById("sidCancel").onclick = closeSchedDlg;
+document.getElementById("schedDlg").addEventListener("click", function(e){
+  if(e.target.id === "schedDlg") closeSchedDlg();
+});
+document.querySelectorAll("#sidKinds button").forEach(function(b){
+  b.onclick = function(){ setSidKind(b.getAttribute("data-k")); };
+});
 document.getElementById("reportToggle").onclick = function(){
   rptOpen = !rptOpen;
   applyReportOpen();
@@ -864,7 +1207,17 @@ function subscribe(){
   chan = sb.channel("mission-sync")
     .on("postgres_changes", {event:"*", schema:"public", table:"mission_weeks"}, function(p){
       var row = p["new"];
-      if(!row || row.week_start !== weekKey()) return;
+      if(!row) return;
+      if(row.week_start === SCHEDULE_WEEK){
+        if(schedPending) return;
+        schedule = row.data || defaultSchedule();
+        ensureSchedule();
+        cacheSchedule();
+        render();
+        setSync("상대방 변경 반영됨 ✔");
+        return;
+      }
+      if(row.week_start !== weekKey()) return;
       if(pending) return;
       data = row.data || {};
       setBase();
@@ -874,7 +1227,7 @@ function subscribe(){
     .subscribe();
 }
 document.addEventListener("visibilitychange", function(){
-  if(!document.hidden && allowed) pull();
+  if(!document.hidden && allowed){ pull(); pullSchedule(); }
 });
 
 
@@ -938,6 +1291,7 @@ function enterApp(){
   document.getElementById("who").textContent = myEmail;
   loadLocal(); render();
   pull();
+  pullSchedule();
   subscribe();
 }
 function enterOffline(msg){
