@@ -155,7 +155,7 @@ button.rpthead:active{box-shadow:inset 4px 4px 0 var(--shadow)}
 .rptchev{flex:none;font-size:14px;opacity:.85}
 .rptlist{display:flex;flex-direction:column;gap:6px}
 .rptrow{display:flex;align-items:center;gap:8px;padding:8px;background:var(--panel2);
-  border:3px solid var(--line);min-height:44px;font-size:13px}
+  border:3px solid var(--line);min-height:44px;font-size:13px;cursor:pointer}
 .rptrow .nm{flex:1;min-width:0}
 .rptrow .ok-badge{font-size:13px;padding:4px 7px;box-shadow:none;white-space:nowrap}
 footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
@@ -181,10 +181,11 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .usebtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .usebtns button{flex:1;min-height:44px}
 .weeknav button{min-height:44px;min-width:48px;font-size:15px}
-.views{display:flex;gap:8px;margin-bottom:8px}
-.views button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:16px;min-height:44px}
-.sev{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--panel2);
+.views{display:flex;gap:6px;margin-bottom:8px}
+.views button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:15px;min-height:44px;padding:7px 4px}
+.sev{display:flex;align-items:flex-start;flex-wrap:wrap;gap:10px;padding:10px;background:var(--panel2);
   border:3px solid var(--line);margin-bottom:7px;min-height:52px}
+.sev .doses{flex-basis:100%;margin-top:0}
 .sev .when{width:72px;flex:none;font-size:12px;color:var(--dim);line-height:1.3}
 .sev .ttl{flex:1;font-size:15px}
 .sev .kd{font-size:11px;border:2px solid var(--line);padding:2px 5px;white-space:nowrap}
@@ -201,19 +202,25 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 .schip.academy{background:var(--gold);color:#2b241a}
 .schip.other{background:var(--dia);color:#123}
 .schip.daycare{background:#e07a6f;color:#fff}
-#schedDlg,#hospDlg{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
+#schedDlg,#hospDlg,#medDlg,#packDlg{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
   background:rgba(0,0,0,.35);padding:12px}
-#schedDlg .gatebox,#hospDlg .gatebox{max-width:420px;margin-bottom:env(safe-area-inset-bottom);max-height:90vh;overflow:auto}
+#schedDlg .gatebox,#hospDlg .gatebox,#medDlg .gatebox,#packDlg .gatebox{max-width:420px;margin-bottom:env(safe-area-inset-bottom);max-height:90vh;overflow:auto}
 #schedDlg .daysel{display:flex;gap:4px}
 #schedDlg .daysel button{flex:1;padding:8px 0;min-height:44px;font-size:13px}
-#schedDlg .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-#schedDlg .kinds,#hospDlg .kinds{display:flex;gap:6px;flex-wrap:wrap}
-#schedDlg .kinds button,#hospDlg .kinds button{flex:1;min-height:44px;min-width:72px}
+#schedDlg .times,#medDlg .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#schedDlg .kinds,#hospDlg .kinds,#medDlg .kinds,#packDlg .kinds,#medDlg .doses{display:flex;gap:6px;flex-wrap:wrap}
+#schedDlg .kinds button,#hospDlg .kinds button,#medDlg .kinds button,#packDlg .kinds button,#medDlg .doses button{flex:1;min-height:44px;min-width:64px}
+.doses{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.doses button{flex:1;min-height:40px;font-size:13px}
+.chk{width:28px;height:28px;flex:none;background:var(--panel);border:3px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;margin-top:2px}
+.chk.on{background:var(--grass)}
+.sev.done .ttl{opacity:.55;text-decoration:line-through}
 @media (max-width:430px){
   header h1{font-size:18px}
   header .inner{padding:7px 8px}
   .tabs button{font-size:14px;min-height:48px}
-  .views button{font-size:15px}
+  .views button{font-size:14px}
   .weeknav .label{font-size:14px;padding:9px 2px}
   .card > .head{font-size:16px}
   .card > .body{padding:10px}
@@ -222,7 +229,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 }
 @media print{
   body{background:#fff;color:#000;padding:0}
-  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,#moreBtn,#moreBar,#viewTabs,#schedAdd,#hospAdd,#schedDlg,#hospDlg,footer,#sync{display:none!important}
+  button,.weeknav,#printBtn,#backupBtn,#restoreBtn,#moreBtn,#moreBar,#viewTabs,#schedAdd,#hospAdd,#medAdd,#packAdd,#schedDlg,#hospDlg,#medDlg,#packDlg,footer,#sync{display:none!important}
   button.rpthead{display:flex!important}
   #report{display:block!important}
   .card{box-shadow:none;break-inside:avoid}
@@ -254,14 +261,38 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 </header>
 
 <div class="views" id="viewTabs">
-  <button type="button" id="viewMission" class="on">미션</button>
+  <button type="button" id="viewToday" class="on">오늘</button>
+  <button type="button" id="viewMission">미션</button>
   <button type="button" id="viewSchedule">일정</button>
   <button type="button" id="viewHospital">병원</button>
 </div>
 
 <div class="tabs" id="tabs"></div>
 
-<div id="missionView">
+<div id="todayView">
+  <div class="card">
+    <div class="head">오늘 미션</div>
+    <div class="body" id="todayMissions"></div>
+  </div>
+  <div class="card">
+    <div class="head">오늘 일정</div>
+    <div class="body" id="todaySched"></div>
+  </div>
+  <div class="card">
+    <div class="head">오늘 병원</div>
+    <div class="body" id="todayHosp"></div>
+  </div>
+  <div class="card">
+    <div class="head">오늘 약</div>
+    <div class="body" id="todayMed"></div>
+  </div>
+  <div class="card">
+    <div class="head">오늘 · 내일 준비물</div>
+    <div class="body" id="todayPack"></div>
+  </div>
+</div>
+
+<div id="missionView" style="display:none">
 <div class="weeknav">
   <button id="prevW">◀</button>
   <div class="label" id="weekLabel">–</div>
@@ -307,6 +338,19 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <div class="body" id="schedWeek"></div>
   </div>
   <button type="button" id="schedAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 학교·학원·어린이집 일정 추가</button>
+  <div class="card">
+    <div class="head">준비물</div>
+    <div class="body" id="packSoon"></div>
+  </div>
+  <div class="card">
+    <button type="button" class="head rpthead" id="packPastToggle" aria-expanded="false">
+      <span>지난 준비물</span>
+      <span class="rptsum" id="packPastSum"></span>
+      <span class="rptchev" id="packPastChev">▼</span>
+    </button>
+    <div class="body" id="packPast" style="display:none"></div>
+  </div>
+  <button type="button" id="packAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 준비물 추가</button>
 </div>
 
 <div id="hospView" style="display:none">
@@ -323,6 +367,19 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <div class="body" id="hospPast" style="display:none"></div>
   </div>
   <button type="button" id="hospAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 병원 일정 추가</button>
+  <div class="card">
+    <div class="head">먹는 약</div>
+    <div class="body" id="medNow"></div>
+  </div>
+  <div class="card">
+    <button type="button" class="head rpthead" id="medPastToggle" aria-expanded="false">
+      <span>지난 약</span>
+      <span class="rptsum" id="medPastSum"></span>
+      <span class="rptchev" id="medPastChev">▼</span>
+    </button>
+    <div class="body" id="medPast" style="display:none"></div>
+  </div>
+  <button type="button" id="medAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 약 추가</button>
 </div>
 
 <div id="hospDlg">
@@ -343,6 +400,53 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <button type="button" id="hidSave">저장</button>
     <button type="button" id="hidDel" class="sub">삭제</button>
     <button type="button" id="hidCancel" class="sub">닫기</button>
+  </div>
+</div>
+
+<div id="medDlg">
+  <div class="gatebox">
+    <div class="gtitle" id="medDlgTitle">약</div>
+    <label>아이</label>
+    <div class="kinds" id="midKids"></div>
+    <label for="midTitle">약 이름</label>
+    <input id="midTitle" type="text" placeholder="예: 해열제, 항생제">
+    <label>먹는 때</label>
+    <div class="doses" id="midDoses">
+      <button type="button" data-d="am">아침</button>
+      <button type="button" data-d="lunch">점심</button>
+      <button type="button" data-d="pm">저녁</button>
+      <button type="button" data-d="night">자기전</button>
+    </div>
+    <div class="times">
+      <div>
+        <label for="midStart">시작</label>
+        <input id="midStart" type="date">
+      </div>
+      <div>
+        <label for="midEnd">끝</label>
+        <input id="midEnd" type="date">
+      </div>
+    </div>
+    <label for="midNote">메모 (선택)</label>
+    <input id="midNote" type="text" placeholder="예: 식후, 가루약">
+    <button type="button" id="midSave">저장</button>
+    <button type="button" id="midDel" class="sub">삭제</button>
+    <button type="button" id="midCancel" class="sub">닫기</button>
+  </div>
+</div>
+
+<div id="packDlg">
+  <div class="gatebox">
+    <div class="gtitle" id="packDlgTitle">준비물</div>
+    <label>아이</label>
+    <div class="kinds" id="pidKids"></div>
+    <label for="pidDate">날짜</label>
+    <input id="pidDate" type="date">
+    <label for="pidTitle">준비물</label>
+    <input id="pidTitle" type="text" placeholder="예: 체육복, 물감, 여벌 옷">
+    <button type="button" id="pidSave">저장</button>
+    <button type="button" id="pidDel" class="sub">삭제</button>
+    <button type="button" id="pidCancel" class="sub">닫기</button>
   </div>
 </div>
 
@@ -391,7 +495,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   <button id="restoreBtn">📥 복원</button>
 </div>
 
-<footer id="foot">토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다</footer>
+<footer id="foot">오늘 할 일만 모았습니다. 칸을 누르면 해당 메뉴로 갑니다.</footer>
 
 <script>
 (function(){
@@ -470,7 +574,11 @@ var BASE_MIN = 120, PENALTY = 30;
 var DAYN = ["월","화","수","목","금","토","일"];
 var SCHEDULE_WEEK = "1970-01-01";
 var HOSPITAL_WEEK = "1970-01-02";
+var MEDICINE_WEEK = "1970-01-03";
+var PACKING_WEEK = "1970-01-04";
 var KINDN = {school:"학교", academy:"학원", daycare:"어린이집", other:"기타"};
+var DOSEN = {am:"아침", lunch:"점심", pm:"저녁", night:"자기전"};
+var DOSEIDS = ["am","lunch","pm","night"];
 
 /* 하루 필수 항목 (주간목표 항목은 제외, 부모 항목은 하위로 대체) */
 function requiredIds(kid, date){
@@ -516,12 +624,16 @@ var sb = null, chan = null, saveTimer = null, pending = false, pendingClear = nu
 var myEmail = "", allowed = false, sessionGen = 0;
 var baseData = {};
 var rptOpen = false;
-var view = "mission";
+var view = "today";
 var schedDay = (TODAY.getDay()+6)%7;
 var schedule = {};
 var schedPending = false, schedTimer = null, schedEditId = null, schedKind = "academy";
 var hospitals = [];
 var hospPending = false, hospTimer = null, hospEditId = null, hospKid = "haseo", hospPastOpen = false;
+var medicines = [];
+var medPending = false, medTimer = null, medEditId = null, medKid = "haseo", medPastOpen = false;
+var packs = [];
+var packPending = false, packTimer = null, packEditId = null, packKid = "hajoo", packPastOpen = false;
 
 function weekKey(){ return fmt(weekStart); }
 function lsKey(){ return "mission:"+weekKey(); }
@@ -547,6 +659,8 @@ function loadLocal(){
   setBase();
   loadScheduleLocal();
   loadHospitalLocal();
+  loadMedicineLocal();
+  loadPackingLocal();
 }
 function defaultSchedule(){
   return {
@@ -671,9 +785,135 @@ function pullHospital(){
       }
     });
 }
+function loadMedicineLocal(){
+  try{
+    var raw = localStorage.getItem("mission:medicine");
+    var o = raw ? JSON.parse(raw) : {items:[]};
+    medicines = Array.isArray(o) ? o : (o.items || []);
+  }catch(e){ medicines = []; }
+}
+function cacheMedicine(){
+  try{ localStorage.setItem("mission:medicine", JSON.stringify({items:medicines})); }catch(e){}
+}
+function saveMedicine(){
+  cacheMedicine();
+  if(!sb || !allowed){ setSync(!sb ? "저장 실패: 연결할 수 없습니다" : "이 기기에만 저장됨"); return; }
+  medPending = true;
+  clearTimeout(medTimer);
+  setSync("저장 중…");
+  var snap = {items: clone(medicines)};
+  medTimer = setTimeout(function(){
+    sb.from("mission_weeks").upsert({
+      week_start: MEDICINE_WEEK, data: snap,
+      updated_at: new Date().toISOString(), updated_by: myEmail
+    }, {onConflict:"week_start"}).then(function(r){
+      medPending = false;
+      setSync(r.error ? "저장 실패: " + r.error.message : "약 저장됨 ✔");
+    }).catch(function(e){
+      medPending = false;
+      setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
+    });
+  }, 400);
+}
+function pullMedicine(){
+  if(!sb || !allowed) return;
+  sb.from("mission_weeks").select("data").eq("week_start", MEDICINE_WEEK).maybeSingle()
+    .then(function(r){
+      if(r.error){ setSync("약 불러오기 실패: " + r.error.message); return; }
+      if(r.data && r.data.data){
+        var d = r.data.data;
+        medicines = Array.isArray(d) ? d : (d.items || []);
+        cacheMedicine();
+        render();
+      }
+    });
+}
+function loadPackingLocal(){
+  try{
+    var raw = localStorage.getItem("mission:packing");
+    var o = raw ? JSON.parse(raw) : {items:[]};
+    packs = Array.isArray(o) ? o : (o.items || []);
+  }catch(e){ packs = []; }
+}
+function cachePacking(){
+  try{ localStorage.setItem("mission:packing", JSON.stringify({items:packs})); }catch(e){}
+}
+function savePacking(){
+  cachePacking();
+  if(!sb || !allowed){ setSync(!sb ? "저장 실패: 연결할 수 없습니다" : "이 기기에만 저장됨"); return; }
+  packPending = true;
+  clearTimeout(packTimer);
+  setSync("저장 중…");
+  var snap = {items: clone(packs)};
+  packTimer = setTimeout(function(){
+    sb.from("mission_weeks").upsert({
+      week_start: PACKING_WEEK, data: snap,
+      updated_at: new Date().toISOString(), updated_by: myEmail
+    }, {onConflict:"week_start"}).then(function(r){
+      packPending = false;
+      setSync(r.error ? "저장 실패: " + r.error.message : "준비물 저장됨 ✔");
+    }).catch(function(e){
+      packPending = false;
+      setSync("저장 실패: " + ((e && e.message) || "연결할 수 없습니다"));
+    });
+  }, 400);
+}
+function pullPacking(){
+  if(!sb || !allowed) return;
+  sb.from("mission_weeks").select("data").eq("week_start", PACKING_WEEK).maybeSingle()
+    .then(function(r){
+      if(r.error){ setSync("준비물 불러오기 실패: " + r.error.message); return; }
+      if(r.data && r.data.data){
+        var d = r.data.data;
+        packs = Array.isArray(d) ? d : (d.items || []);
+        cachePacking();
+        render();
+      }
+    });
+}
 function kidById(id){
   for(var i=0;i<KIDS.length;i++) if(KIDS[i].id===id) return KIDS[i];
   return KIDS[0];
+}
+function kidIndex(id){
+  for(var i=0;i<KIDS.length;i++) if(KIDS[i].id===id) return i;
+  return 0;
+}
+function kidLabel(id){
+  if(id==="all") return "모두";
+  return kidById(id).name;
+}
+function kidMark(id){
+  if(id==="all") return '<span class="kd other">모두</span>';
+  return avatar(kidById(id), 26);
+}
+function prettyDate(key){
+  if(!key) return "";
+  if(key===TODAY_KEY) return "오늘";
+  if(key===fmt(addDays(TODAY,1))) return "내일";
+  var p = key.split("-");
+  return (+p[1])+"/"+ (+p[2]);
+}
+function fillKidPick(box, current, includeAll, onChange){
+  box.innerHTML = "";
+  var opts = includeAll ? [{id:"all", name:"모두"}].concat(KIDS) : KIDS.slice();
+  opts.forEach(function(k){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = k.name.replace("김","");
+    b.className = k.id===current ? "on" : "";
+    b.onclick = function(){
+      onChange(k.id);
+      box.querySelectorAll("button").forEach(function(x){ x.className = ""; });
+      b.className = "on";
+    };
+    box.appendChild(b);
+  });
+}
+function upsertById(arr, ev){
+  var idx = -1;
+  arr.forEach(function(x,i){ if(x.id===ev.id) idx=i; });
+  if(idx>=0) arr[idx] = ev; else arr.push(ev);
 }
 function clone(o){
   try{ return JSON.parse(JSON.stringify(o || {})); }
@@ -811,31 +1051,39 @@ function avatar(skin, size){
 
 /* ============ 렌더링 ============ */
 function applyView(){
+  document.getElementById("viewToday").className = view==="today" ? "on" : "";
   document.getElementById("viewMission").className = view==="mission" ? "on" : "";
   document.getElementById("viewSchedule").className = view==="schedule" ? "on" : "";
   document.getElementById("viewHospital").className = view==="hospital" ? "on" : "";
+  document.getElementById("todayView").style.display = view==="today" ? "" : "none";
   document.getElementById("missionView").style.display = view==="mission" ? "" : "none";
   document.getElementById("schedView").style.display = view==="schedule" ? "" : "none";
   document.getElementById("hospView").style.display = view==="hospital" ? "" : "none";
-  document.getElementById("tabs").style.display = view==="hospital" ? "none" : "";
+  document.getElementById("tabs").style.display = (view==="hospital" || view==="today") ? "none" : "";
   var foot = document.getElementById("foot");
-  if(foot) foot.textContent = view==="mission"
-    ? "토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다"
-    : view==="schedule"
-      ? "반복되는 학교·학원·어린이집 일정입니다. 칸을 누르면 수정할 수 있어요."
-      : "병원 예약은 날짜가 있는 일정입니다. 지난 예약은 접어서 볼 수 있어요.";
+  if(foot) foot.textContent = view==="today"
+    ? "오늘 할 일만 모았습니다. 칸을 누르면 해당 메뉴로 갑니다."
+    : view==="mission"
+      ? "토요일 또는 주일에 사용 · 주일이 지나면 남은 시간은 사라집니다"
+      : view==="schedule"
+        ? "반복 일정과 날짜별 준비물을 함께 봅니다."
+        : "병원 예약과 먹는 약을 함께 봅니다.";
 }
 function render(){
   applyView();
   renderTabs();
-  if(view === "mission"){
+  if(view === "today"){
+    renderToday();
+  } else if(view === "mission"){
     renderWeek(); renderDays();
     renderTasks(); renderHabits(); renderBank(); renderReport();
   } else if(view === "schedule"){
     renderSchedDays();
     renderSchedule();
+    renderPacking();
   } else {
     renderHospital();
+    renderMedicine();
   }
 }
 
@@ -1133,6 +1381,298 @@ function delHospDlg(){
   render();
 }
 
+function medActive(it, key){
+  key = key || TODAY_KEY;
+  return (it.start||"") <= key && (!it.end || it.end >= key);
+}
+function medTaken(it, key, dose){
+  return !!(it.taken && it.taken[key] && it.taken[key][dose]);
+}
+function toggleDose(it, key, dose){
+  it.taken = it.taken || {};
+  it.taken[key] = it.taken[key] || {};
+  it.taken[key][dose] = !it.taken[key][dose];
+  saveMedicine();
+  render();
+}
+function doseBar(it, key, canToggle){
+  var box = document.createElement("div");
+  box.className = "doses";
+  (it.doses||[]).forEach(function(d){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = DOSEN[d] || d;
+    if(medTaken(it, key, d)) b.className = "on";
+    if(canToggle){
+      b.onclick = function(e){ e.stopPropagation(); toggleDose(it, key, d); };
+    } else {
+      b.onclick = function(e){ e.stopPropagation(); };
+    }
+    box.appendChild(b);
+  });
+  return box;
+}
+function renderMedList(el, items, emptyText, showDoses){
+  el.innerHTML = "";
+  if(!items.length){
+    el.innerHTML = '<p class="note">'+(emptyText||"약이 없습니다.")+'</p>';
+    return;
+  }
+  items.forEach(function(it){
+    var row = document.createElement("div");
+    row.className = "sev";
+    row.innerHTML = '<div class="when">'+prettyDate(it.start)+(it.end && it.end!==it.start ? "<br>~ "+prettyDate(it.end) : "")+"</div>"
+      + kidMark(it.kidId)
+      + '<div class="ttl"><b>'+kidLabel(it.kidId)+"</b> · "+it.title
+      + (it.note ? '<div class="note" style="margin:2px 0 0">'+it.note+"</div>" : "")
+      + "</div>";
+    if(showDoses) row.appendChild(doseBar(it, TODAY_KEY, true));
+    row.onclick = function(){ openMedDlg(it); };
+    el.appendChild(row);
+  });
+}
+function renderMedicine(){
+  var now = (medicines||[]).filter(function(it){ return medActive(it); })
+    .sort(function(a,b){ return (a.end||"").localeCompare(b.end||"") || (a.title||"").localeCompare(b.title||""); });
+  var past = (medicines||[]).filter(function(it){ return !medActive(it); })
+    .sort(function(a,b){ return (b.end||b.start||"").localeCompare(a.end||a.start||""); });
+  renderMedList(document.getElementById("medNow"), now, "먹고 있는 약이 없습니다. 아래 버튼으로 추가하세요.", true);
+  var sum = document.getElementById("medPastSum");
+  if(sum) sum.textContent = past.length ? past.length+"건" : "없음";
+  renderMedList(document.getElementById("medPast"), past, "지난 약이 없습니다.", false);
+  document.getElementById("medPast").style.display = medPastOpen ? "" : "none";
+  document.getElementById("medPastChev").textContent = medPastOpen ? "▲" : "▼";
+}
+function selectedDoses(){
+  var out = [];
+  document.querySelectorAll("#midDoses button.on").forEach(function(b){
+    out.push(b.getAttribute("data-d"));
+  });
+  return out;
+}
+function setMidDoses(ds){
+  document.querySelectorAll("#midDoses button").forEach(function(b){
+    b.className = ds.indexOf(b.getAttribute("data-d")) >= 0 ? "on" : "";
+  });
+}
+function openMedDlg(it){
+  medEditId = it ? it.id : null;
+  medKid = it ? it.kidId : KIDS[curKid].id;
+  document.getElementById("medDlgTitle").textContent = it ? "약 수정" : "약 추가";
+  document.getElementById("midTitle").value = it ? it.title : "";
+  document.getElementById("midStart").value = it ? it.start : TODAY_KEY;
+  document.getElementById("midEnd").value = it ? (it.end||"") : "";
+  document.getElementById("midNote").value = it ? (it.note||"") : "";
+  setMidDoses(it ? (it.doses||[]) : ["am","pm"]);
+  fillKidPick(document.getElementById("midKids"), medKid, false, function(id){ medKid = id; });
+  document.getElementById("midDel").style.display = it ? "" : "none";
+  document.getElementById("medDlg").style.display = "flex";
+}
+function closeMedDlg(){
+  document.getElementById("medDlg").style.display = "none";
+  medEditId = null;
+}
+function saveMedDlg(){
+  var title = document.getElementById("midTitle").value.trim();
+  var start = document.getElementById("midStart").value;
+  var doses = selectedDoses();
+  if(!title){ setSync("약 이름을 적어 주세요"); return; }
+  if(!start){ setSync("시작 날짜를 골라 주세요"); return; }
+  if(!doses.length){ setSync("먹는 때를 하나 이상 고르세요"); return; }
+  var prev = null;
+  medicines.forEach(function(x){ if(x.id===medEditId) prev=x; });
+  var ev = {
+    id: medEditId || ("m"+Date.now().toString(36)),
+    kidId: medKid,
+    title: title,
+    doses: doses,
+    start: start,
+    end: document.getElementById("midEnd").value || "",
+    note: document.getElementById("midNote").value.trim(),
+    taken: prev && prev.taken ? prev.taken : {}
+  };
+  upsertById(medicines, ev);
+  closeMedDlg();
+  saveMedicine();
+  render();
+}
+function delMedDlg(){
+  if(!medEditId) return;
+  if(!window.confirm("이 약을 지울까요?")) return;
+  medicines = medicines.filter(function(x){ return x.id !== medEditId; });
+  closeMedDlg();
+  saveMedicine();
+  render();
+}
+
+function packItems(){
+  return (packs||[]).slice().sort(function(a,b){
+    return (a.date||"").localeCompare(b.date||"") || (a.title||"").localeCompare(b.title||"");
+  });
+}
+function togglePack(it){
+  it.done = !it.done;
+  savePacking();
+  render();
+}
+function renderPackList(el, items, emptyText){
+  el.innerHTML = "";
+  if(!items.length){
+    el.innerHTML = '<p class="note">'+(emptyText||"준비물이 없습니다.")+'</p>';
+    return;
+  }
+  items.forEach(function(it){
+    var row = document.createElement("div");
+    row.className = "sev" + (it.done ? " done" : "");
+    var chk = document.createElement("button");
+    chk.type = "button";
+    chk.className = "chk" + (it.done ? " on" : "");
+    chk.textContent = it.done ? "✔" : "";
+    chk.onclick = function(e){ e.stopPropagation(); togglePack(it); };
+    row.appendChild(chk);
+    var when = document.createElement("div");
+    when.className = "when";
+    when.innerHTML = prettyDate(it.date);
+    row.appendChild(when);
+    var mark = document.createElement("div");
+    mark.innerHTML = kidMark(it.kidId);
+    row.appendChild(mark);
+    var ttl = document.createElement("div");
+    ttl.className = "ttl";
+    ttl.innerHTML = "<b>"+kidLabel(it.kidId)+"</b> · "+it.title;
+    row.appendChild(ttl);
+    row.onclick = function(){ openPackDlg(it); };
+    el.appendChild(row);
+  });
+}
+function renderPacking(){
+  var all = packItems();
+  var soon = all.filter(function(it){ return (it.date||"") >= TODAY_KEY; });
+  var past = all.filter(function(it){ return (it.date||"") < TODAY_KEY; }).reverse();
+  renderPackList(document.getElementById("packSoon"), soon, "다가오는 준비물이 없습니다. 아래 버튼으로 추가하세요.");
+  var sum = document.getElementById("packPastSum");
+  if(sum) sum.textContent = past.length ? past.length+"건" : "없음";
+  renderPackList(document.getElementById("packPast"), past, "지난 준비물이 없습니다.");
+  document.getElementById("packPast").style.display = packPastOpen ? "" : "none";
+  document.getElementById("packPastChev").textContent = packPastOpen ? "▲" : "▼";
+}
+function openPackDlg(it){
+  packEditId = it ? it.id : null;
+  packKid = it ? it.kidId : KIDS[curKid].id;
+  document.getElementById("packDlgTitle").textContent = it ? "준비물 수정" : "준비물 추가";
+  document.getElementById("pidDate").value = it ? it.date : fmt(addDays(TODAY,1));
+  document.getElementById("pidTitle").value = it ? it.title : "";
+  fillKidPick(document.getElementById("pidKids"), packKid, true, function(id){ packKid = id; });
+  document.getElementById("pidDel").style.display = it ? "" : "none";
+  document.getElementById("packDlg").style.display = "flex";
+}
+function closePackDlg(){
+  document.getElementById("packDlg").style.display = "none";
+  packEditId = null;
+}
+function savePackDlg(){
+  var title = document.getElementById("pidTitle").value.trim();
+  var date = document.getElementById("pidDate").value;
+  if(!title){ setSync("준비물을 적어 주세요"); return; }
+  if(!date){ setSync("날짜를 골라 주세요"); return; }
+  var prev = null;
+  packs.forEach(function(x){ if(x.id===packEditId) prev=x; });
+  var ev = {
+    id: packEditId || ("p"+Date.now().toString(36)),
+    kidId: packKid,
+    date: date,
+    title: title,
+    done: prev ? !!prev.done : false
+  };
+  upsertById(packs, ev);
+  closePackDlg();
+  savePacking();
+  render();
+}
+function delPackDlg(){
+  if(!packEditId) return;
+  if(!window.confirm("이 준비물을 지울까요?")) return;
+  packs = packs.filter(function(x){ return x.id !== packEditId; });
+  closePackDlg();
+  savePacking();
+  render();
+}
+
+function todayEvents(){
+  var di = (TODAY.getDay()+6)%7;
+  var out = [];
+  KIDS.forEach(function(k){
+    (schedule[k.id]||[]).forEach(function(ev){
+      if(evOnDay(ev, di)) out.push({kid:k, ev:ev});
+    });
+  });
+  out.sort(function(a,b){ return (a.ev.start||"").localeCompare(b.ev.start||""); });
+  return out;
+}
+function goMission(kidId){
+  curKid = kidIndex(kidId);
+  view = "mission";
+  var t = new Date();
+  var target = monday(t);
+  var needPull = fmt(target) !== weekKey();
+  weekStart = target;
+  curDate = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  if(needPull){ loadLocal(); render(); pull(); }
+  else render();
+}
+function renderToday(){
+  var mis = document.getElementById("todayMissions");
+  mis.innerHTML = "";
+  KIDS.forEach(function(kid){
+    var st = dayStatus(kid, TODAY);
+    var s = weekStats(kid);
+    var row = document.createElement("div");
+    row.className = "rptrow";
+    row.innerHTML = avatar(kid,26)
+      + '<div class="nm"><b>'+kid.name+'</b> · 오늘 '+st.n+'/'+st.total
+      + ' · 주간 '+s.pct+'% · '+s.left+'분</div>'
+      + '<span class="ok-badge'+(st.total && st.n>=st.total ? "" : " no")+'">'
+      + (st.total && st.n>=st.total ? "완료" : "진행")+"</span>";
+    row.onclick = function(){ goMission(kid.id); };
+    mis.appendChild(row);
+  });
+
+  var sch = document.getElementById("todaySched");
+  sch.innerHTML = "";
+  var evs = todayEvents();
+  if(!evs.length) sch.innerHTML = '<p class="note">오늘 학교·학원·어린이집 일정이 없습니다.</p>';
+  evs.forEach(function(x){
+    var row = document.createElement("div");
+    row.className = "sev";
+    row.innerHTML = '<div class="when">'+(x.ev.start||"--:--")+'<br>'+(x.ev.end||"")+'</div>'
+      + avatar(x.kid,26)
+      + '<div class="ttl"><b>'+x.kid.name+'</b> · '+x.ev.title
+      + (x.ev.place ? '<div class="note" style="margin:2px 0 0">'+x.ev.place+"</div>" : "")+"</div>"
+      + '<span class="kd '+x.ev.kind+'">'+(KINDN[x.ev.kind]||"기타")+"</span>";
+    row.onclick = function(){
+      curKid = kidIndex(x.kid.id);
+      schedDay = (TODAY.getDay()+6)%7;
+      view = "schedule";
+      render();
+    };
+    sch.appendChild(row);
+  });
+
+  var hp = document.getElementById("todayHosp");
+  var todayH = hospItems().filter(function(it){ return it.date === TODAY_KEY; });
+  renderHospList(hp, todayH);
+  if(!todayH.length) hp.innerHTML = '<p class="note">오늘 병원 예약이 없습니다.</p>';
+
+  var md = document.getElementById("todayMed");
+  var todayM = (medicines||[]).filter(function(it){ return medActive(it); });
+  renderMedList(md, todayM, "오늘 먹을 약이 없습니다.", true);
+
+  var pk = document.getElementById("todayPack");
+  var tomo = fmt(addDays(TODAY,1));
+  var todayP = packItems().filter(function(it){ return it.date===TODAY_KEY || it.date===tomo; });
+  renderPackList(pk, todayP, "오늘·내일 준비물이 없습니다.");
+}
+
 function taskRow(kid, key, it){
   var c = cell(kid.id, key);
   var wrap = document.createDocumentFragment();
@@ -1332,6 +1872,7 @@ function renderReport(){
 }
 
 /* ============ 조작 ============ */
+document.getElementById("viewToday").onclick = function(){ view = "today"; render(); };
 document.getElementById("viewMission").onclick = function(){ view = "mission"; render(); };
 document.getElementById("viewSchedule").onclick = function(){
   view = "schedule";
@@ -1350,6 +1891,33 @@ document.getElementById("hospDlg").addEventListener("click", function(e){
 document.getElementById("hospPastToggle").onclick = function(){
   hospPastOpen = !hospPastOpen;
   document.getElementById("hospPastToggle").setAttribute("aria-expanded", hospPastOpen ? "true" : "false");
+  render();
+};
+document.getElementById("medAdd").onclick = function(){ openMedDlg(null); };
+document.getElementById("midSave").onclick = saveMedDlg;
+document.getElementById("midDel").onclick = delMedDlg;
+document.getElementById("midCancel").onclick = closeMedDlg;
+document.getElementById("medDlg").addEventListener("click", function(e){
+  if(e.target.id === "medDlg") closeMedDlg();
+});
+document.querySelectorAll("#midDoses button").forEach(function(b){
+  b.onclick = function(){ b.className = b.className === "on" ? "" : "on"; };
+});
+document.getElementById("medPastToggle").onclick = function(){
+  medPastOpen = !medPastOpen;
+  document.getElementById("medPastToggle").setAttribute("aria-expanded", medPastOpen ? "true" : "false");
+  render();
+};
+document.getElementById("packAdd").onclick = function(){ openPackDlg(null); };
+document.getElementById("pidSave").onclick = savePackDlg;
+document.getElementById("pidDel").onclick = delPackDlg;
+document.getElementById("pidCancel").onclick = closePackDlg;
+document.getElementById("packDlg").addEventListener("click", function(e){
+  if(e.target.id === "packDlg") closePackDlg();
+});
+document.getElementById("packPastToggle").onclick = function(){
+  packPastOpen = !packPastOpen;
+  document.getElementById("packPastToggle").setAttribute("aria-expanded", packPastOpen ? "true" : "false");
   render();
 };
 document.getElementById("sidSave").onclick = saveSchedDlg;
@@ -1460,6 +2028,24 @@ function subscribe(){
         setSync("상대방 변경 반영됨 ✔");
         return;
       }
+      if(row.week_start === MEDICINE_WEEK){
+        if(medPending) return;
+        var md = row.data;
+        medicines = Array.isArray(md) ? md : ((md && md.items) || []);
+        cacheMedicine();
+        render();
+        setSync("상대방 변경 반영됨 ✔");
+        return;
+      }
+      if(row.week_start === PACKING_WEEK){
+        if(packPending) return;
+        var pd = row.data;
+        packs = Array.isArray(pd) ? pd : ((pd && pd.items) || []);
+        cachePacking();
+        render();
+        setSync("상대방 변경 반영됨 ✔");
+        return;
+      }
       if(row.week_start !== weekKey()) return;
       if(pending) return;
       data = row.data || {};
@@ -1470,7 +2056,7 @@ function subscribe(){
     .subscribe();
 }
 document.addEventListener("visibilitychange", function(){
-  if(!document.hidden && allowed){ pull(); pullSchedule(); pullHospital(); }
+  if(!document.hidden && allowed){ pull(); pullSchedule(); pullHospital(); pullMedicine(); pullPacking(); }
 });
 
 
@@ -1536,6 +2122,8 @@ function enterApp(){
   pull();
   pullSchedule();
   pullHospital();
+  pullMedicine();
+  pullPacking();
   subscribe();
 }
 function enterOffline(msg){
