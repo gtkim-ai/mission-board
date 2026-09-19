@@ -1,7 +1,7 @@
 {
   "name": "하주 · 하유 · 하서 미션 보드",
   "short_name": "미션보드",
-  "start_url": "./",
+  "start_url": "./dashboard.html",
   "display": "standalone",
   "background_color": "#eef1f6",
   "theme_color": "#0A84FF",

@@ -79,8 +79,8 @@ end $$;
 
 -- ── 4. ★ 여기를 본인 이메일로 바꾸세요 ★ ─────────────────────────
 insert into public.allowed_users (email, note) values
-  ('아빠이메일@example.com', '아빠'),
-  ('엄마이메일@example.com', '엄마')
+  ('geuntae_kim@icloud.com', '아빠'),
+  ('lotusgem@naver.com', '엄마')
 on conflict (email) do nothing;
 
 

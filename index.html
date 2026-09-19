@@ -22,6 +22,7 @@
   --safe-b:env(safe-area-inset-bottom, 0px);
   --safe-l:env(safe-area-inset-left, 0px);
   --safe-r:env(safe-area-inset-right, 0px);
+  --tab-h:56px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;min-height:100%;min-height:100dvh}
@@ -46,8 +47,22 @@ body{
 .wrap{
   position:relative;z-index:1;box-sizing:border-box;
   min-height:100dvh;max-width:920px;margin:0 auto;
-  padding:calc(12px + var(--safe-t)) calc(16px + var(--safe-r)) calc(24px + var(--safe-b)) calc(16px + var(--safe-l));
+  padding:calc(12px + var(--safe-t)) calc(16px + var(--safe-r)) calc(var(--tab-h) + 20px + var(--safe-b)) calc(16px + var(--safe-l));
 }
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  display:flex;gap:4px;padding:6px 10px calc(6px + var(--safe-b));
+  background:#ffffffdb;border:1px solid rgba(255,255,255,.75);
+  box-shadow:0 -8px 24px var(--shadow);
+}
+@supports ((-webkit-backdrop-filter:blur(24px)) or (backdrop-filter:blur(24px))){
+  .tabbar{background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%)}
+}
+.tabbar button{
+  flex:1;border:0;background:transparent;border-radius:12px;
+  min-height:44px;padding:6px 4px;font-size:12px;font-weight:600;color:var(--dim);
+}
+.tabbar button.on{background:rgba(255,255,255,.92);color:var(--ink);font-weight:700}
 button,.task,.sub,.habit .st{touch-action:manipulation; -webkit-user-select:none; user-select:none}
 h1,h2,h3{font-weight:700;letter-spacing:-0.02em}
 img,svg{max-width:100%;display:block}
@@ -348,7 +363,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
   .printing #schedView,.printing #hospView,.printing #growView,.printing #gate,.printing #moreBtn,
   .printing #logoutBtn,.printing #moreBar,.printing #who,.printing #sync,.printing footer,
   .printing #schedDlg,.printing #hospDlg,.printing #medDlg,.printing #packDlg,.printing #growDlg,
-  .printing #printPreview .printbar,.printing #appBar{display:none!important}
+  .printing #printPreview .printbar,.printing #appBar,.printing .tabbar{display:none!important}
   body.printing .wrap{padding:0;max-width:none;min-height:0}
   body.printing #printPreview{display:block!important;position:static;inset:auto;background:#fff;padding:0;overflow:visible}
   body.printing #printSheet{display:block!important;padding:0;background:transparent;border:none}
@@ -364,6 +379,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="growth-lms.js"></script>
+<script src="game-time.js"></script>
 </head>
 <body>
 <div class="bg"></div>
@@ -455,7 +471,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
 </div>
 
 <div class="card">
-    <div class="head">생활 미션 <span style="font-size:12px;font-weight:500;color:#6E6E73">(어기면 30분 차감)</span></div>
+    <div class="head">생활 미션</div>
   <div class="body" id="habits"></div>
 </div>
 
@@ -698,6 +714,12 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
 
 <footer id="foot">오늘 할 일만 모았습니다. 칸을 누르면 해당 메뉴로 갑니다.</footer>
 </div>
+<nav class="tabbar" id="tabbar" aria-label="하단 탭">
+  <button type="button" data-tab="family">가족</button>
+  <button type="button" data-tab="today" class="on">숙제</button>
+  <button type="button" data-tab="schedule">일정</button>
+  <button type="button" data-tab="more">더보기</button>
+</nav>
 
 <script>
 (function(){
@@ -779,6 +801,8 @@ var HOSPITAL_WEEK = "1970-01-02";
 var MEDICINE_WEEK = "1970-01-03";
 var PACKING_WEEK = "1970-01-04";
 var GROWTH_WEEK = "1970-01-05";
+var RULE_WEEK = (window.GameTime && GameTime.RULE_WEEK) || "1970-01-06";
+var gameRules = window.GameTime ? GameTime.defaultRules() : {base_minutes:120, deduct_per_item:30, min_minutes:0};
 var KINDN = {school:"학교", academy:"학원", daycare:"어린이집", other:"기타"};
 var HOSPN = {clinic:"병원", vaccine:"예방접종"};
 var DOSEN = {am:"아침", lunch:"점심", pm:"저녁", night:"자기전"};
@@ -832,6 +856,18 @@ if(/(?:\?|&)dash=1\b/.test(location.search) || location.hash === "#dash"){
   location.replace("dashboard.html");
 }
 var view = "today";
+(function readQuery(){
+  var q = {};
+  location.search.replace(/^\?/,"").split("&").forEach(function(p){
+    if(!p) return;
+    var kv = p.split("=");
+    q[decodeURIComponent(kv[0]||"")] = decodeURIComponent((kv[1]||"").replace(/\+/g," "));
+  });
+  if(q.view==="mission"||q.view==="today"||q.view==="schedule"||q.view==="hospital"||q.view==="growth") view = q.view;
+  if(q.kid){
+    KIDS.forEach(function(k,i){ if(k.id===q.kid) curKid = i; });
+  }
+})();
 var hospKind = "clinic";
 var schedDay = (TODAY.getDay()+6)%7;
 var schedule = {};
@@ -874,6 +910,10 @@ function loadLocal(){
   loadMedicineLocal();
   loadPackingLocal();
   loadGrowthLocal();
+  try{
+    var rr = localStorage.getItem("mission:rules");
+    if(rr && window.GameTime) gameRules = GameTime.normalizeRules(JSON.parse(rr));
+  }catch(e){}
 }
 function defaultSchedule(){
   return {
@@ -1289,6 +1329,10 @@ function mergeThree(base, local, remote){
   base = base || {}; local = local || {}; remote = remote || {};
   var out = {};
   keySet(base, local, remote).forEach(function(kid){
+    if(kid === "_game"){
+      out._game = window.GameTime ? GameTime.mergeGameLock(base._game, local._game, remote._game) : (local._game || remote._game || {});
+      return;
+    }
     out[kid] = mergeKid(base[kid], local[kid], remote[kid]);
   });
   return out;
@@ -1398,8 +1442,24 @@ function applyView(){
         : view==="hospital"
           ? "병원 예약과 먹는 약을 함께 봅니다."
           : "키·몸무게를 모아 두고, 또래 백분위를 참고로 봅니다.";
+  var bar = document.getElementById("tabbar");
+  if(bar){
+    bar.querySelectorAll("button").forEach(function(b){
+      var t = b.getAttribute("data-tab");
+      b.className = ((t==="today" && view!=="schedule") || (t==="schedule" && view==="schedule")) ? "on" : "";
+    });
+  }
+}
+var weekLoaded = false;
+function maybeFreezeGame(){
+  if(!weekLoaded || !window.GameTime) return;
+  if(!GameTime.isConfirmedTime(weekStart, new Date(), gameRules.confirm_hour || 21)) return;
+  if(data._game && data._game.confirmed) return;
+  data._game = GameTime.freezeAll(KIDS, data, weekStart, gameRules, new Date());
+  save();
 }
 function render(){
+  maybeFreezeGame();
   applyView();
   renderTabs();
   if(view === "today"){
@@ -2308,7 +2368,7 @@ function renderHabits(){
   }
   var p = document.createElement("p");
   p.className = "note";
-  p.innerHTML = "– 아직 확인 안 함 · <b>O</b> 잘 지킴 · <b>X</b> 어김(30분 차감)<br>이번 주 X 표시: <b>"+bad+"번</b>";
+  p.innerHTML = "– 아직 확인 안 함 · <b>O</b> 잘 지킴 · <b>X</b> 어김<br>이번 주 X 표시: <b>"+bad+"번</b>";
   el.appendChild(p);
 }
 
@@ -2324,13 +2384,18 @@ function weekStats(kid){
   }
   var deduct = bad*PENALTY;
   var remain = Math.max(0, BASE_MIN - deduct);
+  if(window.GameTime){
+    var gt = GameTime.compute(kid, data, weekStart, gameRules, new Date());
+    if(gt.status === "unregistered"){ remain = null; deduct = 0; }
+    else { remain = gt.minutes; deduct = Math.max(0, (gameRules.base_minutes||BASE_MIN) - remain); }
+  }
   var weekly = weeklyItems(kid).map(function(it){
     var n=0; for(var i=0;i<7;i++){ if(cell(kid.id,fmt(addDays(weekStart,i))).t[it.id]) n++; }
     return {label:it.label, n:n, target:it.weekly, ok:n>=it.weekly};
   });
   var wkOk = weekly.every(function(it){ return it.ok; });
   var used = (meta(kid.id).used) || 0;
-  var left = Math.max(0, remain - used);
+  var left = remain == null ? 0 : Math.max(0, remain - used);
   var playOk = doneDays>=checkedDays && checkedDays>0 && wkOk;
   return {
     bad:bad, deduct:deduct, remain:remain, used:used, left:left,
@@ -2344,10 +2409,16 @@ function renderBank(){
   var kid = KIDS[curKid];
   var s = weekStats(kid);
   var mt = meta(kid.id), used = s.used, left = s.left;
-  var blocks = "";
-  for(var b=0;b<4;b++) blocks += '<i class="'+(b < left/PENALTY ? "" : "gone")+'"></i>';
-
   var el = document.getElementById("bank");
+  if(s.remain == null){
+    el.innerHTML = '<div class="bank"><div><div class="big">미등록</div><div style="font-size:12px;color:var(--dim)">핵심 숙제를 먼저 넣어 주세요</div></div></div>';
+    return;
+  }
+  var unit = (gameRules.deduct_per_item || PENALTY);
+  var slots = window.GameTime ? GameTime.slotCount(gameRules) : 4;
+  var blocks = "";
+  for(var b=0;b<slots;b++) blocks += '<i class="'+(b < left/unit ? "" : "gone")+'"></i>';
+
   el.innerHTML =
     '<div class="bank"><div class="blocks">'+blocks+'</div>'
     + '<div><div class="big">'+left+'분</div>'
@@ -2499,6 +2570,16 @@ document.getElementById("todayW").onclick = function(){
 document.getElementById("dashBtn").onclick = function(){
   location.href = "dashboard.html";
 };
+document.getElementById("tabbar").addEventListener("click", function(e){
+  var b = e.target.closest("[data-tab]");
+  if(!b) return;
+  var t = b.getAttribute("data-tab");
+  if(t==="family"){ location.href = "dashboard.html"; return; }
+  if(t==="more"){ document.getElementById("moreBtn").click(); return; }
+  if(t==="schedule"){ view = "schedule"; render(); return; }
+  view = "today";
+  render();
+});
 document.querySelectorAll("#hidKinds button").forEach(function(b){
   b.onclick = function(){
     hospKind = b.getAttribute("data-hk");
@@ -2569,6 +2650,7 @@ document.getElementById("restoreBtn").onclick = function(){
 function shiftWeek(n){
   weekStart = addDays(weekStart,n);
   curDate = addDays(weekStart, Math.min(6, Math.max(0,(curDate.getDay()+6)%7)));
+  weekLoaded = false;
   loadLocal();
   render();
   pull();
@@ -2576,20 +2658,23 @@ function shiftWeek(n){
 
 /* ============ 서버 동기화 ============ */
 function pull(){
-  if(!sb || !allowed) return;
+  if(!sb || !allowed){ weekLoaded = true; return; }
   setSync("불러오는 중…");
+  weekLoaded = false;
   sb.from("mission_weeks").select("data").eq("week_start", weekKey()).maybeSingle()
     .then(function(r){
-      if(r.error){ setSync("불러오기 실패: " + r.error.message); return; }
+      if(r.error){ weekLoaded = true; setSync("불러오기 실패: " + r.error.message); return; }
       if(r.data && r.data.data){
         data = r.data.data;
         cacheLocal();
-        render();
       }
       setBase();
+      weekLoaded = true;
+      render();
       setSync("동기화됨 ✔");
     })
     .catch(function(e){
+      weekLoaded = true;
       setSync("불러오기 실패: " + ((e && e.message) || "연결할 수 없습니다"));
     });
 }
@@ -2635,6 +2720,15 @@ function subscribe(){
         setSync("상대방 변경 반영됨 ✔");
         return;
       }
+      if(row.week_start === RULE_WEEK){
+        if(row.data && window.GameTime){
+          gameRules = GameTime.normalizeRules(row.data);
+          try{ localStorage.setItem("mission:rules", JSON.stringify(gameRules)); }catch(e){}
+          render();
+        }
+        setSync("상대방 변경 반영됨 ✔");
+        return;
+      }
       if(row.week_start === GROWTH_WEEK){
         if(growPending) return;
         if(row.data && typeof row.data === "object"){
@@ -2656,7 +2750,7 @@ function subscribe(){
     .subscribe();
 }
 document.addEventListener("visibilitychange", function(){
-  if(!document.hidden && allowed){ pull(); pullSchedule(); pullHospital(); pullMedicine(); pullPacking(); pullGrowth(); }
+  if(!document.hidden && allowed){ pull(); pullSchedule(); pullHospital(); pullMedicine(); pullPacking(); pullGrowth(); pullRules(); }
 });
 
 
@@ -2725,13 +2819,25 @@ function enterApp(){
   pullMedicine();
   pullPacking();
   pullGrowth();
+  pullRules();
   subscribe();
+}
+function pullRules(){
+  if(!sb || !allowed || !window.GameTime) return;
+  sb.from("mission_weeks").select("data").eq("week_start", RULE_WEEK).maybeSingle()
+    .then(function(r){
+      if(r.error || !r.data || !r.data.data) return;
+      gameRules = GameTime.normalizeRules(r.data.data);
+      try{ localStorage.setItem("mission:rules", JSON.stringify(gameRules)); }catch(e){}
+      render();
+    });
 }
 function enterOffline(msg){
   myEmail = lastAllowed();
   allowed = !!myEmail;
   hideGate();
   document.getElementById("who").textContent = myEmail;
+  weekLoaded = true;
   loadLocal(); render();
   setSync(msg || "저장 실패: 연결할 수 없습니다");
 }
