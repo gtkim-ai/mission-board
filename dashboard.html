@@ -2,18 +2,21 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="가족">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#eef1f6">
 <title>가족</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=4">
 <style>
-  html,body{margin:0;min-height:100%;}
+  html,body{margin:0;min-height:100%;min-height:100dvh;}
   body{
     font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','SF Pro Text','Noto Sans KR',sans-serif;
     color:#1D1D1F;
     background:#eef1f6;
+    -webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;
   }
   a{color:#0A84FF;text-decoration:none}
   button{font-family:inherit;cursor:pointer}
@@ -27,8 +30,8 @@
       linear-gradient(180deg,#eef1f6,#e7ebf2);
     filter:blur(2px);
   }
-  .wrap{position:relative;z-index:1;box-sizing:border-box;min-height:100vh;
-    padding:calc(28px + env(safe-area-inset-top)) 24px calc(28px + env(safe-area-inset-bottom));
+  .wrap{position:relative;z-index:1;box-sizing:border-box;min-height:100dvh;
+    padding:calc(12px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px));
     max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
   .glass{
     background:#ffffffdb;border:1px solid rgba(255,255,255,0.75);
@@ -45,13 +48,13 @@
   .sub{font-size:14px;color:#6E6E73;font-weight:500}
   .nav{display:flex;align-items:center;gap:8px;margin-bottom:4px}
   .nav button,.tools button{
-    border:0;background:rgba(255,255,255,.55);border-radius:999px;min-height:36px;padding:6px 12px;
+    border:0;background:rgba(255,255,255,.55);border-radius:999px;min-height:44px;padding:8px 14px;
     font-size:13px;font-weight:600;color:#1D1D1F}
   h1{margin:0;font-size:34px;font-weight:700;letter-spacing:-0.02em}
   .tools{display:flex;gap:8px}
   .seg{display:flex;padding:4px;border-radius:14px;gap:2px}
-  .seg button{border:0;background:transparent;padding:8px 18px;border-radius:10px;
-    font-size:14px;font-weight:500;color:#6E6E73;min-height:36px}
+  .seg button{border:0;background:transparent;padding:8px 14px;border-radius:10px;
+    font-size:14px;font-weight:500;color:#6E6E73;min-height:44px}
   .seg button.on{background:rgba(255,255,255,0.9);box-shadow:0 1px 3px rgba(0,0,0,0.08);font-weight:600;color:#1D1D1F}
   .card{border-radius:24px;padding:26px 30px}
   .card h2{margin:0 0 18px;font-size:17px;font-weight:700}
@@ -98,13 +101,18 @@
   .gatebox button.sub{background:rgba(255,255,255,.7);color:#1D1D1F;margin-top:8px}
   #gerr{min-height:18px;margin:10px 0 0;font-size:13px;color:#FF3B30;text-align:center;white-space:pre-line}
   @media (max-width:860px){
-    .wrap{padding:20px 16px 28px}
+    .wrap{padding:calc(12px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px))}
     h1{font-size:28px}
+    .card,.hw{padding:20px 18px}
+    .side .card{padding:18px}
     .rates,.grid{flex-direction:column}
     .rate{padding:0 0 16px}
     .rate:last-child{padding:16px 0 0}
     .split{width:auto;height:1px}
     .side{min-height:0}
+    .seg{width:100%;justify-content:space-between}
+    .seg button{flex:1;padding:8px 6px}
+    .head{align-items:flex-start}
   }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
