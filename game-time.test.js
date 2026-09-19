@@ -134,4 +134,14 @@ var onlyExtra = {};
 fillWeek(onlyExtra, "hajoo", {});
 assert.strictEqual(GT.compute(extraKid, onlyExtra, WEEK, rules, FRI_NIGHT).remaining, 0);
 
+assert.strictEqual(GT.lastNameChar({id:"hajoo", name:"김하주"}, rules), "주");
+assert.strictEqual(GT.lastNameChar({id:"hayoo", name:"김하유"}, rules), "유");
+assert.strictEqual(GT.lastNameChar({id:"haseo", name:"김하서"}, rules), "서");
+var withPhoto = GT.normalizeRules({
+  child_master: { hajoo: { photo_url: "https://example.com/a.jpg", emoji: "👧" } }
+});
+assert.ok(GT.avatarHTML({id:"hajoo", name:"김하주"}, withPhoto).indexOf("<img") >= 0);
+assert.ok(GT.avatarHTML({id:"hajoo", name:"김하주"}, rules).indexOf("주") >= 0);
+assert.ok(GT.avatarHTML({id:"hajoo", name:"김하주"}, rules).indexOf("👧") < 0);
+
 console.log("game-time 테스트 통과");

@@ -62,38 +62,42 @@
       backdrop-filter:blur(24px) saturate(180%);
     }
   }
-  .head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .head{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-bottom:12px}
+  .head-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
   .kicker{margin:0 0 4px;font-size:13px;font-weight:600;color:var(--dim)}
-  h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-0.02em}
-  .nav{display:flex;align-items:center;gap:6px}
+  h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-0.02em;white-space:nowrap}
+  .nav{display:flex;align-items:center;gap:6px;width:100%}
+  .nav .weeklbl{flex:1}
   .nav button,.iconbtn{
     border:0;background:rgba(255,255,255,.55);border-radius:999px;
     min-height:44px;min-width:44px;padding:8px 12px;font-size:14px;font-weight:600;color:var(--ink);
   }
   .weeklbl{font-size:13px;font-weight:600;color:var(--dim);text-align:center;min-width:118px}
   .card{border-radius:22px;padding:16px 16px 14px;margin-bottom:10px}
-  .card h2{margin:0 0 12px;font-size:15px;font-weight:700}
-  .grow{display:flex;flex-direction:column;gap:6px}
+  .card h2{margin:0 0 12px;font-size:15px;font-weight:700;white-space:nowrap}
+  .grow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
   .kidrow{
-    display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:100%;text-align:left;
     border:0;background:rgba(255,255,255,.45);border-radius:16px;
-    min-height:64px;padding:10px 12px;color:inherit;
+    min-height:132px;padding:12px 10px;color:inherit;
   }
-  .kidrow + .kidrow{margin-top:8px}
   .av{
-    width:44px;height:44px;border-radius:50%;flex:none;overflow:hidden;
+    width:40px;height:40px;border-radius:50%;flex:none;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
-    color:#fff;font-size:18px;font-weight:700;
+    font-size:17px;line-height:1;font-weight:700;
   }
   .av img{width:100%;height:100%;object-fit:cover}
-  .av.lg{width:52px;height:52px;font-size:20px}
-  .kidmeta{flex:1;min-width:0}
-  .kidnm{font-size:15px;font-weight:700}
-  .kidsub{font-size:12px;color:var(--dim);font-weight:600}
-  .slots{display:flex;gap:4px;margin-top:6px}
-  .slots i{width:18px;height:10px;border-radius:3px;background:rgba(120,120,128,.22);display:block}
+  .av-letter{color:#fff;font-size:17px}
+  .av.lg{width:52px;height:52px;font-size:22px}
+  .av.lg.av-letter{font-size:22px}
+  .av.sm{width:40px;height:40px;font-size:17px}
+  .kidmeta{width:100%;min-width:0}
+  .kidnm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kidsub{font-size:11px;color:var(--dim);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .slots{display:flex;gap:3px;margin-top:6px}
+  .slots i{width:14px;height:8px;border-radius:3px;background:rgba(120,120,128,.22);display:block}
   .slots i.on{background:currentColor}
-  .mins{font-size:26px;font-weight:700;letter-spacing:-0.03em;line-height:1;flex:none}
+  .mins{font-size:22px;font-weight:700;letter-spacing:-0.03em;line-height:1}
   .mins span{font-size:13px;font-weight:600;color:var(--dim)}
   .mins.none{font-size:18px;color:var(--dim)}
   .hint{margin:8px 0 0;font-size:12px;color:var(--dim)}
@@ -138,9 +142,11 @@
   }
   .tabbar button{
     flex:1;border:0;background:transparent;border-radius:12px;
-    min-height:44px;padding:6px 4px;font-size:12px;font-weight:600;color:var(--dim);
+    min-height:44px;padding:4px 4px 6px;font-size:11px;font-weight:600;color:var(--dim);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   }
   .tabbar button.on{background:rgba(255,255,255,.92);color:var(--ink);font-weight:700}
+  .tabico{font-size:18px;line-height:1;font-weight:400}
   .rail{display:none}
   .morebox{
     display:none;position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + var(--safe-b) + 8px);
@@ -186,15 +192,21 @@
       position:fixed;left:0;top:0;bottom:0;width:var(--rail);z-index:30;
       padding:calc(16px + var(--safe-t)) 8px calc(16px + var(--safe-b));border-radius:0;
     }
+    .av{width:40px;height:40px;font-size:22px}
     .rail button{
       width:64px;min-height:64px;border:0;border-radius:16px;
       background:transparent;font-size:11px;font-weight:700;color:var(--dim);padding:8px 4px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
     }
     .rail button.on{background:rgba(255,255,255,.92);color:var(--ink)}
     .home-grid{display:grid;grid-template-columns:660px 1fr;gap:16px;align-items:start}
-    .gt-card .grow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .gt-card .kidrow{margin:0;flex-direction:column;align-items:flex-start;min-height:150px;padding:16px}
+    .head{flex-direction:row;align-items:flex-end;justify-content:space-between}
+    .head-top{flex:none}
+    .nav{width:auto}
+    .gt-card .grow{gap:10px}
+    .gt-card .kidrow{min-height:150px;padding:16px}
     .gt-card .mins{font-size:32px}
+    .gt-card .kidnm{font-size:15px}
     .detail-grid{display:grid;grid-template-columns:660px 1fr;gap:16px;align-items:start}
     .morebox{left:calc(var(--rail) + 16px);max-width:420px;bottom:24px}
     h1{font-size:34px}
@@ -208,16 +220,18 @@
 <nav class="rail glass" id="rail" aria-label="가족 메뉴"></nav>
 <div class="app" id="app">
   <div class="head">
-    <div>
-      <p class="kicker" id="kicker">가족</p>
-      <h1 id="title">주말 게임 시간</h1>
+    <div class="head-top">
+      <div>
+        <p class="kicker" id="kicker">가족</p>
+        <h1 id="title">가족</h1>
+      </div>
+      <button type="button" class="iconbtn" id="lock">🔒 잠그기</button>
     </div>
     <div class="nav">
       <button type="button" id="prev" aria-label="이전 주">◀</button>
       <div class="weeklbl" id="range">–</div>
       <button type="button" id="now">이번 주</button>
       <button type="button" id="next" aria-label="다음 주">▶</button>
-      <button type="button" class="iconbtn" id="lock">잠그기</button>
     </div>
   </div>
   <div id="main"></div>
@@ -302,10 +316,7 @@ function kidById(id){ for(var i=0;i<KIDS.length;i++) if(KIDS[i].id===id) return 
 function colorOf(kid){ return (rules.child_master[kid.id] && rules.child_master[kid.id].color) || kid.tone[1]; }
 function photoOf(kid){ return (rules.child_master[kid.id] && rules.child_master[kid.id].photo_url) || ""; }
 function avatar(kid, cls){
-  var photo = photoOf(kid);
-  var ch = kid.name.replace("김","").charAt(0);
-  if(photo) return '<div class="av '+(cls||"")+'"><img alt="" src="'+photo+'"></div>';
-  return '<div class="av '+(cls||"")+'" style="background:linear-gradient(160deg,'+kid.tone[0]+','+kid.tone[1]+')">'+ch+"</div>";
+  return GameTime.avatarHTML(kid, rules, {cls: cls || ""});
 }
 function prettyDate(key){
   if(!key) return "";
@@ -376,7 +387,7 @@ function homeHtml(){
   html += '<p class="hint">'+(anyPending ? "평일 값은 예상치입니다. 일요일 밤 확정" : "이번 주 게임 시간이 확정되었습니다")+"</p></section></div>";
   html += '<div>';
   if(hosp.length){
-    html += '<section class="card glass"><h2>다가오는 일정</h2>';
+    html += '<section class="card glass"><h2>📅 다가오는 일정</h2>';
     hosp.forEach(function(x){
       html += '<div class="hline"><span class="l">'+x.kid.name+" · "+(x.it.kind==="vaccine"?"예방접종":"병원")+(x.it.title?" · "+esc(x.it.title):"")+'</span><span class="r">'+prettyDate(x.it.date)+"</span></div>";
     });
@@ -384,28 +395,28 @@ function homeHtml(){
   }
   var hasGrow = KIDS.some(function(k){ return !!lastGrow(k.id); });
   if(hasGrow){
-    html += '<section class="card glass"><h2>성장 기록</h2>';
+    html += '<section class="card glass"><h2>📏 성장 기록</h2>';
     KIDS.forEach(function(kid){
       var last = lastGrow(kid.id);
       html += '<div class="hline"><span class="l">'+kid.name+'</span><span class="r '+(last?"":"dim")+'">'
         +(last?((+last.date.split("-")[1])+"월"+(last.height?" · "+last.height+"cm":"")+(last.weight?" · "+last.weight+"kg":"")):"아직 없음")
         +"</span></div>";
     });
-    html += "</section>";
+    html += '<div class="hline"><a href="index.html?view=growth">성장 곡선 보기</a></div></section>';
   }
   var empty = [];
   if(!hosp.length) empty.push("다가오는 병원 없음");
   if(!meds.length) empty.push("오늘 약 없음");
   if(!pks.length) empty.push("오늘·내일 준비물 없음");
   if(meds.length){
-    html += '<section class="card glass"><h2>오늘 약</h2>';
+    html += '<section class="card glass"><h2>💊 오늘 약</h2>';
     meds.forEach(function(it){
       html += '<div class="hline"><span class="l">'+esc(kidById(it.kidId).name)+" · "+esc(it.title)+'</span><span class="r">오늘</span></div>';
     });
     html += "</section>";
   }
   if(pks.length){
-    html += '<section class="card glass"><h2>준비물</h2>';
+    html += '<section class="card glass"><h2>🎒 준비물</h2>';
     pks.forEach(function(it){
       html += '<div class="hline"><span class="l">'+esc(kidById(it.kidId).name)+" · "+esc(it.title)+'</span><span class="r">'+prettyDate(it.date)+"</span></div>";
     });
@@ -424,13 +435,13 @@ function detailHtml(kid){
   if(g.status==="unregistered"){
     html += '<div class="mins none">미등록</div></div></div>';
     html += '<p class="formula">계산할 핵심 숙제가 없습니다.</p>';
-    html += '<button type="button" class="cta" data-go="board">숙제 등록하기</button></section></div>';
+    html += '<button type="button" class="cta" data-go="board">✏️ 숙제 등록하기</button></section></div>';
   } else {
     html += '<div class="mins">'+g.minutes+"<span>분</span></div></div></div>";
     html += '<p class="formula">'+esc(g.formula)+(g.pendingConfirm?" · 일요일 밤 확정":" · 확정됨")+"</p>";
     html += slotsHtml(g, color);
     html += "</section>";
-    html += '<section class="card glass"><h2>주중에 못한 숙제</h2>';
+    html += '<section class="card glass"><h2>✏️ 주중에 못한 숙제</h2>';
     if(!left.length) html += '<p class="hint">남은 핵심 숙제가 없습니다.</p>';
     left.forEach(function(it, idx){
       var day = it.dayIndex>=0 ? DAYN[it.dayIndex]+"요일" : "주간 목표";
@@ -457,7 +468,7 @@ function detailHtml(kid){
     }
     html += "</section></div>";
   }
-  html += '<div><section class="card glass"><h2>이번 주 남긴 개수</h2><div class="daysum">';
+  html += '<div><section class="card glass"><h2>📆 이번 주 남긴 개수</h2><div class="daysum">';
   for(var d=0;d<7;d++){
     html += "<div><span>"+DAYN[d]+"</span><b>"+(g.dayCounts[d]||0)+"</b></div>";
   }
@@ -466,22 +477,22 @@ function detailHtml(kid){
 }
 function navHtml(where){
   var items = [
-    {id:"home", label:"가족"},
-    {id:"board", label:"숙제"},
-    {id:"sched", label:"일정"},
-    {id:"more", label:"더보기"}
+    {id:"home", ico:"🏠", label:"가족"},
+    {id:"board", ico:"✏️", label:"숙제"},
+    {id:"sched", ico:"📅", label:"일정"},
+    {id:"more", ico:"•••", label:"더보기"}
   ];
   var railItems = [
-    {id:"home", label:"가족"},
-    {id:"board", label:"숙제"},
-    {id:"sched", label:"일정"},
-    {id:"grow", label:"성장"},
-    {id:"lock", label:"잠그기"}
+    {id:"home", ico:"🏠", label:"가족"},
+    {id:"board", ico:"✏️", label:"숙제"},
+    {id:"sched", ico:"📅", label:"일정"},
+    {id:"grow", ico:"📏", label:"성장"},
+    {id:"lock", ico:"🔒", label:"잠그기"}
   ];
   function btns(list){
     return list.map(function(it){
       var on = (it.id==="home" && page!=="more") || (it.id==="more" && moreOn);
-      return '<button type="button" class="'+(on?"on":"")+'" data-nav="'+it.id+'">'+it.label+"</button>";
+      return '<button type="button" class="'+(on?"on":"")+'" data-nav="'+it.id+'"><span class="tabico">'+it.ico+"</span>"+it.label+"</button>";
     }).join("");
   }
   document.getElementById("tabbar").innerHTML = btns(items);
@@ -490,8 +501,8 @@ function navHtml(where){
 function moreHtml(){
   var box = document.getElementById("morebox");
   if(!moreOn){ box.className = "morebox glass"; box.innerHTML = ""; return; }
-  var h = '<button type="button" data-nav="board">숙제 보드</button>'
-    + '<button type="button" data-nav="grow">성장 기록</button>'
+  var h = '<button type="button" data-nav="board">✏️ 숙제 보드</button>'
+    + '<button type="button" data-nav="grow">📏 성장 기록</button>'
     + '<button type="button" id="toggleRules">'+(rulesOn?"규칙 접기":"규칙 설정")+"</button>";
   if(rulesOn){
     h += '<div class="rules">';
@@ -511,7 +522,7 @@ function moreHtml(){
     });
     h += '<button type="button" class="cta" id="saveRules">규칙 저장</button></div>';
   }
-  h += '<button type="button" data-nav="lock">잠그기</button>';
+  h += '<button type="button" data-nav="lock">🔒 잠그기</button>';
   box.className = "morebox glass on";
   box.innerHTML = h;
 }
@@ -526,7 +537,7 @@ function render(){
   } else {
     page = "home"; detailId = "";
     document.getElementById("kicker").textContent = "가족";
-    document.getElementById("title").textContent = "주말 게임 시간";
+    document.getElementById("title").textContent = "가족";
     document.getElementById("main").innerHTML = homeHtml();
   }
   navHtml();

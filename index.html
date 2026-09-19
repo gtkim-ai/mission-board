@@ -60,9 +60,11 @@ body{
 }
 .tabbar button{
   flex:1;border:0;background:transparent;border-radius:12px;
-  min-height:44px;padding:6px 4px;font-size:12px;font-weight:600;color:var(--dim);
+  min-height:44px;padding:4px 4px 6px;font-size:11px;font-weight:600;color:var(--dim);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
 }
 .tabbar button.on{background:rgba(255,255,255,.92);color:var(--ink);font-weight:700}
+.tabico{font-size:18px;line-height:1;font-weight:400}
 button,.task,.sub,.habit .st{touch-action:manipulation; -webkit-user-select:none; user-select:none}
 h1,h2,h3{font-weight:700;letter-spacing:-0.02em}
 img,svg{max-width:100%;display:block}
@@ -94,7 +96,14 @@ header .inner{display:flex;align-items:flex-end;justify-content:space-between;ga
 header h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1.15}
 header .kicker{font-size:14px;color:var(--dim);font-weight:500;margin:0 0 4px}
 #hdrAvatar{display:flex;gap:6px;flex:none}
-#hdrAvatar svg{width:32px;height:32px}
+#hdrAvatar .av{width:32px;height:32px;font-size:18px}
+.av{
+  width:32px;height:32px;border-radius:50%;flex:none;overflow:hidden;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:18px;line-height:1;font-weight:700;vertical-align:middle;
+}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.av-letter{color:#fff;font-size:14px}
 
 button{
   font-family:inherit;font-weight:600;color:var(--ink);cursor:pointer;
@@ -296,6 +305,23 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
 .gchip{flex:1;min-width:120px;padding:12px 14px;border-radius:16px}
 .gchip b{display:block;font-size:20px;font-weight:700;letter-spacing:-0.02em}
 .gchip span{font-size:12px;color:var(--dim)}
+.gsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 10px}
+.gsum .gchip b.low{color:#FF3B30}
+.gsum .gchip b.high{color:#FF9F0A}
+.gchart{position:relative;width:100%;height:260px;margin-top:4px}
+.gchart svg{width:100%;height:100%;display:block}
+.gchart .tip{
+  display:none;position:absolute;z-index:2;min-width:148px;padding:8px 10px;
+  background:#fff;border-radius:12px;box-shadow:0 8px 24px var(--shadow);
+  font-size:11px;line-height:1.45;color:var(--ink);pointer-events:none;
+}
+.gchart .tip.on{display:block}
+.gleg{display:flex;flex-wrap:wrap;gap:10px 14px;margin-top:10px;font-size:12px;color:var(--dim);font-weight:600}
+.gleg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.gleg i.in{background:#5B8DEF}
+.gleg i.p3{background:#FF9F0A}
+.gleg i.p50{background:#34C759}
+.gleg i.p97{background:#FF3B30}
 #gidBirth{
   width:100%;margin:4px 0 8px;font:inherit;font-size:16px;padding:12px;
   border:1px solid rgba(120,120,128,.22);border-radius:12px;background:rgba(255,255,255,.8);color:var(--ink)
@@ -551,6 +577,23 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
     </div>
   </div>
   <div class="card">
+    <div class="head">성장 곡선</div>
+    <div class="body">
+      <div class="kinds" id="growKind" style="display:flex;gap:6px">
+        <button type="button" data-gk="h" class="on">키</button>
+        <button type="button" data-gk="w">몸무게</button>
+      </div>
+      <div class="gsum" id="growSum"></div>
+      <div class="gchart" id="growChart"></div>
+      <div class="gleg">
+        <span><i class="in"></i>입력</span>
+        <span><i class="p3"></i>P3(하단선)</span>
+        <span><i class="p50"></i>P50(중앙선)</span>
+        <span><i class="p97"></i>P97(상단선)</span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
     <div class="head">최근 기록</div>
     <div class="body" id="growNow"></div>
   </div>
@@ -715,10 +758,10 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
 <footer id="foot">오늘 할 일만 모았습니다. 칸을 누르면 해당 메뉴로 갑니다.</footer>
 </div>
 <nav class="tabbar" id="tabbar" aria-label="하단 탭">
-  <button type="button" data-tab="family">가족</button>
-  <button type="button" data-tab="today" class="on">숙제</button>
-  <button type="button" data-tab="schedule">일정</button>
-  <button type="button" data-tab="more">더보기</button>
+  <button type="button" data-tab="family"><span class="tabico">🏠</span>가족</button>
+  <button type="button" data-tab="today" class="on"><span class="tabico">✏️</span>숙제</button>
+  <button type="button" data-tab="schedule"><span class="tabico">📅</span>일정</button>
+  <button type="button" data-tab="more"><span class="tabico">•••</span>더보기</button>
 </nav>
 
 <script>
@@ -880,6 +923,7 @@ var packs = [];
 var packPending = false, packTimer = null, packEditId = null, packKid = "hajoo", packPastOpen = false;
 var growth = {profiles:{}, items:[]};
 var growPending = false, growTimer = null, growEditId = null;
+var growKind = "h";
 var printYM = {y: TODAY.getFullYear(), m: TODAY.getMonth()};
 var printKidId = "all";
 
@@ -1235,6 +1279,153 @@ function pctText(p){
   var top = Math.max(0.1, Math.round((100-p)*10)/10);
   return "백분위 "+shown+"% · 상위 약 "+top+"%";
 }
+var Z_P3 = -1.880793608, Z_P50 = 0, Z_P97 = 1.880793608;
+function lmsY(z, lms){
+  if(!lms || !lms.M || !lms.S) return null;
+  if(Math.abs(lms.L) < 1e-6) return lms.M * Math.exp(lms.S * z);
+  var inner = 1 + lms.L * lms.S * z;
+  if(inner <= 0) return null;
+  return lms.M * Math.pow(inner, 1/lms.L);
+}
+function refValue(kind, sex, months, z){
+  var y = lmsY(z, lmsAt(kind, sex, months));
+  return (y && isFinite(y)) ? y : null;
+}
+function growJudge(kind, p){
+  if(p==null) return {label:"판정 불가", cls:""};
+  if(kind==="h"){
+    if(p < 3) return {label:"저신장", cls:"low"};
+    if(p > 97) return {label:"고신장", cls:"high"};
+    return {label:"정상범위", cls:""};
+  }
+  if(p < 3) return {label:"저체중", cls:"low"};
+  if(p > 97) return {label:"과체중", cls:"high"};
+  return {label:"정상범위", cls:""};
+}
+function niceNum(v, unit){
+  if(v==null || !isFinite(v)) return "-";
+  return (Math.round(v*10)/10) + (unit||"");
+}
+function renderGrowthChart(){
+  var box = document.getElementById("growChart");
+  var sum = document.getElementById("growSum");
+  if(!box || !sum) return;
+  document.querySelectorAll("#growKind button").forEach(function(b){
+    b.className = b.getAttribute("data-gk")===growKind ? "on" : "";
+  });
+  var kid = KIDS[curKid];
+  var pr = (growth.profiles||{})[kid.id] || {};
+  if(!pr.birth){
+    sum.innerHTML = "";
+    box.innerHTML = '<p class="note">생년월일과 성별을 먼저 넣으면 질병관리청 2017 성장도표 곡선이 그려집니다.</p>';
+    return;
+  }
+  var sex = pr.sex==="M" ? "M" : "F";
+  var unit = growKind==="h" ? "cm" : "kg";
+  var kindName = growKind==="h" ? "키" : "몸무게";
+  var items = kidGrowthItems(kid.id).filter(function(it){
+    return growKind==="h" ? +it.height>0 : +it.weight>0;
+  }).map(function(it){
+    var mo = ageMonthsOn(pr.birth, it.date);
+    return {date:it.date, months:mo, value: growKind==="h" ? +it.height : +it.weight};
+  }).filter(function(it){ return it.months!=null; })
+    .sort(function(a,b){ return a.months-b.months; });
+  var ageNow = ageMonthsOn(pr.birth, TODAY_KEY) || 0;
+  var last = items.length ? items[items.length-1] : null;
+  var focus = last || {months:ageNow, value:null, date:TODAY_KEY};
+  var p = (focus.value!=null) ? pctOf(growKind, sex, focus.months, focus.value) : null;
+  var judge = growJudge(growKind, p);
+  sum.innerHTML =
+    '<div class="gchip"><span>신체계측치</span><b>'+(focus.value!=null?niceNum(focus.value, unit):"-")+'</b></div>'
+    + '<div class="gchip"><span>백분위수</span><b>'+(p==null?"-":(Math.round(p*10)/10))+'</b></div>'
+    + '<div class="gchip"><span>판정</span><b class="'+judge.cls+'">'+judge.label+'</b></div>';
+  var x1 = Math.min(227, Math.max(24, Math.ceil((Math.max(ageNow, focus.months)+12)/12)*12));
+  var x0 = 0;
+  var step = x1>120 ? 2 : 1;
+  function series(z){
+    var pts = [];
+    for(var m=x0;m<=x1;m+=step){
+      var y = refValue(growKind, sex, m, z);
+      if(y!=null) pts.push([m,y]);
+    }
+    return pts;
+  }
+  var p3 = series(Z_P3), p50 = series(Z_P50), p97 = series(Z_P97);
+  var ys = p3.concat(p50).concat(p97).map(function(pt){ return pt[1]; });
+  items.forEach(function(it){ ys.push(it.value); });
+  var yMin = Math.min.apply(null, ys), yMax = Math.max.apply(null, ys);
+  var pad = (yMax-yMin)*0.12 || 4;
+  yMin = Math.max(0, yMin-pad);
+  yMax = yMax+pad;
+  var W = 360, H = 240, L = 36, T = 10, R = 10, B = 28;
+  var iw = W-L-R, ih = H-T-B;
+  function sx(m){ return L + (m-x0)/((x1-x0)||1)*iw; }
+  function sy(v){ return T + (yMax-v)/((yMax-yMin)||1)*ih; }
+  function path(pts){
+    return pts.map(function(pt,i){ return (i?"L":"M")+sx(pt[0]).toFixed(1)+","+sy(pt[1]).toFixed(1); }).join(" ");
+  }
+  function ticks(a,b,n){
+    var out=[], span=b-a;
+    if(span<=0) return [a,b];
+    var raw=span/n, pow=Math.pow(10, Math.floor(Math.log(raw)/Math.LN10));
+    var nice=pow; if(raw/pow>5) nice=5*pow; else if(raw/pow>2) nice=2*pow;
+    var v=Math.ceil(a/nice)*nice;
+    for(;v<=b+1e-9;v+=nice) out.push(Math.round(v*10)/10);
+    return out;
+  }
+  var xt = ticks(x0, x1, 6), yt = ticks(yMin, yMax, 5);
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-label="성장 곡선">';
+  yt.forEach(function(v){
+    svg += '<line x1="'+L+'" y1="'+sy(v).toFixed(1)+'" x2="'+(W-R)+'" y2="'+sy(v).toFixed(1)+'" stroke="rgba(60,60,67,.12)" stroke-width="1"/>';
+    svg += '<text x="'+(L-4)+'" y="'+(sy(v)+3).toFixed(1)+'" text-anchor="end" font-size="8" fill="#6E6E73">'+v+'</text>';
+  });
+  xt.forEach(function(v){
+    svg += '<text x="'+sx(v).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="8" fill="#6E6E73">'+v+'</text>';
+  });
+  svg += '<text x="'+(W/2)+'" y="'+(H-1)+'" text-anchor="middle" font-size="8" fill="#6E6E73">만 나이(개월)</text>';
+  svg += '<path d="'+path(p3)+'" fill="none" stroke="#FF9F0A" stroke-width="1.6" stroke-dasharray="3 3"/>';
+  svg += '<path d="'+path(p50)+'" fill="none" stroke="#34C759" stroke-width="1.6" stroke-dasharray="3 3"/>';
+  svg += '<path d="'+path(p97)+'" fill="none" stroke="#FF3B30" stroke-width="1.6" stroke-dasharray="3 3"/>';
+  if(items.length>1){
+    svg += '<path d="'+path(items.map(function(it){ return [it.months, it.value]; }))+'" fill="none" stroke="#5B8DEF" stroke-width="1.8"/>';
+  }
+  items.forEach(function(it){
+    svg += '<circle cx="'+sx(it.months).toFixed(1)+'" cy="'+sy(it.value).toFixed(1)+'" r="4" fill="#5B8DEF"/>';
+  });
+  svg += "</svg>";
+  box.innerHTML = svg + '<div class="tip" id="growTip"></div>';
+  var tip = document.getElementById("growTip");
+  function showTip(m, clientX, clientY){
+    m = Math.max(x0, Math.min(x1, Math.round(m)));
+    var v3 = refValue(growKind, sex, m, Z_P3);
+    var v50 = refValue(growKind, sex, m, Z_P50);
+    var v97 = refValue(growKind, sex, m, Z_P97);
+    var nearest = null, best=99;
+    items.forEach(function(it){
+      var d = Math.abs(it.months-m);
+      if(d<best){ best=d; nearest=it; }
+    });
+    var html = '<b>'+m+'개월</b><br>P3(하단선): '+niceNum(v3, unit)
+      +'<br>P50(중앙선): '+niceNum(v50, unit)
+      +'<br>P97(상단선): '+niceNum(v97, unit);
+    if(nearest && best<=2) html += '<br>입력: '+niceNum(nearest.value, unit);
+    tip.innerHTML = html;
+    tip.className = "tip on";
+    var r = box.getBoundingClientRect();
+    tip.style.left = Math.min(r.width-160, Math.max(8, clientX-r.left+8))+"px";
+    tip.style.top = Math.max(8, clientY-r.top-70)+"px";
+  }
+  box.onpointerdown = box.onpointermove = function(e){
+    var svgEl = box.querySelector("svg");
+    if(!svgEl) return;
+    var r = svgEl.getBoundingClientRect();
+    var x = (e.clientX-r.left)/r.width*W;
+    var m = x0 + (x-L)/iw*(x1-x0);
+    if(!isFinite(m)) return;
+    showTip(m, e.clientX, e.clientY);
+  };
+  box.onpointerleave = function(){ tip.className = "tip"; };
+}
 function kidGrowthItems(kidId){
   return (growth.items||[]).filter(function(x){ return x.kidId===kidId; })
     .sort(function(a,b){ return (b.date||"").localeCompare(a.date||""); });
@@ -1402,21 +1593,9 @@ function setSync(msg){
 
 /* ============ 아바타 ============ */
 function avatar(kid, size){
-  var id = kid && kid.id ? kid.id : "";
-  var S = (kid && kid.skin) ? kid.skin : (kid || {});
-  var hair = S.hair || "#5b3a1e", shirt = S.shirt || "#888", skin = "#e8b08a";
-  var hairPath = id==="hayoo"
-    ? '<ellipse cx="32" cy="24" rx="20" ry="16" fill="'+hair+'"/><rect x="16" y="24" width="32" height="10" fill="'+skin+'"/><ellipse cx="16" cy="34" rx="6" ry="10" fill="'+hair+'"/><ellipse cx="48" cy="34" rx="6" ry="10" fill="'+hair+'"/>'
-    : id==="haseo"
-      ? '<path d="M16 28 C16 12 48 12 48 28 L48 22 C48 10 16 10 16 22 Z" fill="'+hair+'"/><rect x="18" y="16" width="28" height="7" fill="'+hair+'"/><ellipse cx="15" cy="34" rx="5" ry="8" fill="'+hair+'"/><ellipse cx="49" cy="34" rx="5" ry="8" fill="'+hair+'"/>'
-      : '<path d="M18 30 C16 14 48 14 46 30 C42 18 22 18 18 30 Z" fill="'+hair+'"/>';
-  return '<svg viewBox="0 0 64 64" width="'+size+'" height="'+size+'" xmlns="http://www.w3.org/2000/svg">'
-    + '<circle cx="32" cy="32" r="30" fill="'+shirt+'"/>'
-    + '<circle cx="32" cy="34" r="16" fill="'+skin+'"/>'
-    + hairPath
-    + '<circle cx="26" cy="34" r="2.2" fill="#2a241c"/><circle cx="38" cy="34" r="2.2" fill="#2a241c"/>'
-    + '<path d="M27 41 Q32 45 37 41" fill="none" stroke="#a86056" stroke-width="1.8" stroke-linecap="round"/>'
-    + '</svg>';
+  if(window.GameTime) return GameTime.avatarHTML(kid, gameRules, {size: size || 32});
+  var ch = (kid && kid.name ? kid.name.replace("김","") : "?").slice(-1);
+  return '<div class="av av-letter" style="width:'+(size||32)+'px;height:'+(size||32)+'px">'+(ch||"?")+"</div>";
 }
 
 /* ============ 렌더링 ============ */
@@ -2118,6 +2297,7 @@ function renderGrowth(){
   if(!items.length){
     now.innerHTML = '<p class="note">기록이 없습니다. 아래 버튼으로 키와 몸무게를 넣으세요.</p>';
     hist.innerHTML = '<p class="note">이전 기록이 없습니다.</p>';
+    renderGrowthChart();
     return;
   }
   var last = items[0];
@@ -2128,6 +2308,7 @@ function renderGrowth(){
     + '<div class="gchip"><span>BMI</span><b>'+(bmi?bmi.toFixed(1):"-")+'</b></div>'
     + '<div class="gchip"><span>측정일</span><b>'+prettyDate(last.date)+'</b></div></div>'
     + growPctLine(kid.id, last);
+  renderGrowthChart();
   hist.innerHTML = "";
   items.slice(1).forEach(function(it){
     var row = document.createElement("div");
@@ -2616,6 +2797,12 @@ document.getElementById("growDlg").addEventListener("click", function(e){
   if(e.target.id === "growDlg") closeGrowDlg();
 });
 document.getElementById("gidBirth").addEventListener("change", saveGrowProfile);
+document.querySelectorAll("#growKind button").forEach(function(b){
+  b.onclick = function(){
+    growKind = b.getAttribute("data-gk") || "h";
+    renderGrowth();
+  };
+});
 document.querySelectorAll("#gidSex button").forEach(function(b){
   b.onclick = function(){
     ensureGrowth();

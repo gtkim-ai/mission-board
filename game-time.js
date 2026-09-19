@@ -30,9 +30,9 @@
         haseo: DEFAULT_TARGETS.haseo.slice()
       },
       child_master: {
-        hajoo: { name: "김하주", color: "#059669", photo_url: "" },
-        hayoo: { name: "김하유", color: "#0A84FF", photo_url: "" },
-        haseo: { name: "김하서", color: "#FF6B35", photo_url: "" }
+        hajoo: { name: "김하주", color: "#059669", photo_url: "", emoji: "👧", initial: "주" },
+        hayoo: { name: "김하유", color: "#0A84FF", photo_url: "", emoji: "👦", initial: "유" },
+        haseo: { name: "김하서", color: "#FF6B35", photo_url: "", emoji: "👶", initial: "서" }
       }
     };
   }
@@ -68,7 +68,9 @@
       n.child_master[id] = {
         name: src.name || fb.name,
         color: src.color || fb.color,
-        photo_url: src.photo_url || ""
+        photo_url: src.photo_url || "",
+        emoji: src.emoji || fb.emoji || "",
+        initial: src.initial || fb.initial || ""
       };
     });
     return n;
@@ -307,6 +309,47 @@
     return {};
   }
 
+  function childMeta(kid, rules) {
+    rules = normalizeRules(rules);
+    var id = kid && kid.id ? kid.id : "";
+    var m = (rules.child_master && rules.child_master[id]) || {};
+    var given = String((kid && kid.name) || m.name || "").replace("김", "");
+    return {
+      name: (kid && kid.name) || m.name || "",
+      color: m.color || "#0A84FF",
+      photo_url: m.photo_url || "",
+      emoji: m.emoji || "",
+      initial: m.initial || given.slice(-1) || "?"
+    };
+  }
+
+  function tint(hex) {
+    hex = String(hex || "").replace("#", "");
+    if (hex.length !== 6) return "rgba(120,120,128,.14)";
+    var r = parseInt(hex.slice(0, 2), 16), g = parseInt(hex.slice(2, 4), 16), b = parseInt(hex.slice(4, 6), 16);
+    return "rgba(" + r + "," + g + "," + b + ",0.18)";
+  }
+
+  function lastNameChar(kid, rules) {
+    var meta = childMeta(kid, rules);
+    var name = (kid && kid.name) || meta.name || "";
+    var ch = String(name).replace(/\s/g, "").slice(-1);
+    return ch || meta.initial || "?";
+  }
+
+  function avatarHTML(kid, rules, opt) {
+    opt = opt || {};
+    var meta = childMeta(kid, rules);
+    var cls = "av" + (opt.cls ? " " + opt.cls : "");
+    var size = opt.size ? "width:" + opt.size + "px;height:" + opt.size + "px;" : "";
+    if (meta.photo_url) {
+      return '<div class="' + cls + ' av-photo" style="' + size + '"><img alt="" src="' + String(meta.photo_url).replace(/"/g, "") + '"></div>';
+    }
+    var letter = lastNameChar(kid, rules);
+    var fs = opt.size ? "font-size:" + Math.round(opt.size * 0.42) + "px;" : "";
+    return '<div class="' + cls + ' av-letter" style="' + size + fs + "background:" + meta.color + '">' + letter + "</div>";
+  }
+
   function toggleLeftover(data, leftover, kid) {
     if (!leftover || leftover.weekly) return data;
     data[leftover.kidId] = data[leftover.kidId] || {};
@@ -339,6 +382,9 @@
     freezeAll: freezeAll,
     mergeGameLock: mergeGameLock,
     toggleLeftover: toggleLeftover,
-    formulaText: formulaText
+    formulaText: formulaText,
+    childMeta: childMeta,
+    lastNameChar: lastNameChar,
+    avatarHTML: avatarHTML
   };
 });
