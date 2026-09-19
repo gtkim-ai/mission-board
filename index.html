@@ -6,270 +6,351 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="미션보드">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#63a03f">
+<meta name="theme-color" content="#eef1f6">
 <title>하주 · 하유 · 하서 미션 보드</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=4">
 <link rel="manifest" href="manifest.webmanifest?v=4">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#e7dfcb; --panel:#f6f0e1; --panel2:#ece3cf; --ink:#2b241a; --dim:#7a6c56;
-  --line:#1d1a15; --grass:#63a03f; --grass-lt:#82c356; --dirt:#8a5f3c; --dirt-dk:#63422a;
-  --stone:#8d8d8d; --gold:#e6a92b; --dia:#3fbfbf; --red:#cf3b2f;
-  --shadow:rgba(0,0,0,.28); --hi:rgba(255,255,255,.35);
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#17140f; --panel:#2a251d; --panel2:#221d16; --ink:#f0e7d5; --dim:#a4967d;
-    --line:#0d0b08; --grass:#4e8434; --grass-lt:#6aa544; --dirt:#6b4a2e; --dirt-dk:#4a3220;
-    --stone:#6d6d6d; --gold:#d59a23; --dia:#37a8a8; --red:#c23a2f;
-    --shadow:rgba(0,0,0,.45); --hi:rgba(255,255,255,.16);
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#17140f; --panel:#2a251d; --panel2:#221d16; --ink:#f0e7d5; --dim:#a4967d;
-  --line:#0d0b08; --grass:#4e8434; --grass-lt:#6aa544; --dirt:#6b4a2e; --dirt-dk:#4a3220;
-  --stone:#6d6d6d; --gold:#d59a23; --dia:#37a8a8; --red:#c23a2f;
-  --shadow:rgba(0,0,0,.45); --hi:rgba(255,255,255,.16);
+  --bg:#eef1f6; --panel:rgba(255,255,255,.62); --panel2:rgba(255,255,255,.55);
+  --ink:#1D1D1F; --dim:#6E6E73; --line:rgba(255,255,255,.75);
+  --grass:#059669; --grass-lt:#34D399; --dirt:#0A84FF; --dirt-dk:#0055D4;
+  --stone:#C7C7CC; --gold:#FF9F0A; --dia:#0A84FF; --red:#FF3B30;
+  --shadow:rgba(31,41,55,.10); --hi:rgba(255,255,255,.50);
+  --safe-t:env(safe-area-inset-top, 0px);
+  --safe-b:env(safe-area-inset-bottom, 0px);
+  --safe-l:env(safe-area-inset-left, 0px);
+  --safe-r:env(safe-area-inset-right, 0px);
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
+html,body{margin:0;padding:0;min-height:100%;min-height:100dvh}
+html{background:#eef1f6}
 body{
-  background:var(--bg); color:var(--ink);
-  font-family:'Gothic A1',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
-  font-weight:700; line-height:1.45; max-width:920px; margin:0 auto;
-  padding:calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
+  position:relative; color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','SF Pro Text','Noto Sans KR',sans-serif;
+  font-weight:400; line-height:1.45;
   -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent;
   overscroll-behavior-y:contain;
 }
-button,.task,.sub,.habit .st{touch-action:manipulation; -webkit-user-select:none; user-select:none}
-h1,h2,h3,.px-font{font-family:'Do Hyeon','Gothic A1',sans-serif;font-weight:400;letter-spacing:.5px}
-img,svg{max-width:100%; image-rendering:pixelated}
-
-/* ---- blocky chrome ---- */
-.blk{border:3px solid var(--line); box-shadow:inset -4px -4px 0 var(--shadow), inset 4px 4px 0 var(--hi);}
-.card{background:var(--panel); border:3px solid var(--line); box-shadow:4px 4px 0 var(--shadow); margin-bottom:10px}
-.card > .head{
-  background:var(--dirt); color:#fff8e7; padding:8px 12px; border-bottom:3px solid var(--line);
-  font-family:'Do Hyeon',sans-serif; font-size:17px; display:flex; align-items:center; gap:8px;
-  box-shadow:inset 0 -4px 0 var(--dirt-dk), inset 0 4px 0 rgba(255,255,255,.18);
-}
-.card > .body{padding:12px}
-
-/* ---- header ---- */
-header{position:relative; margin-bottom:10px; border:3px solid var(--line); box-shadow:4px 4px 0 var(--shadow);
+.bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-   repeating-linear-gradient(90deg, var(--dirt) 0 14px, var(--dirt-dk) 14px 28px) 0 0/auto 100%;
-  overflow:hidden}
-header .inner{display:flex;align-items:center;gap:8px;padding:8px 10px;color:#fff6e4}
-header h1{margin:0;font-size:20px;text-shadow:3px 3px 0 rgba(0,0,0,.45)}
+    radial-gradient(760px 560px at 8% 0%, rgba(255,138,101,0.55), rgba(255,138,101,0) 60%),
+    radial-gradient(820px 620px at 95% 10%, rgba(94,151,255,0.55), rgba(94,151,255,0) 60%),
+    radial-gradient(900px 700px at 40% 100%, rgba(167,139,250,0.45), rgba(167,139,250,0) 60%),
+    radial-gradient(700px 600px at 85% 95%, rgba(52,211,153,0.35), rgba(52,211,153,0) 60%),
+    linear-gradient(180deg,#eef1f6,#e7ebf2);
+  filter:blur(2px);
+}
+.wrap{
+  position:relative;z-index:1;box-sizing:border-box;
+  min-height:100dvh;max-width:920px;margin:0 auto;
+  padding:calc(12px + var(--safe-t)) calc(16px + var(--safe-r)) calc(24px + var(--safe-b)) calc(16px + var(--safe-l));
+}
+button,.task,.sub,.habit .st{touch-action:manipulation; -webkit-user-select:none; user-select:none}
+h1,h2,h3{font-weight:700;letter-spacing:-0.02em}
+img,svg{max-width:100%;display:block}
+a{color:#0A84FF;text-decoration:none}
 
-/* ---- buttons ---- */
-button{font-family:inherit;font-weight:700;color:var(--ink);cursor:pointer;
-  background:var(--panel2); border:3px solid var(--line); padding:7px 11px; font-size:14px;
-  box-shadow:inset -4px -4px 0 var(--shadow), inset 4px 4px 0 var(--hi);}
-button:active{box-shadow:inset 4px 4px 0 var(--shadow)}
-button.on{background:var(--grass); color:#fff}
+.glass,.card,.gatebox,.views,.tabs,.weeknav .label,.task,.sub,.habit,.wk,.rptrow,.sev,.gchip{
+  background:#ffffffdb;border:1px solid rgba(255,255,255,.75);
+  box-shadow:0 8px 32px var(--shadow), inset 0 1px 0 var(--hi);
+}
+@supports ((-webkit-backdrop-filter:blur(24px)) or (backdrop-filter:blur(24px))){
+  .glass,.card,.gatebox,.views,.tabs,.weeknav .label,.task,.sub,.habit,.wk,.rptrow,.sev,.gchip{
+    background:rgba(255,255,255,.62);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    backdrop-filter:blur(24px) saturate(180%);
+  }
+}
+
+.card{border-radius:24px;margin-bottom:12px;overflow:hidden;box-shadow:0 8px 32px var(--shadow), inset 0 1px 0 var(--hi)}
+.card > .head{
+  padding:16px 18px 0;font-size:17px;font-weight:700;color:var(--ink);
+  display:flex;align-items:center;gap:8px;background:transparent;border:0;box-shadow:none
+}
+.card > button.head{padding:16px 18px}
+.card > .body{padding:14px 18px 18px}
+.card > .head + .body{padding-top:12px}
+
+header{margin-bottom:14px}
+header .inner{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+header h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1.15}
+header .kicker{font-size:14px;color:var(--dim);font-weight:500;margin:0 0 4px}
+#hdrAvatar{display:flex;gap:6px;flex:none}
+#hdrAvatar svg{width:32px;height:32px}
+
+button{
+  font-family:inherit;font-weight:600;color:var(--ink);cursor:pointer;
+  background:rgba(255,255,255,.55);border:0;border-radius:999px;
+  padding:8px 14px;font-size:14px;min-height:44px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+button:active{opacity:.72}
+button.on{background:#1D1D1F;color:#fff;box-shadow:none}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .spacer{flex:1}
 
-.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-.tabs button{flex:1;min-width:30%;font-family:'Do Hyeon',sans-serif;font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px}
-.tabs button.on{background:var(--grass);color:#fff}
-.tabs svg{width:26px;height:26px;flex:none}
+.views{
+  display:flex;gap:2px;padding:4px;border-radius:14px;margin-bottom:10px;
+  box-shadow:0 8px 24px var(--shadow), inset 0 1px 0 var(--hi)
+}
+.views button{
+  flex:1;min-width:0;border-radius:10px;min-height:44px;padding:8px 2px;
+  font-size:14px;font-weight:500;color:var(--dim);background:transparent;box-shadow:none
+}
+.views button.on{background:rgba(255,255,255,.92);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 
-.weeknav{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.weeknav .label{flex:1;text-align:center;font-family:'Do Hyeon',sans-serif;font-size:16px;
-  background:var(--panel);border:3px solid var(--line);padding:7px;box-shadow:4px 4px 0 var(--shadow)}
+.tabs{
+  display:flex;flex-wrap:nowrap;gap:6px;margin-bottom:10px;padding:4px;border-radius:16px;
+  box-shadow:0 8px 24px var(--shadow), inset 0 1px 0 var(--hi)
+}
+.tabs button{
+  flex:1;min-width:0;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:8px 6px;border-radius:12px;background:transparent;box-shadow:none;color:var(--dim)
+}
+.tabs button.on{background:rgba(255,255,255,.92);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tabs svg{width:26px;height:26px;flex:none;border-radius:50%}
 
-.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:8px;
-  position:sticky;top:0;z-index:20;background:var(--bg);padding:4px 0 6px}
-.days button{padding:8px 1px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.1;min-height:60px;justify-content:center}
-.days button .d{font-family:'Do Hyeon',sans-serif;font-size:16px}
-.days button.sel{background:var(--gold);color:#2b241a}
-.days button.today{outline:3px solid var(--dia);outline-offset:-9px}
-.days .dot{width:8px;height:8px;background:var(--stone);border:2px solid var(--line)}
-.days .dot.done{background:var(--grass-lt)}
-.days .dot.part{background:var(--gold)}
+.weeknav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.weeknav .label{
+  flex:1;text-align:center;font-size:15px;font-weight:700;border-radius:14px;padding:10px 8px
+}
+.weeknav button{min-height:44px;min-width:48px;font-size:15px}
 
-/* ---- task rows ---- */
-.grp{margin-bottom:10px}
-.grp h3{margin:0 0 6px;font-size:15px;color:var(--dim);display:flex;align-items:center;gap:6px}
-.grp h3::before{content:"";width:12px;height:12px;background:var(--dirt);border:2px solid var(--line)}
-.task{display:flex;align-items:center;gap:10px;padding:10px 10px;background:var(--panel2);
-  border:3px solid var(--line);margin-bottom:7px;cursor:pointer;user-select:none;min-height:52px}
-.task.done{background:color-mix(in srgb,var(--grass) 30%, var(--panel2))}
-.task .box{width:28px;height:28px;flex:none;background:var(--panel);border:3px solid var(--line);
-  display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;
-  box-shadow:inset -3px -3px 0 var(--shadow)}
-.task.done .box{background:var(--grass)}
-.task .txt{flex:1;font-size:15px}
-.task .tag{font-size:11px;background:var(--gold);color:#2b241a;border:2px solid var(--line);padding:2px 5px;white-space:nowrap}
-.subs{display:flex;flex-wrap:wrap;gap:7px;margin:-2px 0 9px 12px}
-.subs .sub{display:flex;align-items:center;gap:6px;padding:9px 10px;background:var(--panel2);
-  border:3px solid var(--line);font-size:13.5px;cursor:pointer;min-height:44px}
-.subs .sub.done{background:color-mix(in srgb,var(--grass) 32%, var(--panel2))}
-.subs .sub .box{width:16px;height:16px;border-width:2px;font-size:11px}
+.days{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:10px;
+  position:sticky;top:var(--safe-t);z-index:20;
+  padding:6px 0 8px;
+  background:linear-gradient(180deg, rgba(238,241,246,.92), rgba(238,241,246,.72) 70%, transparent)
+}
+.days button{
+  padding:8px 1px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:4px;
+  line-height:1.1;min-height:58px;justify-content:center;border-radius:14px
+}
+.days button .d{font-size:15px;font-weight:700}
+.days button.sel{background:#1D1D1F;color:#fff}
+.days button.today{box-shadow:inset 0 0 0 2px #0A84FF}
+.days .dot{width:7px;height:7px;border-radius:50%;background:var(--stone);border:0}
+.days .dot.done{background:var(--grass)}
+.days .dot.part{background:#0A84FF}
+.days button.wk .d{color:#FF9F0A}
+.days button.sel .d{color:#fff}
 
-/* ---- habits ---- */
-.habit{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--panel2);
-  border:3px solid var(--line);margin-bottom:7px;min-height:56px}
-.habit .txt{flex:1;font-size:14.5px}
-.habit .st{width:56px;height:44px;flex:none;font-family:'Do Hyeon',sans-serif;font-size:20px;padding:0}
-.habit .st[data-v="ok"]{background:var(--grass);color:#fff}
-.habit .st[data-v="no"]{background:var(--red);color:#fff}
-.note{font-size:12.5px;color:var(--dim);margin:8px 0 0}
+.grp{margin-bottom:12px}
+.grp h3{margin:0 0 8px;font-size:13px;font-weight:600;color:var(--dim);display:flex;align-items:center;gap:8px}
+.grp h3::before{content:"";width:8px;height:8px;border-radius:3px;background:#0A84FF;border:0}
+.task{
+  display:flex;align-items:center;gap:12px;padding:13px 16px;margin-bottom:8px;
+  cursor:pointer;user-select:none;min-height:52px;border-radius:16px
+}
+.task.done{background:rgba(5,150,105,.12)}
+.task .box{
+  width:28px;height:28px;flex:none;border-radius:8px;
+  background:rgba(120,120,128,.12);border:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;box-shadow:none
+}
+.task.done .box{background:linear-gradient(160deg,#34D399,#059669)}
+.task .txt{flex:1;font-size:15px;font-weight:500}
+.task .tag{font-size:11px;font-weight:600;background:rgba(10,132,255,.12);color:#0A84FF;border:0;border-radius:999px;padding:3px 8px;white-space:nowrap}
+.subs{display:flex;flex-wrap:wrap;gap:8px;margin:-2px 0 10px 8px}
+.subs .sub{
+  display:flex;align-items:center;gap:6px;padding:10px 12px;font-size:13.5px;
+  cursor:pointer;min-height:44px;border-radius:14px
+}
+.subs .sub.done{background:rgba(5,150,105,.12)}
+.subs .sub .box{width:18px;height:18px;border-radius:6px;font-size:11px}
 
-/* ---- reward ---- */
+.habit{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:8px;
+  min-height:56px;border-radius:16px
+}
+.habit .txt{flex:1;font-size:15px;font-weight:500}
+.habit .st{
+  width:56px;height:44px;flex:none;font-size:18px;font-weight:700;padding:0;border-radius:12px
+}
+.habit .st[data-v="ok"]{background:#059669;color:#fff}
+.habit .st[data-v="no"]{background:#FF3B30;color:#fff}
+.note{font-size:13px;color:var(--dim);margin:8px 0 0}
+
 .bank{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.blocks{display:flex;gap:5px}
-.blocks i{width:34px;height:34px;display:block;border:3px solid var(--line);
-  background:repeating-linear-gradient(135deg,var(--dia) 0 6px,color-mix(in srgb,var(--dia) 70%,#fff) 6px 12px);
-  box-shadow:inset -4px -4px 0 var(--shadow), inset 4px 4px 0 var(--hi)}
-.blocks i.gone{background:var(--stone);opacity:.5}
-.big{font-family:'Do Hyeon',sans-serif;font-size:30px;line-height:1}
+.blocks{display:flex;gap:6px}
+.blocks i{
+  width:34px;height:34px;display:block;border:0;border-radius:10px;
+  background:linear-gradient(160deg,#5EA1FF,#0A84FF);box-shadow:none
+}
+.blocks i.gone{background:rgba(120,120,128,.22);opacity:.7}
+.big{font-size:30px;font-weight:700;letter-spacing:-0.02em;line-height:1}
 .stat{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:13.5px;margin-top:10px}
-.stat b{font-weight:900}
-.bar{height:16px;background:var(--panel2);border:3px solid var(--line);margin-top:8px;position:relative;overflow:hidden}
-.bar > span{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--grass) 0 8px,var(--grass-lt) 8px 16px)}
-.ok-badge{font-family:'Do Hyeon',sans-serif;font-size:16px;padding:6px 10px;border:3px solid var(--line);
-  background:var(--gold);color:#2b241a;box-shadow:4px 4px 0 var(--shadow)}
-.ok-badge.no{background:var(--stone);color:#fff}
-.wk{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px;
-  padding:6px 9px;background:var(--panel2);border:3px solid var(--line);margin-bottom:6px}
-.wk .cnt{font-family:'Do Hyeon',sans-serif;font-size:16px}
-.wk .cnt.ok{color:var(--grass)}
+.stat b{font-weight:700}
+.bar{height:6px;background:rgba(120,120,128,.16);border:0;border-radius:6px;margin-top:8px;position:relative;overflow:hidden}
+.bar > span{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#34D399,#059669)}
+.ok-badge{
+  font-size:13px;font-weight:700;padding:6px 10px;border:0;border-radius:999px;
+  background:#d1fae5;color:#059669;box-shadow:none
+}
+.ok-badge.no{background:rgba(60,60,67,.08);color:var(--dim)}
+.wk{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px;
+  padding:10px 12px;margin-bottom:6px;border-radius:14px
+}
+.wk .cnt{font-size:16px;font-weight:700}
+.wk .cnt.ok{color:#059669}
 button.rpthead{
   width:100%;display:flex;align-items:center;gap:8px;text-align:left;
-  background:var(--dirt);color:#fff8e7;padding:8px 12px;font-size:16px;
-  font-family:'Do Hyeon',sans-serif;min-height:48px;
-  box-shadow:inset 0 -4px 0 var(--dirt-dk), inset 0 4px 0 rgba(255,255,255,.18);
+  background:transparent;color:var(--ink);padding:16px 18px;font-size:16px;
+  font-weight:700;min-height:48px;border-radius:0;box-shadow:none
 }
-button.rpthead:active{box-shadow:inset 4px 4px 0 var(--shadow)}
-.rptsum{flex:1;display:flex;flex-wrap:wrap;gap:6px;font-family:'Gothic A1',sans-serif;font-size:12px;font-weight:700}
-.rptchip{background:rgba(0,0,0,.22);border:2px solid var(--line);padding:3px 7px;color:#fff8e7;white-space:nowrap}
-.rptchip.ok{background:var(--grass)}
-.rptchev{flex:none;font-size:14px;opacity:.85}
+button.rpthead:active{opacity:.7}
+.rptsum{flex:1;display:flex;flex-wrap:wrap;gap:6px;font-size:12px;font-weight:600}
+.rptchip{background:rgba(60,60,67,.08);border:0;border-radius:999px;padding:3px 8px;color:var(--dim);white-space:nowrap}
+.rptchip.ok{background:#d1fae5;color:#059669}
+.rptchev{flex:none;font-size:12px;opacity:.55}
 .rptlist{display:flex;flex-direction:column;gap:6px}
-.rptrow{display:flex;align-items:center;gap:8px;padding:8px;background:var(--panel2);
-  border:3px solid var(--line);min-height:44px;font-size:13px;cursor:pointer}
+.rptrow{display:flex;align-items:center;gap:8px;padding:10px 12px;min-height:44px;font-size:13px;cursor:pointer;border-radius:14px}
 .rptrow .nm{flex:1;min-width:0}
-.rptrow .ok-badge{font-size:13px;padding:4px 7px;box-shadow:none;white-space:nowrap}
-footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
-#sync{font-size:11.5px;color:var(--dim)}
-#gate{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
-  background:var(--bg);padding:20px}
-.gatebox{width:100%;max-width:330px;background:var(--panel);border:3px solid var(--line);
-  box-shadow:6px 6px 0 var(--shadow);padding:18px}
-.gatebox .gtitle{font-family:'Do Hyeon',sans-serif;font-size:22px;text-align:center;margin-bottom:6px}
-.gatebox .gsub{font-size:12.5px;color:var(--dim);text-align:center;margin-bottom:14px}
+.rptrow .ok-badge{font-size:12px;padding:4px 8px;white-space:nowrap}
+
+footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
+#sync,#who{font-size:12px;color:var(--dim)}
+#who{margin-right:8px}
+#appBar,#moreBar{margin-bottom:10px}
+#appBar button,#moreBar button{min-height:44px}
+
+#gate{
+  position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+  background:rgba(238,241,246,.72);padding:20px;
+  padding-top:calc(20px + var(--safe-t));padding-bottom:calc(20px + var(--safe-b))
+}
+.gatebox{width:100%;max-width:340px;border-radius:24px;padding:22px;box-shadow:0 8px 32px var(--shadow)}
+.gatebox .gtitle{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px}
+.gatebox .gsub{font-size:13px;color:var(--dim);text-align:center;margin-bottom:14px}
 .gatebox label{display:block;font-size:13px;color:var(--dim);margin:10px 0 4px}
-.gatebox input{width:100%;font-family:inherit;font-weight:700;font-size:16px;padding:11px;
-  background:var(--panel2);color:var(--ink);border:3px solid var(--line);
-  box-shadow:inset 3px 3px 0 var(--shadow)}
-.gatebox button{width:100%;margin-top:16px;padding:13px;font-size:16px;background:var(--grass);color:#fff}
-.gatebox button.sub{background:var(--panel2);color:var(--ink);margin-top:8px}
+.gatebox input{
+  width:100%;font-family:inherit;font-weight:500;font-size:16px;padding:12px;
+  background:rgba(255,255,255,.8);color:var(--ink);
+  border:1px solid rgba(120,120,128,.22);border-radius:12px;box-shadow:none
+}
+.gatebox button{width:100%;margin-top:14px;padding:13px;font-size:16px;background:#0A84FF;color:#fff;border-radius:12px}
+.gatebox button.sub{background:rgba(255,255,255,.7);color:var(--ink);margin-top:8px}
 .gatebox p{min-height:18px;margin:10px 0 0;font-size:13px;color:var(--red);text-align:center;line-height:1.4;white-space:pre-line}
-#who{font-size:11.5px;color:var(--dim);margin-right:8px}
-.wkend{background:var(--gold);color:#2b241a;border:3px solid var(--line);padding:10px;
-  margin-bottom:10px;font-size:14px;line-height:1.4}
-.days button.wk .d{color:var(--gold)}
-.days button.sel .d{color:#2b241a}
+
+.wkend{
+  background:rgba(255,159,10,.14);color:#9A5B00;border:0;border-radius:16px;padding:12px 14px;
+  margin-bottom:10px;font-size:14px;line-height:1.4
+}
 .usebtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .usebtns button{flex:1;min-height:44px}
-.weeknav button{min-height:44px;min-width:48px;font-size:15px}
-.views{display:flex;gap:4px;margin-bottom:8px}
-.views button{flex:1;font-family:'Do Hyeon',sans-serif;font-size:14px;min-height:44px;padding:7px 2px}
-.sev{display:flex;align-items:flex-start;flex-wrap:wrap;gap:10px;padding:10px;background:var(--panel2);
-  border:3px solid var(--line);margin-bottom:7px;min-height:52px}
+.addbtn{width:100%;min-height:48px;margin-bottom:10px;background:#0A84FF;color:#fff;border-radius:16px;font-size:15px}
+
+.sev{display:flex;align-items:flex-start;flex-wrap:wrap;gap:10px;padding:12px 14px;margin-bottom:8px;min-height:52px;border-radius:16px}
 .sev .doses{flex-basis:100%;margin-top:0}
 .sev .when{width:72px;flex:none;font-size:12px;color:var(--dim);line-height:1.3}
-.sev .ttl{flex:1;font-size:15px}
-.sev .kd{font-size:11px;border:2px solid var(--line);padding:2px 5px;white-space:nowrap}
-.sev .kd.school{background:var(--grass);color:#fff}
-.sev .kd.academy{background:var(--gold);color:#2b241a}
-.sev .kd.other{background:var(--dia);color:#123}
-.sev .kd.daycare{background:#e07a6f;color:#fff}
+.sev .ttl{flex:1;font-size:15px;font-weight:500}
+.sev .kd{font-size:11px;font-weight:600;border:0;border-radius:999px;padding:3px 8px;white-space:nowrap}
+.sev .kd.school{background:#d1fae5;color:#059669}
+.sev .kd.academy{background:#dbeafe;color:#0A84FF}
+.sev .kd.other{background:rgba(120,120,128,.12);color:#3A3A3C}
+.sev .kd.daycare{background:#ffe8d6;color:#C93400}
 .sgrid{display:grid;grid-template-columns:52px repeat(7,1fr);gap:4px;align-items:stretch;font-size:11px}
-.sgrid b{display:flex;align-items:center;justify-content:center;padding:6px 0;font-family:'Do Hyeon',sans-serif;font-size:13px}
-.sgrid .scell{min-height:44px;background:var(--panel2);border:2px solid var(--line);padding:3px 2px;line-height:1.25}
-.sgrid .scell.on{outline:2px solid var(--gold);outline-offset:-2px}
-.schip{display:block;margin:0 0 3px;padding:2px 3px;border:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.schip.school{background:var(--grass);color:#fff}
-.schip.academy{background:var(--gold);color:#2b241a}
-.schip.other{background:var(--dia);color:#123}
-.schip.daycare{background:#e07a6f;color:#fff}
-#schedDlg,#hospDlg,#medDlg,#packDlg,#growDlg{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
-  background:rgba(0,0,0,.35);padding:12px}
-#schedDlg .gatebox,#hospDlg .gatebox,#medDlg .gatebox,#packDlg .gatebox,#growDlg .gatebox{max-width:420px;margin-bottom:env(safe-area-inset-bottom);max-height:90vh;overflow:auto}
+.sgrid b{display:flex;align-items:center;justify-content:center;padding:6px 0;font-size:12px;font-weight:700}
+.sgrid .scell{min-height:44px;background:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.7);border-radius:10px;padding:3px 2px;line-height:1.25}
+.sgrid .scell.on{outline:2px solid #0A84FF;outline-offset:-2px}
+.schip{display:block;margin:0 0 3px;padding:2px 4px;border:0;border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.schip.school{background:#d1fae5;color:#059669}
+.schip.academy{background:#dbeafe;color:#0A84FF}
+.schip.other{background:rgba(120,120,128,.12);color:#3A3A3C}
+.schip.daycare{background:#ffe8d6;color:#C93400}
+
+#schedDlg,#hospDlg,#medDlg,#packDlg,#growDlg{
+  position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;
+  background:rgba(29,29,31,.28);padding:12px
+}
+#schedDlg .gatebox,#hospDlg .gatebox,#medDlg .gatebox,#packDlg .gatebox,#growDlg .gatebox{
+  max-width:420px;margin-bottom:var(--safe-b);max-height:min(90vh, 90dvh);overflow:auto
+}
 #schedDlg .daysel{display:flex;gap:4px}
 #schedDlg .daysel button{flex:1;padding:8px 0;min-height:44px;font-size:13px}
 #schedDlg .times,#medDlg .times{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 #schedDlg .kinds,#hospDlg .kinds,#medDlg .kinds,#packDlg .kinds,#growDlg .kinds,#medDlg .doses{display:flex;gap:6px;flex-wrap:wrap}
 #schedDlg .kinds button,#hospDlg .kinds button,#medDlg .kinds button,#packDlg .kinds button,#growDlg .kinds button,#medDlg .doses button{flex:1;min-height:44px;min-width:64px}
+.kinds button.on,.doses button.on,#gidSex button.on{background:#1D1D1F;color:#fff}
+
 .gstat{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.gchip{flex:1;min-width:120px;background:var(--panel2);border:3px solid var(--line);padding:8px}
-.gchip b{display:block;font-size:20px;font-family:'Do Hyeon',sans-serif}
+.gchip{flex:1;min-width:120px;padding:12px 14px;border-radius:16px}
+.gchip b{display:block;font-size:20px;font-weight:700;letter-spacing:-0.02em}
 .gchip span{font-size:12px;color:var(--dim)}
+#gidBirth{
+  width:100%;margin:4px 0 8px;font:inherit;font-size:16px;padding:12px;
+  border:1px solid rgba(120,120,128,.22);border-radius:12px;background:rgba(255,255,255,.8);color:var(--ink)
+}
+
 .psheet{display:table;width:100%;border-collapse:collapse;table-layout:fixed;font-size:10px}
 .psheet thead{display:table-header-group}
 .psheet tbody{display:table-row-group}
 .psheet tr{display:table-row}
-.psheet th,.psheet td{display:table-cell;border:2px solid #1d1a15;padding:2px 1px;text-align:center;vertical-align:middle}
-.psheet th.g{background:#8a5f3c;color:#fff8e7;font-family:'Do Hyeon',sans-serif;font-size:12px;letter-spacing:.3px}
-.psheet th.day{background:#63422a;color:#fff8e7;width:36px;font-family:'Do Hyeon',sans-serif}
-.psheet th.it{background:#f6f0e1;color:#2b241a;font-size:10px;line-height:1.1;padding:5px 2px;height:74px;
+.psheet th,.psheet td{display:table-cell;border:1px solid rgba(60,60,67,.18);padding:2px 1px;text-align:center;vertical-align:middle}
+.psheet th.g{background:#0A84FF;color:#fff;font-size:12px;font-weight:700}
+.psheet th.day{background:#3A3A3C;color:#fff;width:36px;font-weight:700}
+.psheet th.it{background:#f5f6fa;color:#1D1D1F;font-size:10px;line-height:1.1;padding:5px 2px;height:74px;
   writing-mode:vertical-rl;text-orientation:mixed;white-space:nowrap}
-.psheet td.day{background:#ece3cf;font-family:'Do Hyeon',sans-serif;font-size:11px;white-space:nowrap}
-.psheet tr.pwk td{background:#ffe08a}
-.psheet tr.pwk td.day{background:#e6a92b;color:#2b241a}
-.psheet td.off{background:#cfc8b8}
+.psheet td.day{background:#f2f3f7;font-size:11px;font-weight:600;white-space:nowrap}
+.psheet tr.pwk td{background:#fff6e0}
+.psheet tr.pwk td.day{background:#FF9F0A;color:#1D1D1F}
+.psheet td.off{background:#eceef3}
 .psheet td.off .mcbox{visibility:hidden}
-.mcbox{display:inline-block;width:12px;height:12px;border:2px solid #1d1a15;vertical-align:middle;
-  background:linear-gradient(180deg,#fff8e4 0 55%,#e4d8b8 55%);
-  box-shadow:inset 1px 1px 0 #fff, inset -1px -1px 0 #b8ab8c}
-#printPreview{display:none;position:fixed;inset:0;z-index:120;background:var(--bg);overflow:auto;padding:10px}
+.mcbox{
+  display:inline-block;width:14px;height:14px;border:1.5px solid rgba(60,60,67,.35);border-radius:4px;
+  vertical-align:middle;background:#fff
+}
+#printPreview{display:none;position:fixed;inset:0;z-index:120;background:#eef1f6;overflow:auto;
+  padding:calc(10px + var(--safe-t)) calc(10px + var(--safe-r)) calc(16px + var(--safe-b)) calc(10px + var(--safe-l))}
 #printPreview .printbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
 #printKids{display:flex;gap:4px;flex-wrap:wrap}
 #printKids button{min-height:40px}
 #printSheet{background:transparent;border:none;padding:0}
-.mcpage{background:#e7dfcb;color:#2b241a;border:4px solid #1d1a15;box-shadow:6px 6px 0 rgba(0,0,0,.28);
-  padding:8px;margin:0 0 18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.mchd{display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:6px;border:3px solid #1d1a15;color:#fff6e4;
-  background:repeating-linear-gradient(90deg,#8a5f3c 0 14px,#63422a 14px 28px)}
-.mchd .ttl{font-family:'Do Hyeon',sans-serif;font-size:20px;line-height:1.1;text-shadow:2px 2px 0 rgba(0,0,0,.4)}
-.mchd .sub{font-size:11px;opacity:.95}
-.mcfoot{margin:6px 0 0;font-size:11px;color:#2b241a;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.mcfoot b{background:#63a03f;color:#fff;border:2px solid #1d1a15;padding:1px 6px;font-family:'Do Hyeon',sans-serif}
+.mcpage{
+  background:#fff;color:#1D1D1F;border:1px solid rgba(60,60,67,.12);border-radius:16px;
+  box-shadow:0 8px 24px var(--shadow);padding:12px;margin:0 0 18px;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact
+}
+.mchd{display:flex;align-items:center;gap:10px;padding:8px 4px 12px;margin-bottom:6px;color:#1D1D1F;background:transparent;border:0}
+.mchd .ttl{font-size:20px;font-weight:700;line-height:1.15;letter-spacing:-0.02em}
+.mchd .sub{font-size:12px;color:var(--dim)}
+.mcfoot{margin:8px 0 0;font-size:11px;color:var(--dim);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mcfoot b{background:#0A84FF;color:#fff;border:0;border-radius:6px;padding:2px 7px;font-weight:700}
+
 .doses{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .doses button{flex:1;min-height:40px;font-size:13px}
-.chk{width:28px;height:28px;flex:none;background:var(--panel);border:3px solid var(--line);
-  display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;margin-top:2px}
-.chk.on{background:var(--grass)}
+.chk{
+  width:28px;height:28px;flex:none;background:rgba(120,120,128,.12);border:0;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;margin-top:2px
+}
+.chk.on{background:linear-gradient(160deg,#34D399,#059669)}
 .sev.done .ttl{opacity:.55;text-decoration:line-through}
+
 @media (max-width:430px){
-  header h1{font-size:18px}
-  header .inner{padding:7px 8px}
-  .tabs button{font-size:14px;min-height:48px}
-  .views button{font-size:13px}
-  .weeknav .label{font-size:14px;padding:9px 2px}
-  .card > .head{font-size:16px}
-  .card > .body{padding:10px}
+  header h1{font-size:26px}
+  .views button{font-size:13px;padding:8px 0}
+  .tabs button{font-size:13px}
+  .weeknav .label{font-size:14px;padding:10px 4px}
+  .card > .head{font-size:16px;padding:14px 16px 0}
+  .card > .body{padding:12px 16px 16px}
   .blocks i{width:30px;height:30px}
   .big{font-size:26px}
+  .sgrid{grid-template-columns:40px repeat(7,minmax(0,1fr))}
 }
 @media print{
   @page{size:A4 landscape;margin:6mm}
-  body.printing{background:#e7dfcb!important;color:#2b241a;padding:0;max-width:none}
-  body.printing header,.printing .views,.printing .tabs,.printing #todayView,.printing #missionView,
+  body.printing{background:#fff!important;color:#1D1D1F;padding:0;max-width:none}
+  body.printing .bg,body.printing header,.printing .views,.printing .tabs,.printing #todayView,.printing #missionView,
   .printing #schedView,.printing #hospView,.printing #growView,.printing #gate,.printing #moreBtn,
   .printing #logoutBtn,.printing #moreBar,.printing #who,.printing #sync,.printing footer,
   .printing #schedDlg,.printing #hospDlg,.printing #medDlg,.printing #packDlg,.printing #growDlg,
-  .printing #printPreview .printbar{display:none!important}
-  body.printing #printPreview{display:block!important;position:static;inset:auto;background:#e7dfcb;padding:0;overflow:visible}
+  .printing #printPreview .printbar,.printing #appBar{display:none!important}
+  body.printing .wrap{padding:0;max-width:none;min-height:0}
+  body.printing #printPreview{display:block!important;position:static;inset:auto;background:#fff;padding:0;overflow:visible}
   body.printing #printSheet{display:block!important;padding:0;background:transparent;border:none}
   body.printing .mcpage{box-shadow:none;margin:0;padding:4px;page-break-after:always;break-after:page}
   body.printing .mcpage:last-child{page-break-after:auto;break-after:auto}
@@ -280,16 +361,17 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   body.printing .mcpage,.printing .psheet th,.printing .psheet td,.printing .mchd,.printing .mcbox{
     -webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
-
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="growth-lms.js"></script>
 </head>
 <body>
+<div class="bg"></div>
+<div class="wrap">
 
 <div id="gate">
   <div class="gatebox">
-    <div class="gtitle">🔒 미션 보드</div>
+    <div class="gtitle">미션 보드</div>
     <div class="gsub">이메일로 로그인하세요</div>
     <label for="gid">이메일</label>
     <input id="gid" type="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
@@ -303,8 +385,11 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 
 <header>
   <div class="inner">
+    <div>
+      <p class="kicker">미션 보드</p>
+      <h1>하주 · 하유 · 하서</h1>
+    </div>
     <div id="hdrAvatar"></div>
-    <h1>하주 · 하유 · 하서 미션 보드</h1>
   </div>
 </header>
 
@@ -357,7 +442,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 
 <div class="card" id="reportCard">
   <button type="button" class="head rpthead" id="reportToggle" aria-expanded="false" aria-controls="report">
-    <span>📊 주간 리포트</span>
+    <span>주간 리포트</span>
     <span class="rptsum" id="reportSum"></span>
     <span class="rptchev" id="reportChev">▼</span>
   </button>
@@ -370,12 +455,12 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 </div>
 
 <div class="card">
-  <div class="head">🧹 생활 미션 <span style="font-size:12px;opacity:.85">(어기면 30분 차감)</span></div>
+    <div class="head">생활 미션 <span style="font-size:12px;font-weight:500;color:#6E6E73">(어기면 30분 차감)</span></div>
   <div class="body" id="habits"></div>
 </div>
 
 <div class="card">
-  <div class="head">💎 게임 시간</div>
+  <div class="head">게임 시간</div>
   <div class="body" id="bank"></div>
 </div>
 </div>
@@ -390,7 +475,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <div class="head">한 주 한눈에</div>
     <div class="body" id="schedWeek"></div>
   </div>
-  <button type="button" id="schedAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 학교·학원·어린이집 일정 추가</button>
+  <button type="button" id="schedAdd" class="addbtn">+ 학교·학원·어린이집 일정 추가</button>
   <div class="card">
     <div class="head">준비물</div>
     <div class="body" id="packSoon"></div>
@@ -403,7 +488,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     </button>
     <div class="body" id="packPast" style="display:none"></div>
   </div>
-  <button type="button" id="packAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 준비물 추가</button>
+  <button type="button" id="packAdd" class="addbtn">+ 준비물 추가</button>
 </div>
 
 <div id="hospView" style="display:none">
@@ -419,7 +504,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     </button>
     <div class="body" id="hospPast" style="display:none"></div>
   </div>
-  <button type="button" id="hospAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 병원 일정 추가</button>
+  <button type="button" id="hospAdd" class="addbtn">+ 병원 일정 추가</button>
   <div class="card">
     <div class="head">먹는 약</div>
     <div class="body" id="medNow"></div>
@@ -432,7 +517,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     </button>
     <div class="body" id="medPast" style="display:none"></div>
   </div>
-  <button type="button" id="medAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 약 추가</button>
+  <button type="button" id="medAdd" class="addbtn">+ 약 추가</button>
 </div>
 
 <div id="growView" style="display:none">
@@ -440,7 +525,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <div class="head">생년월일 · 성별</div>
     <div class="body">
       <label for="gidBirth">생년월일</label>
-      <input id="gidBirth" type="date" style="width:100%;margin:4px 0 8px;font:inherit;font-weight:700;padding:10px;border:3px solid var(--line);background:var(--panel2);color:var(--ink)">
+      <input id="gidBirth" type="date">
       <label>성별</label>
       <div class="kinds" id="gidSex" style="display:flex;gap:6px;margin-top:4px">
         <button type="button" data-s="F">여아</button>
@@ -457,7 +542,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
     <div class="head">이전 기록</div>
     <div class="body" id="growHist"></div>
   </div>
-  <button type="button" id="growAdd" style="width:100%;min-height:48px;margin-bottom:10px;background:var(--grass);color:#fff">+ 키 · 몸무게 기록</button>
+  <button type="button" id="growAdd" class="addbtn">+ 키 · 몸무게 기록</button>
   <p class="note">백분위는 세계보건기구(WHO) 0–24개월 성장표준과 미국 CDC 2000 성장도표 LMS로 계산합니다. 한국 병원은 질병관리청·대한소아청소년과학회 <b>2017 소아청소년 성장도표</b>를 쓰므로, 진료 전 <a href="https://knhanes.kdca.go.kr/knhanes/grtcht/clclt/measClclt.do" target="_blank" rel="noopener">질병관리청 공식 계산기</a>에서 한 번 더 확인하세요. 참고용이며 진료를 대신하지 않습니다.</p>
 </div>
 
@@ -487,7 +572,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
       <button type="button" data-pk="hayoo">하유</button>
       <button type="button" data-pk="haseo">하서</button>
     </div>
-    <button type="button" id="printGo" style="background:var(--grass);color:#fff">인쇄</button>
+    <button type="button" id="printGo" class="addbtn" style="width:auto;margin:0;min-height:44px;padding:0 16px">인쇄</button>
     <button type="button" id="printClose">닫기</button>
   </div>
   <div id="printSheet"></div>
@@ -600,7 +685,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 
 <div class="row" id="appBar" style="margin-bottom:10px">
   <button id="moreBtn">더보기</button>
-  <button id="logoutBtn">🔒 잠그기</button>
+  <button id="logoutBtn">잠그기</button>
   <div class="spacer"></div>
   <span id="who"></span>
   <span id="sync">연결 중…</span>
@@ -613,6 +698,7 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
 </div>
 
 <footer id="foot">오늘 할 일만 모았습니다. 칸을 누르면 해당 메뉴로 갑니다.</footer>
+</div>
 
 <script>
 (function(){
@@ -1268,10 +1354,9 @@ function save(opts){
 }
 function setSync(msg){
   var el=document.getElementById("sync"); if(el) el.textContent = msg;
-  var d=document.getElementById("dashSync"); if(d) d.textContent = msg;
 }
 
-/* ============ 픽셀 아바타 ============ */
+/* ============ 아바타 ============ */
 function avatar(kid, size){
   var id = kid && kid.id ? kid.id : "";
   var S = (kid && kid.skin) ? kid.skin : (kid || {});
@@ -2103,10 +2188,10 @@ function buildPrintKidPage(kid, y, m, last){
   var nick = kid.name.replace("김","");
   return "<section class='mcpage'>"
     + "<div class='mchd'>"+avatar(kid,36)
-    + "<div><div class='ttl'>"+nick+" 미션 체크표</div>"
-    + "<div class='sub'>"+y+"년 "+(m+1)+"월 · 네모에 V 하면 미션 클리어!</div></div></div>"
+    + "<div><div class='ttl'>"+nick+" 숙제 체크표</div>"
+    + "<div class='sub'>"+y+"년 "+(m+1)+"월 · 칸에 표시하면 완료</div></div></div>"
     + "<table class='psheet'><thead>"+head+"</thead><tbody>"+body+"</tbody></table>"
-    + "<div class='mcfoot'><b>V</b> 하면 클리어 · 주말은 노란 칸 · 회색은 쉬는 날 · A4 가로 1장</div>"
+    + "<div class='mcfoot'><b>✓</b> 완료 · 주말은 노란 칸 · 회색은 쉬는 날 · A4 가로 1장</div>"
     + "</section>";
 }
 function buildPrintSheet(){
@@ -2578,7 +2663,7 @@ document.addEventListener("visibilitychange", function(){
 /* ============ 로그인 (Supabase Auth) ============ */
 function gmsg(t, ok){
   var p = document.getElementById("gerr");
-  p.style.color = ok ? "var(--grass)" : "var(--red)";
+  p.style.color = ok ? "#059669" : "#FF3B30";
   p.textContent = t || "";
 }
 function showGate(){
