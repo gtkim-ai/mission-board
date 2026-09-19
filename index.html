@@ -279,117 +279,13 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:18px 0 6px}
   body.printing .mchd .ttl{font-size:18px}
   body.printing .mcpage,.printing .psheet th,.printing .psheet td,.printing .mchd,.printing .mcbox{
     -webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .printing #dashView{display:none!important}
 }
 
-/* ---- parent family dashboard (liquid glass, no pixel chrome) ---- */
-#dashView{display:none}
-body.dash{
-  max-width:860px;
-  font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
-  font-weight:400;
-  color:#1d1d1f;
-  background:
-    radial-gradient(120% 80% at 12% -10%, #dce9ff 0%, transparent 52%),
-    radial-gradient(90% 70% at 110% 8%, #ffe3c7 0%, transparent 46%),
-    linear-gradient(180deg,#eef1f6 0%, #e7ebf2 100%);
-  padding:calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
-}
-body.dash header,body.dash .views,body.dash #tabs,body.dash #todayView,body.dash #missionView,
-body.dash #schedView,body.dash #hospView,body.dash #growView,body.dash #appBar,body.dash #moreBar,
-body.dash footer,body.dash #printPreview{display:none!important}
-body.dash #dashView{display:block}
-.glass{background:#ffffffdb;border:1px solid rgba(255,255,255,.75);border-radius:24px;
-  box-shadow:0 8px 32px rgba(31,41,55,.10)}
-@supports (backdrop-filter:blur(24px)){
-  .glass{background:rgba(255,255,255,.62);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%)}
-}
-.dash-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
-.dash-top h1{margin:0;font-size:34px;font-weight:700;letter-spacing:-.4px;line-height:1.15}
-.dash-top .sub{margin:4px 0 0;font-size:13px;color:#6E6E73}
-.dash-tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.dash-tools button,.dash-seg button,.dash-nav button{
-  font-family:inherit;font-weight:600;border:0;background:rgba(255,255,255,.7);
-  box-shadow:none;color:#1d1d1f;border-radius:999px;padding:8px 14px;min-height:40px;font-size:14px}
-.dash-tools button.ghost{background:rgba(255,255,255,.45)}
-.dash-range{display:flex;align-items:center;gap:8px;margin:0 0 12px}
-.dash-range .when{flex:1;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.dash-range .span{font-size:17px;font-weight:700}
-.dash-badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;
-  font-size:12px;font-weight:700;background:#0A84FF;color:#fff}
-.dash-seg{display:flex;gap:4px;padding:4px;border-radius:999px;margin-bottom:14px}
-.dash-seg button{flex:1;min-width:0;padding:8px 6px}
-.dash-seg button.on{background:#1d1d1f;color:#fff}
-.dcard{padding:16px 16px 14px;margin-bottom:12px}
-.dcard h2{margin:0 0 12px;font-size:16px;font-weight:700}
-.dico{width:28px;height:28px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;
-  margin-right:8px;vertical-align:middle}
-.dico svg{width:16px;height:16px}
-.dcols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.dcol{padding:4px 2px}
-.ddot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
-.dname{font-size:14px;font-weight:700}
-.dbig{font-size:34px;font-weight:700;letter-spacing:-.8px;line-height:1.1;margin:6px 0 8px}
-.dbar{height:8px;border-radius:999px;background:rgba(60,60,67,.12);overflow:hidden}
-.dbar > i{display:block;height:100%;border-radius:999px}
-.drow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(60,60,67,.08)}
-.drow:first-of-type{border-top:0;padding-top:0}
-.drow .nm{flex:1;min-width:0}
-.drow b{display:block;font-size:15px}
-.drow span.meta{display:block;font-size:13px;color:#6E6E73;margin-top:2px}
-.st{border-radius:999px;padding:4px 9px;font-size:12px;font-weight:700;white-space:nowrap}
-.st.done{background:#d1fae5;color:#059669}
-.st.prog{background:#dbeafe;color:#0A84FF}
-.st.need{background:#fee2e2;color:#FF3B30}
-.st.none{background:rgba(60,60,67,.08);color:#6E6E73}
-.ditem{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:14px}
-.ditem .dotx{width:7px;height:7px;border-radius:50%;flex:none}
-.dlink{appearance:none;border:0;background:none;color:#0A84FF;font:inherit;font-weight:600;padding:0;min-height:0;box-shadow:none}
-.dnote{font-size:13px;color:#6E6E73;margin:0}
-.dash-foot{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#6E6E73;margin-top:8px}
-@media (max-width:640px){
-  body.dash .dash-top h1{font-size:28px}
-  .dcols{grid-template-columns:1fr}
-  .dash-seg button{font-size:13px}
-}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="growth-lms.js"></script>
 </head>
 <body>
-
-<div id="dashView">
-  <div class="dash-top">
-    <div>
-      <h1>가족</h1>
-      <p class="sub" id="dashWho">읽기 전용 요약</p>
-    </div>
-    <div class="dash-tools">
-      <button type="button" class="ghost" id="dashToBoard">숙제 보드</button>
-      <button type="button" class="ghost" id="dashLock">잠그기</button>
-    </div>
-  </div>
-  <div class="dash-range">
-    <button type="button" id="dashPrev">◀</button>
-    <div class="when">
-      <span class="span" id="dashRange">–</span>
-      <span class="dash-badge" id="dashTodayBadge">오늘</span>
-    </div>
-    <button type="button" id="dashNow">오늘</button>
-    <button type="button" id="dashNext">▶</button>
-  </div>
-  <div class="dash-seg glass" id="dashSeg">
-    <button type="button" data-dt="summary" class="on">요약</button>
-    <button type="button" data-dt="hw">숙제</button>
-    <button type="button" data-dt="hosp">병원</button>
-    <button type="button" data-dt="grow">성장</button>
-  </div>
-  <div id="dashSummary"></div>
-  <div class="dash-foot">
-    <span id="dashSync"></span>
-    <span>수정은 숙제 보드에서</span>
-  </div>
-</div>
 
 <div id="gate">
   <div class="gatebox">
@@ -800,11 +696,6 @@ var PACKING_WEEK = "1970-01-04";
 var GROWTH_WEEK = "1970-01-05";
 var KINDN = {school:"학교", academy:"학원", daycare:"어린이집", other:"기타"};
 var HOSPN = {clinic:"병원", vaccine:"예방접종"};
-var KIDTONE = {
-  hajoo:{from:"#34C759", to:"#248A3D", soft:"#d1fae5"},
-  hayoo:{from:"#0A84FF", to:"#0055D4", soft:"#dbeafe"},
-  haseo:{from:"#FF9F0A", to:"#C93400", soft:"#ffe8c7"}
-};
 var DOSEN = {am:"아침", lunch:"점심", pm:"저녁", night:"자기전"};
 var DOSEIDS = ["am","lunch","pm","night"];
 
@@ -852,8 +743,10 @@ var sb = null, chan = null, saveTimer = null, pending = false, pendingClear = nu
 var myEmail = "", allowed = false, sessionGen = 0;
 var baseData = {};
 var rptOpen = false;
-var view = (/(?:\?|&)dash=1\b/.test(location.search) || location.hash === "#dash") ? "dash" : "today";
-var dashTab = "summary";
+if(/(?:\?|&)dash=1\b/.test(location.search) || location.hash === "#dash"){
+  location.replace("dashboard.html");
+}
+var view = "today";
 var hospKind = "clinic";
 var schedDay = (TODAY.getDay()+6)%7;
 var schedule = {};
@@ -1399,7 +1292,6 @@ function avatar(kid, size){
 
 /* ============ 렌더링 ============ */
 function applyView(){
-  document.body.classList.toggle("dash", view==="dash");
   document.getElementById("viewToday").className = view==="today" ? "on" : "";
   document.getElementById("viewMission").className = view==="mission" ? "on" : "";
   document.getElementById("viewSchedule").className = view==="schedule" ? "on" : "";
@@ -1410,7 +1302,7 @@ function applyView(){
   document.getElementById("schedView").style.display = view==="schedule" ? "" : "none";
   document.getElementById("hospView").style.display = view==="hospital" ? "" : "none";
   document.getElementById("growView").style.display = view==="growth" ? "" : "none";
-  document.getElementById("tabs").style.display = (view==="hospital" || view==="today" || view==="dash") ? "none" : "";
+  document.getElementById("tabs").style.display = (view==="hospital" || view==="today") ? "none" : "";
   var foot = document.getElementById("foot");
   if(foot) foot.textContent = view==="today"
     ? "오늘 할 일만 모았습니다. 칸을 누르면 해당 메뉴로 갑니다."
@@ -1420,16 +1312,12 @@ function applyView(){
         ? "반복 일정과 날짜별 준비물을 함께 봅니다."
         : view==="hospital"
           ? "병원 예약과 먹는 약을 함께 봅니다."
-          : view==="dash"
-            ? "부모용 요약입니다. 수정은 숙제 보드에서 합니다."
-            : "키·몸무게를 모아 두고, 또래 백분위를 참고로 봅니다.";
+          : "키·몸무게를 모아 두고, 또래 백분위를 참고로 봅니다.";
 }
 function render(){
   applyView();
   renderTabs();
-  if(view === "dash"){
-    renderDash();
-  } else if(view === "today"){
+  if(view === "today"){
     renderToday();
   } else if(view === "mission"){
     renderWeek(); renderDays();
@@ -2056,133 +1944,6 @@ function renderToday(){
   }
 }
 
-function dashTone(kid, d){
-  var st = dayStatus(kid, d);
-  if(!st.total) return {key:"none", label:"해당 없음", n:st.n, total:st.total};
-  if(st.n>=st.total) return {key:"done", label:"완료", n:st.n, total:st.total};
-  if(st.n>0) return {key:"prog", label:"진행 중", n:st.n, total:st.total};
-  return {key:"need", label:"확인 필요", n:st.n, total:st.total};
-}
-function dashIco(kind){
-  var fill = kind==="hw" ? "linear-gradient(180deg,#34C759,#248A3D)"
-    : kind==="hosp" ? "linear-gradient(180deg,#0A84FF,#0055D4)"
-    : "linear-gradient(180deg,#FF9F0A,#C93400)";
-  var path = kind==="hw"
-    ? '<path d="M4 4h8v10H4z" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M6 7h4M6 9.5h4" stroke="#fff" stroke-width="1.4"/>'
-    : kind==="hosp"
-      ? '<path d="M7 3v10M3 7h8" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>'
-      : '<path d="M8 13c4-4 4-7 0-8-4 1-4 4 0 8z" fill="#fff"/>';
-  return '<span class="dico" style="background:'+fill+'"><svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">'+path+"</svg></span>";
-}
-function nextHospFor(kidId){
-  return hospItems().filter(function(it){ return it.kidId===kidId && (it.date||"")>=TODAY_KEY; })[0] || null;
-}
-function dashDayItems(kid, d){
-  var c = cell(kid.id, fmt(d)), wknd = isWeekend(d), rows = [];
-  kid.groups.forEach(function(g){
-    g.items.forEach(function(it){
-      if(it.weekendOnly && !wknd) return;
-      if(it.weekdayOnly && wknd) return;
-      if(it.subs){
-        var n = 0;
-        it.subs.forEach(function(s){ if(c.t[s.id]) n++; });
-        rows.push({label:g.name+" · "+it.label, done:n>=it.subs.length, part:n>0});
-      } else {
-        rows.push({label:g.name+" · "+it.label+(it.tag?" · "+it.tag:""), done:!!c.t[it.id], part:false});
-      }
-    });
-  });
-  return rows;
-}
-function enterDash(){
-  view = "dash";
-  try{ history.replaceState(null, "", "index.html?dash=1"); }catch(e){}
-  render();
-}
-function leaveDash(next){
-  view = next || "today";
-  try{ history.replaceState(null, "", "index.html"); }catch(e){}
-  render();
-}
-function dashShift(n){
-  var d = addDays(curDate, n);
-  var ws = monday(d);
-  if(fmt(ws) !== weekKey()){
-    weekStart = ws;
-    curDate = d;
-    loadLocal(); render(); pull();
-  } else {
-    curDate = d;
-    render();
-  }
-}
-function renderDash(){
-  var end = addDays(weekStart, 6);
-  document.getElementById("dashRange").textContent =
-    (weekStart.getMonth()+1)+"/"+weekStart.getDate()+" ~ "+(end.getMonth()+1)+"/"+end.getDate();
-  document.getElementById("dashTodayBadge").style.display = fmt(curDate)===TODAY_KEY ? "" : "none";
-  document.getElementById("dashWho").textContent = (myEmail ? myEmail+" · " : "") + "읽기 전용 요약";
-  document.querySelectorAll("#dashSeg button").forEach(function(b){
-    b.className = b.getAttribute("data-dt")===dashTab ? "on" : "";
-  });
-  var showHw = dashTab==="summary" || dashTab==="hw";
-  var showHp = dashTab==="summary" || dashTab==="hosp";
-  var showGr = dashTab==="summary" || dashTab==="grow";
-  var html = "";
-  if(showHw){
-    html += '<section class="dcard glass"><h2>'+dashIco("hw")+'이번 주 숙제 완료율</h2><div class="dcols">';
-    KIDS.forEach(function(kid){
-      var s = weekStats(kid), tone = KIDTONE[kid.id];
-      html += '<div class="dcol"><div class="dname"><i class="ddot" style="background:'+tone.from+'"></i>'
-        +kid.name.replace("김","")+'</div><div class="dbig">'+s.pct+'%</div>'
-        +'<div class="dbar"><i style="width:'+s.pct+'%;background:linear-gradient(90deg,'+tone.from+','+tone.to+')"></i></div>'
-        +'<div class="dnote" style="margin-top:6px">'+s.reqDone+'/'+s.reqTotal+'칸</div></div>';
-    });
-    html += "</div></section>";
-    html += '<section class="dcard glass"><h2>'+dashIco("hw")+(fmt(curDate)===TODAY_KEY?"오늘의 숙제":prettyDate(fmt(curDate))+" 숙제")+"</h2>";
-    KIDS.forEach(function(kid){
-      var tone = dashTone(kid, curDate);
-      html += '<div class="drow">'+avatar(kid,36)+'<div class="nm"><b>'+kid.name+'</b>'
-        +'<span class="meta">'+tone.n+'/'+tone.total+' · 주간 '+weekStats(kid).pct+'%</span></div>'
-        +'<span class="st '+tone.key+'">'+tone.label+"</span></div>";
-      if(dashTab==="hw"){
-        dashDayItems(kid, curDate).forEach(function(it){
-          var col = it.done ? "#059669" : (it.part ? "#0A84FF" : "#FF3B30");
-          html += '<div class="ditem"><i class="dotx" style="background:'+col+'"></i>'+it.label
-            +(it.done?" · 완료":(it.part?" · 진행 중":" · 확인 필요"))+"</div>";
-        });
-      }
-    });
-    html += "</section>";
-  }
-  if(showHp){
-    html += '<section class="dcard glass"><h2>'+dashIco("hosp")+"병원 · 예방접종</h2>";
-    var anyH = false;
-    KIDS.forEach(function(kid){
-      var nx = nextHospFor(kid.id);
-      anyH = anyH || !!nx;
-      html += '<div class="drow">'+avatar(kid,36)+'<div class="nm"><b>'+kid.name+'</b><span class="meta">';
-      if(nx) html += (HOSPN[nx.kind]||"병원")+" · "+prettyDate(nx.date)+(nx.time?" "+nx.time:"")+" · "+nx.title;
-      else html += "다가오는 일정 없음";
-      html += "</span></div></div>";
-    });
-    if(!anyH) html += '<p class="dnote">숙제 보드 병원 메뉴에서 일정을 넣으면 여기에 모입니다.</p>';
-    html += "</section>";
-  }
-  if(showGr){
-    html += '<section class="dcard glass"><h2>'+dashIco("grow")+"성장 기록</h2>";
-    KIDS.forEach(function(kid){
-      var last = kidGrowthItems(kid.id)[0];
-      html += '<div class="drow">'+avatar(kid,36)+'<div class="nm"><b>'+kid.name+'</b><span class="meta">';
-      if(last) html += prettyDate(last.date)+(last.height?" · "+last.height+"cm":"")+(last.weight?" · "+last.weight+"kg":"");
-      else html += "아직 측정 없음";
-      html += '</span></div><button type="button" class="dlink" data-grow="'+kid.id+'">자세히</button></div>';
-    });
-    html += "</section>";
-  }
-  document.getElementById("dashSummary").innerHTML = html;
-}
-
 function growPctLine(kidId, it){
   var pr = (growth.profiles||{})[kidId] || {};
   if(!pr.birth || !it) return "";
@@ -2651,42 +2412,14 @@ document.getElementById("todayW").onclick = function(){
   }
 };
 document.getElementById("dashBtn").onclick = function(){
-  document.getElementById("moreBar").style.display = "none";
-  document.getElementById("moreBtn").className = "";
-  document.getElementById("moreBtn").textContent = "더보기";
-  enterDash();
+  location.href = "dashboard.html";
 };
-document.getElementById("dashToBoard").onclick = function(){ leaveDash("today"); };
-document.getElementById("dashLock").onclick = function(){ document.getElementById("logoutBtn").click(); };
-document.getElementById("dashPrev").onclick = function(){ dashShift(-1); };
-document.getElementById("dashNext").onclick = function(){ dashShift(1); };
-document.getElementById("dashNow").onclick = function(){
-  var t = new Date();
-  var target = monday(t);
-  if(fmt(target) !== weekKey()){
-    weekStart = target;
-    curDate = new Date(t.getFullYear(),t.getMonth(),t.getDate());
-    loadLocal(); render(); pull();
-  } else {
-    curDate = new Date(t.getFullYear(),t.getMonth(),t.getDate());
-    render();
-  }
-};
-document.querySelectorAll("#dashSeg button").forEach(function(b){
-  b.onclick = function(){ dashTab = b.getAttribute("data-dt"); renderDash(); };
-});
 document.querySelectorAll("#hidKinds button").forEach(function(b){
   b.onclick = function(){
     hospKind = b.getAttribute("data-hk");
     document.querySelectorAll("#hidKinds button").forEach(function(x){ x.className = ""; });
     b.className = "on";
   };
-});
-document.getElementById("dashSummary").addEventListener("click", function(e){
-  var btn = e.target.closest("[data-grow]");
-  if(!btn) return;
-  curKid = kidIndex(btn.getAttribute("data-grow"));
-  leaveDash("growth");
 });
 document.getElementById("printBtn").onclick = function(){
   document.getElementById("moreBar").style.display = "none";
