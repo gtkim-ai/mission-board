@@ -543,7 +543,6 @@ footer{font-size:12px;color:var(--dim);text-align:center;margin:16px 0 4px}
     <div class="body" id="growHist"></div>
   </div>
   <button type="button" id="growAdd" class="addbtn">+ 키 · 몸무게 기록</button>
-  <p class="note">백분위는 세계보건기구(WHO) 0–24개월 성장표준과 미국 CDC 2000 성장도표 LMS로 계산합니다. 한국 병원은 질병관리청·대한소아청소년과학회 <b>2017 소아청소년 성장도표</b>를 쓰므로, 진료 전 <a href="https://knhanes.kdca.go.kr/knhanes/grtcht/clclt/measClclt.do" target="_blank" rel="noopener">질병관리청 공식 계산기</a>에서 한 번 더 확인하세요. 참고용이며 진료를 대신하지 않습니다.</p>
 </div>
 
 <div id="growDlg">
@@ -1192,8 +1191,9 @@ function pctOf(kind, sex, months, value){
 }
 function pctText(p){
   if(p==null) return "계산 불가";
-  var top = Math.max(1, Math.round(100-p));
-  return "백분위 "+Math.round(p)+"% · 상위 약 "+top+"%";
+  var shown = Math.round(p*10)/10;
+  var top = Math.max(0.1, Math.round((100-p)*10)/10);
+  return "백분위 "+shown+"% · 상위 약 "+top+"%";
 }
 function kidGrowthItems(kidId){
   return (growth.items||[]).filter(function(x){ return x.kidId===kidId; })
